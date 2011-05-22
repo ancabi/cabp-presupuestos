@@ -7,13 +7,20 @@ import java.awt.Dimension;
 import javax.swing.JMenuBar;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JToolBar;
 import javax.swing.JButton;
 import java.awt.GridBagLayout;
 import java.awt.CardLayout;
+import java.sql.Connection;
+import java.sql.SQLException;
+
 import javax.swing.ImageIcon;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+
+import conexion.Conectar;
+import javax.swing.JTabbedPane;
 
 public class MainFrame extends JFrame {
 
@@ -26,7 +33,11 @@ public class MainFrame extends JFrame {
 	private JButton jButton = null;
 	private JPanel panelCard = null;
 	private JPanel panelVacio = null;
-	private JPanel panelUser = null;
+	private JPanel panelCliente = null;
+	private Connection dbConnect;
+	private Conectar con;  //  @jve:decl-index=0:
+	private JTabbedPane tabCliente = null;
+	
 	/**
 	 * This is the default constructor
 	 */
@@ -41,10 +52,29 @@ public class MainFrame extends JFrame {
 	 * @return void
 	 */
 	private void initialize() {
+		
 		this.setSize(925, 629);
 		this.setJMenuBar(getJJMenuBar());
+		
+		con=new Conectar();
+		
+		try {
+			
+			dbConnect=con.makeConnection();
+			
+		} catch (ClassNotFoundException ex) {
+			JOptionPane.showMessageDialog(null, ex.getMessage());
+		} catch (SQLException ex) {
+			JOptionPane.showMessageDialog(null, ex.getMessage());
+		}
+		
+		
 		this.setContentPane(getJContentPane());
-		this.setTitle("JFrame");
+		this.setTitle("CABP");
+		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		this.setLocationRelativeTo(null);
+		this.setVisible(true);
+		
 	}
 
 	/**
@@ -124,6 +154,15 @@ public class MainFrame extends JFrame {
 		if (jButton == null) {
 			jButton = new JButton();
 			jButton.setIcon(new ImageIcon(getClass().getResource("/img/user.png")));
+			jButton.addActionListener(new java.awt.event.ActionListener() {
+				public void actionPerformed(java.awt.event.ActionEvent e) {
+					
+					((PanelCliente) panelCliente).actualizarTablaClientes();
+										
+					//mostramos el panel con los datos de los prestamos
+					cambiarCapa("panelCliente");
+				}
+			});
 		}
 		return jButton;
 	}
@@ -138,7 +177,8 @@ public class MainFrame extends JFrame {
 			panelCard = new JPanel();
 			panelCard.setLayout(new CardLayout());
 			panelCard.add(getPanelVacio(), getPanelVacio().getName());
-			panelCard.add(getPanelUser(), getPanelUser().getName());
+			panelCard.add(getPanelCliente(), getPanelCliente().getName());
+			panelCard.add(getTabCliente(), getTabCliente().getName());
 		}
 		return panelCard;
 	}
@@ -158,17 +198,37 @@ public class MainFrame extends JFrame {
 	}
 
 	/**
-	 * This method initializes panelUser	
+	 * This method initializes panelCliente	
 	 * 	
 	 * @return javax.swing.JPanel	
 	 */
-	private JPanel getPanelUser() {
-		if (panelUser == null) {
-			panelUser = new JPanel();
-			panelUser.setLayout(new BorderLayout());
-			panelUser.setName("panelUser");
+	private JPanel getPanelCliente() {
+		if (panelCliente == null) {
+			panelCliente = new PanelCliente(dbConnect);
+			panelCliente.setName("panelCliente");
 		}
-		return panelUser;
+		return panelCliente;
+	}
+	
+	private void cambiarCapa(String panel){
+		//obetener el layout
+		CardLayout card=(CardLayout) panelCard.getLayout();
+		
+		//metodo next
+		card.show(getPanelCard(), panel);
+	}
+
+	/**
+	 * This method initializes tabCliente	
+	 * 	
+	 * @return javax.swing.JTabbedPane	
+	 */
+	private JTabbedPane getTabCliente() {
+		if (tabCliente == null) {
+			tabCliente = new TabCliente();
+			tabCliente.setName("tabCliente");
+		}
+		return tabCliente;
 	}
 
 }  //  @jve:decl-index=0:visual-constraint="10,10"
