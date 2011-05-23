@@ -72,6 +72,18 @@ public class MainFrame extends JFrame {
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		this.setLocationRelativeTo(null);
 		this.setVisible(true);
+		this.addWindowListener(new java.awt.event.WindowAdapter() {
+			public void windowClosing(java.awt.event.WindowEvent e) {
+				try {
+					
+					if(dbConnect!=null){
+						con.closeConnection(dbConnect);
+					}
+				} catch (SQLException e1) {
+					JOptionPane.showMessageDialog(null, e1.getMessage());
+				}
+			}
+		});
 		
 	}
 

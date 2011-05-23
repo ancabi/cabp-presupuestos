@@ -14,7 +14,9 @@ import javax.swing.JTextArea;
 import java.awt.Insets;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.Vector;
 
 import javax.swing.JButton;
@@ -50,6 +52,9 @@ public class PanelDatosClientes extends JPanel {
 	private boolean agregar=true;
 	private Connection dbConnect;
 	private PreparedStatement psInsertar;
+	private PreparedStatement psInsertarTel;
+	private PreparedStatement psInsertarEmail;
+	private ResultSet rs;
 	private PreparedStatement psActualizar;
 	private JFrame mainFrame;
 	private int idCliente;
@@ -58,6 +63,7 @@ public class PanelDatosClientes extends JPanel {
 	private JButton btnAddTel = null;
 	private JButton btnDelTel = null;
 	private DefaultListModel modeloLista;
+	private DefaultListModel modeloListaEmail;
 	private JTextField tfEmail = null;
 	private JList jlEmail = null;
 	private JButton btnAddEmail = null;
@@ -86,6 +92,10 @@ public class PanelDatosClientes extends JPanel {
 			try {
 				psInsertar=dbConnect.prepareStatement("INSERT INTO clientes(dni, nombre, apellidos, direccion, ciudad, empresa, notas)" +
 						" VALUES (?,?,?,?,?,?,?)");
+				
+				psInsertarTel=dbConnect.prepareStatement("INSERT INTO telefonos(idCliente, telefono) VALUES (?,?)");
+				
+				psInsertarEmail=dbConnect.prepareStatement("INSERT INTO email(idCliente, email) VALUES (?,?)");
 				
 				psActualizar=dbConnect.prepareStatement("UPDATE clientes SET dni=?, nombre=?, apellidos=?, direccion=?, ciudad=?, empresa=?, notas=?" +
 						"WHERE idCliente=?");
@@ -259,6 +269,7 @@ public class PanelDatosClientes extends JPanel {
 			btnAceptar.addActionListener(new java.awt.event.ActionListener() {
 				public void actionPerformed(java.awt.event.ActionEvent e) {
 					
+					
 					String dni=tfDni.getText();
 					String nombre=tfNombre.getText();
 					String apellidos=tfApellidos.getText();
@@ -267,10 +278,13 @@ public class PanelDatosClientes extends JPanel {
 					String empresa=tfEmpresa.getText();
 					String notas=taNotas.getText();
 					
+					
 					if(agregar){
 						
+						int id;
+						
 						try {
-							
+							//asigno los campos al preparedStatement
 							psInsertar.setString(1, dni);
 							psInsertar.setString(2, nombre);
 							psInsertar.setString(3, apellidos);
@@ -278,8 +292,39 @@ public class PanelDatosClientes extends JPanel {
 							psInsertar.setString(5, ciudad);
 							psInsertar.setString(6, empresa);
 							psInsertar.setString(7, notas);
-							
+							//lo inserto
 							psInsertar.executeUpdate();
+							//pido el id generado
+							rs=psInsertar.getGeneratedKeys();
+							//paso 1 ya que siempre deolvera solo 1
+							rs.next();
+							//guardo el id
+							id=rs.getInt(1);
+							//recorro el modelo de la lista
+							for(int x=0; x<modeloLista.getSize(); x++){
+								
+								//asigno el id y el telefono, hago el parseInt sin try-catch porque ya esta controlado antes
+								psInsertarTel.setInt(1, id);
+								String telTemp=""+modeloLista.getElementAt(x);
+								psInsertarTel.setInt(2, Integer.parseInt(telTemp));
+								
+								psInsertarTel.executeUpdate();
+								
+							}
+							
+							//recorro el modelo de la lista
+							for(int x=0; x<modeloListaEmail.getSize(); x++){
+								
+								//asigno el id y el telefono, hago el parseInt sin try-catch porque ya esta controlado antes
+								psInsertarEmail.setInt(1, id);
+								String emailTemp=""+modeloListaEmail.getElementAt(x);
+								psInsertarEmail.setString(2, emailTemp);
+								
+								psInsertarEmail.executeUpdate();
+								
+							}
+							
+							
 							
 						} catch (SQLException e1) {
 							JOptionPane.showMessageDialog(null, e1.getMessage());
@@ -348,6 +393,9 @@ public class PanelDatosClientes extends JPanel {
 		tfCiudad.setText("");
 		tfEmpresa.setText("");
 		taNotas.setText("");
+		
+		modeloLista.clear();
+		modeloListaEmail.clear();
 		
 		agregar=true;
 		
@@ -479,7 +527,10 @@ public class PanelDatosClientes extends JPanel {
 	 */
 	private JList getJlEmail() {
 		if (jlEmail == null) {
-			jlEmail = new JList();
+			
+			modeloListaEmail=new DefaultListModel();
+			
+			jlEmail = new JList(modeloListaEmail);
 		}
 		return jlEmail;
 	}
@@ -493,6 +544,22 @@ public class PanelDatosClientes extends JPanel {
 		if (btnAddEmail == null) {
 			btnAddEmail = new JButton();
 			btnAddEmail.setText("+");
+			btnAddEmail.addActionListener(new java.awt.event.ActionListener() {
+				public void actionPerformed(java.awt.event.ActionEvent e) {
+					
+					String email=tfEmail.getText();
+					
+					if(email.length()>0){
+						
+						
+						modeloListaEmail.addElement(email);
+						
+						tfEmail.setText("");
+						
+					}
+					
+				}
+			});
 		}
 		return btnAddEmail;
 	}
@@ -506,6 +573,18 @@ public class PanelDatosClientes extends JPanel {
 		if (btnDelEmail == null) {
 			btnDelEmail = new JButton();
 			btnDelEmail.setText("-");
+			btnDelEmail.addActionListener(new java.awt.event.ActionListener() {
+				public void actionPerformed(java.awt.event.ActionEvent e) {
+					
+					int indice=jlEmail.getSelectedIndex();
+					
+					if(agregar){
+						
+						modeloListaEmail.removeElementAt(indice);
+						
+					}
+				}
+			});
 		}
 		return btnDelEmail;
 	}
