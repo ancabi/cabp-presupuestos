@@ -34,6 +34,7 @@ public class PanelCliente extends JPanel {
 	private PreparedStatement psCliente;
 	private PreparedStatement psTelefono;
 	private PreparedStatement psEmail;
+	private PreparedStatement psBorrarCliente;
 	private ModeloGeneral modelo=new ModeloGeneral();
 	private JFrame mainFrame;
 
@@ -56,6 +57,8 @@ public class PanelCliente extends JPanel {
 				psTelefono=dbConnect.prepareStatement("SELECT telefono FROM telefonos WHERE idCliente=?");
 				
 				psEmail=dbConnect.prepareStatement("SELECT email FROM email WHERE idCliente=?");
+				
+				psBorrarCliente=dbConnect.prepareStatement("DELETE FROM clientes WHERE idCliente=?");
 				
 				
 			} catch (SQLException e) {
@@ -201,6 +204,34 @@ public class PanelCliente extends JPanel {
 			jButton1.setMaximumSize(new Dimension(85, 25));
 			jButton1.setMinimumSize(new Dimension(85, 25));
 			jButton1.setPreferredSize(new Dimension(85, 25));
+			jButton1.addActionListener(new java.awt.event.ActionListener() {
+				public void actionPerformed(java.awt.event.ActionEvent e) {
+					
+					int seleccionado=jTable.getSelectedRow();
+					
+					if(seleccionado>=0){
+						
+						int idCliente= Integer.parseInt(""+modelo.getValueAt(seleccionado, 0));
+						
+						try {
+							psBorrarCliente.setInt(1, idCliente);
+							
+							psBorrarCliente.executeUpdate();
+							
+							modelo.deleteRow(seleccionado);
+							
+							modelo.fireTableDataChanged();
+							
+						} catch (SQLException e1) {
+							JOptionPane.showMessageDialog(null, e1.getMessage());
+						}
+						
+						
+						
+					}
+					
+				}
+			});
 		}
 		return jButton1;
 	}
