@@ -3,7 +3,6 @@ package gui;
 import java.awt.BorderLayout;
 import javax.swing.JPanel;
 import javax.swing.JFrame;
-import java.awt.Dimension;
 import javax.swing.JMenuBar;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
@@ -14,11 +13,9 @@ import java.awt.GridBagLayout;
 import java.awt.CardLayout;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.Vector;
 
 import javax.swing.ImageIcon;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
-
 import conexion.Conectar;
 import javax.swing.JTabbedPane;
 
@@ -37,6 +34,7 @@ public class MainFrame extends JFrame {
 	private Connection dbConnect;
 	private Conectar con;  //  @jve:decl-index=0:
 	private JTabbedPane tabCliente = null;
+	private JPanel panelAddClientes = null;
 	
 	/**
 	 * This is the default constructor
@@ -179,6 +177,7 @@ public class MainFrame extends JFrame {
 			panelCard.add(getPanelVacio(), getPanelVacio().getName());
 			panelCard.add(getPanelCliente(), getPanelCliente().getName());
 			panelCard.add(getTabCliente(), getTabCliente().getName());
+			panelCard.add(getPanelAddClientes(), getPanelAddClientes().getName());
 		}
 		return panelCard;
 	}
@@ -192,7 +191,7 @@ public class MainFrame extends JFrame {
 		if (panelVacio == null) {
 			panelVacio = new JPanel();
 			panelVacio.setLayout(new GridBagLayout());
-			panelVacio.setName("jPanel1");
+			panelVacio.setName("panelVacio");
 		}
 		return panelVacio;
 	}
@@ -204,15 +203,21 @@ public class MainFrame extends JFrame {
 	 */
 	private JPanel getPanelCliente() {
 		if (panelCliente == null) {
-			panelCliente = new PanelCliente(dbConnect);
+			panelCliente = new PanelCliente(dbConnect, this);
 			panelCliente.setName("panelCliente");
 		}
 		return panelCliente;
 	}
 	
-	private void cambiarCapa(String panel){
+	public void cambiarCapa(String panel){
 		//obetener el layout
 		CardLayout card=(CardLayout) panelCard.getLayout();
+		//si es el panel cliente, tiene que recargar la tabla
+		if(panel.equals("panelCliente")){
+			
+			((PanelCliente) panelCliente).actualizarTablaClientes();
+			
+		}
 		
 		//metodo next
 		card.show(getPanelCard(), panel);
@@ -225,10 +230,29 @@ public class MainFrame extends JFrame {
 	 */
 	private JTabbedPane getTabCliente() {
 		if (tabCliente == null) {
-			tabCliente = new TabCliente();
+			tabCliente = new TabCliente(dbConnect, this);
 			tabCliente.setName("tabCliente");
 		}
 		return tabCliente;
+	}
+
+	/**
+	 * This method initializes panelAddClientes	
+	 * 	
+	 * @return javax.swing.JPanel	
+	 */
+	private JPanel getPanelAddClientes() {
+		if (panelAddClientes == null) {
+			panelAddClientes = new PanelDatosClientes(dbConnect, this);
+			panelAddClientes.setName("panelAddClientes");
+		}
+		return panelAddClientes;
+	}
+	
+	public void rowSelected(Vector row){
+	
+		 ((TabCliente) tabCliente).rowSelected(row);
+		
 	}
 
 }  //  @jve:decl-index=0:visual-constraint="10,10"
