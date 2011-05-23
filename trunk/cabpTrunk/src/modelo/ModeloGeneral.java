@@ -39,8 +39,28 @@ public class ModeloGeneral extends AbstractTableModel {
 	 */
 	@Override
 	public Object getValueAt(int rowIndex, int columnIndex) {
-		Vector rowVector = (Vector)data.elementAt(rowIndex);
-        return rowVector.elementAt(columnIndex);
+		
+		if(columnIndex==4 || columnIndex==5){
+			
+			Vector rowVector = (Vector)data.elementAt(rowIndex);
+			
+			Vector temp=(Vector) rowVector.elementAt(columnIndex);
+
+			if(temp.isEmpty()){
+				
+				return "";
+				
+			}else{
+				return temp.elementAt(0);
+			}
+			
+		}else{
+		
+			Vector rowVector = (Vector)data.elementAt(rowIndex);
+			
+	        return rowVector.elementAt(columnIndex);
+	        
+		}
 	}
 	
 	public void setHeader(Vector h){
@@ -48,7 +68,7 @@ public class ModeloGeneral extends AbstractTableModel {
 	}
 	
 	public void setData(Vector d){
-		fireTableDataChanged();
+		//fireTableDataChanged();
 		
 		data=d;
 

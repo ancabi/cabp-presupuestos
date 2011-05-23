@@ -29,8 +29,11 @@ public class PanelCliente extends JPanel {
 	private JButton jButton = null;
 	private JButton jButton1 = null;
 	private Connection dbConnect;
-	private ResultSet rs;
+	private ResultSet rs;  //  @jve:decl-index=0:
+	private ResultSet rsSec;
 	private PreparedStatement psCliente;
+	private PreparedStatement psTelefono;
+	private PreparedStatement psEmail;
 	private ModeloGeneral modelo=new ModeloGeneral();
 	private JFrame mainFrame;
 
@@ -49,6 +52,10 @@ public class PanelCliente extends JPanel {
 			try {
 				
 				psCliente=dbConnect.prepareStatement("SELECT * FROM clientes");
+				
+				psTelefono=dbConnect.prepareStatement("SELECT telefono FROM telefonos WHERE idCliente=?");
+				
+				psEmail=dbConnect.prepareStatement("SELECT email FROM email WHERE idCliente=?");
 				
 				
 			} catch (SQLException e) {
@@ -97,6 +104,8 @@ public class PanelCliente extends JPanel {
 			head.addElement("DNI");
 			head.addElement("Nombre");
 			head.addElement("Apellidos");
+			head.addElement("Telefono");
+			head.addElement("E-Mail");
 			head.addElement("Direccion");
 			head.addElement("Ciudad");
 			head.addElement("Empresa");
@@ -202,18 +211,45 @@ public class PanelCliente extends JPanel {
 		try {
 			rs=psCliente.executeQuery();
 			
-			Vector<String> tupla;
+			Vector<Object> tupla;
 			Vector<Vector> data=new Vector<Vector>();
+			
 			
 			while(rs.next()){
 				
+				Vector<String> telefono=new Vector<String>();
+				Vector<String> email=new Vector<String>();
 				//construyo de nuevo el vector para que no se me acumulen todo en un solo vector
-				tupla=new Vector<String>();
+				tupla=new Vector<Object>();
 				
 				tupla.addElement(""+rs.getInt(1));
 				tupla.addElement(rs.getString(2));
 				tupla.addElement(rs.getString(3));
 				tupla.addElement(rs.getString(4));
+				
+				psTelefono.setInt(1, rs.getInt(1));
+				rsSec=psTelefono.executeQuery();
+
+				
+				while(rsSec.next()){
+					
+					telefono.addElement(""+rsSec.getInt(1));
+					
+				}
+
+				tupla.addElement(telefono);
+				
+				psEmail.setInt(1, rs.getInt(1));
+				rsSec=psEmail.executeQuery();
+				
+				while(rsSec.next()){
+					
+					email.addElement(rsSec.getString(1));
+					
+				}
+				tupla.addElement(email);
+				
+				
 				tupla.addElement(rs.getString(5));
 				tupla.addElement(rs.getString(6));
 				tupla.addElement(rs.getString(7));
