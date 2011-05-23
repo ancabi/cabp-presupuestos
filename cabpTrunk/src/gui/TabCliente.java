@@ -1,21 +1,30 @@
 package gui;
 
+import javax.swing.JFrame;
 import javax.swing.JTabbedPane;
 import java.awt.Dimension;
 import javax.swing.JPanel;
 import java.awt.GridBagLayout;
+import java.sql.Connection;
+import java.util.Vector;
 
 public class TabCliente extends JTabbedPane {
 
 	private static final long serialVersionUID = 1L;
 	private JPanel panelDatos = null;
 	private JPanel panelClientePres = null;
+	private Connection dbConnect;
+	private JFrame mainFrame;
 
 	/**
 	 * This is the default constructor
 	 */
-	public TabCliente() {
+	public TabCliente(Connection con, JFrame mainFrame) {
 		super();
+		
+		dbConnect=con;
+		this.mainFrame=mainFrame;
+		
 		initialize();
 	}
 
@@ -38,8 +47,8 @@ public class TabCliente extends JTabbedPane {
 	 */
 	private JPanel getPanelDatos() {
 		if (panelDatos == null) {
-			panelDatos = new JPanel();
-			panelDatos.setLayout(new GridBagLayout());
+			panelDatos = new PanelDatosClientes(dbConnect, mainFrame);
+			
 		}
 		return panelDatos;
 	}
@@ -55,6 +64,14 @@ public class TabCliente extends JTabbedPane {
 			panelClientePres.setLayout(new GridBagLayout());
 		}
 		return panelClientePres;
+	}
+	
+	public void rowSelected(Vector row){
+		
+		((PanelDatosClientes) panelDatos).setCliente(row);
+		
+		((PanelDatosClientes) panelDatos).setAgregar();
+		
 	}
 
 }  //  @jve:decl-index=0:visual-constraint="10,10"

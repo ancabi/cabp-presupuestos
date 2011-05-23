@@ -10,6 +10,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Vector;
 
+import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -30,18 +31,18 @@ public class PanelCliente extends JPanel {
 	private Connection dbConnect;
 	private ResultSet rs;
 	private PreparedStatement psCliente;
-	ModeloGeneral modelo=new ModeloGeneral();
+	private ModeloGeneral modelo=new ModeloGeneral();
+	private JFrame mainFrame;
 
 	/**
 	 * This is the default constructor
 	 */
-	public PanelCliente( Connection con) {
+	public PanelCliente( Connection con, JFrame mainFrame) {
 		super();
 		initialize();
-		
+		//recibo la conexion con la base de datos
 		dbConnect=con;
-		
-		System.out.println(dbConnect);
+		this.mainFrame=mainFrame;
 		
 		if(dbConnect!=null){
 			
@@ -91,16 +92,34 @@ public class PanelCliente extends JPanel {
 		if (jTable == null) {
 			
 			Vector<String> head=new Vector<String>();
-			
+			//agrego las cabeceras de la tabla
+			head.addElement("ID Cliente");
 			head.addElement("DNI");
 			head.addElement("Nombre");
-			head.addElement("Tipo");
-			head.addElement("E-Mail");
-			head.addElement("Area");
+			head.addElement("Apellidos");
+			head.addElement("Direccion");
+			head.addElement("Ciudad");
+			head.addElement("Empresa");
 
 			modelo.setHeader(head);
 			
 			jTable = new JTable(modelo);
+						jTable.addMouseListener(new java.awt.event.MouseAdapter() { 
+							public void mouseClicked(java.awt.event.MouseEvent evt) {    
+								if (evt.getClickCount() >= 2){// si es doble click
+									
+									int fila = jTable.rowAtPoint(evt.getPoint());
+									
+									Vector row=modelo.getRow(fila);
+							        
+									((MainFrame) mainFrame).rowSelected(row);
+							        
+									((MainFrame) mainFrame).cambiarCapa("tabCliente");
+									
+							    }
+							    
+							}
+						});
 		}
 		return jTable;
 	}
@@ -132,6 +151,15 @@ public class PanelCliente extends JPanel {
 			btnAgregar.setText("Agregar");
 			btnAgregar.setMaximumSize(new Dimension(85, 25));
 			btnAgregar.setMinimumSize(new Dimension(85, 25));
+			btnAgregar.addActionListener(new java.awt.event.ActionListener() {
+				public void actionPerformed(java.awt.event.ActionEvent e) {
+					//muestro el panel en el que se insertan los datos
+					((MainFrame) mainFrame).cambiarCapa("panelAddClientes");
+					
+					
+					
+				}
+			});
 		}
 		return btnAgregar;
 	}
@@ -189,6 +217,7 @@ public class PanelCliente extends JPanel {
 				tupla.addElement(rs.getString(5));
 				tupla.addElement(rs.getString(6));
 				tupla.addElement(rs.getString(7));
+				tupla.addElement(rs.getString(8));
 
 				//asigno el vector de cada tupla al de las filas
 				data.add(tupla);
@@ -200,7 +229,7 @@ public class PanelCliente extends JPanel {
 			modelo.fireTableDataChanged();
 			
 		} catch (SQLException e) {
-			JOptionPane.showMessageDialog(null, e.getMessage()+"Actualizar tabla usuario");
+			JOptionPane.showMessageDialog(null, e.getMessage()+"Actualizar tabla cliente");
 
 		}
 		
