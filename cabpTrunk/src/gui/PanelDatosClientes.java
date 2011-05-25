@@ -17,6 +17,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.Iterator;
 import java.util.Vector;
 
 import javax.swing.JButton;
@@ -28,6 +29,7 @@ import java.awt.Color;
 import java.awt.BorderLayout;
 import javax.swing.JScrollPane;
 import java.awt.FlowLayout;
+import javax.swing.ImageIcon;
 
 public class PanelDatosClientes extends JPanel {
 
@@ -54,6 +56,8 @@ public class PanelDatosClientes extends JPanel {
 	private PreparedStatement psInsertar;
 	private PreparedStatement psInsertarTel;
 	private PreparedStatement psInsertarEmail;
+	private PreparedStatement psBorrarTel;
+	private PreparedStatement psBorrarEmail;
 	private ResultSet rs;
 	private PreparedStatement psActualizar;
 	private JFrame mainFrame;
@@ -99,9 +103,12 @@ public class PanelDatosClientes extends JPanel {
 				
 				psActualizar=dbConnect.prepareStatement("UPDATE clientes SET dni=?, nombre=?, apellidos=?, direccion=?, ciudad=?, empresa=?, notas=?" +
 						"WHERE idCliente=?");
+				
+				psBorrarTel=dbConnect.prepareStatement("DELETE FROM telefonos WHERE idCliente=? AND telefono=?");
+				
+				psBorrarEmail=dbConnect.prepareStatement("DELETE FROM email WHERE idCliente=? AND email=?");
 			} catch (SQLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				JOptionPane.showMessageDialog(null, e.getMessage());
 			}
 			
 		}
@@ -306,7 +313,7 @@ public class PanelDatosClientes extends JPanel {
 								//asigno el id y el telefono, hago el parseInt sin try-catch porque ya esta controlado antes
 								psInsertarTel.setInt(1, id);
 								String telTemp=""+modeloLista.getElementAt(x);
-								psInsertarTel.setInt(2, Integer.parseInt(telTemp));
+								psInsertarTel.setString(2, telTemp);
 								
 								psInsertarTel.executeUpdate();
 								
@@ -412,10 +419,30 @@ public class PanelDatosClientes extends JPanel {
 		tfDni.setText(""+cliente.elementAt(1));
 		tfNombre.setText(""+cliente.elementAt(2));
 		tfApellidos.setText(""+cliente.elementAt(3));
-		tfDireccion.setText(""+cliente.elementAt(4));
-		tfCiudad.setText(""+cliente.elementAt(5));
-		tfEmpresa.setText(""+cliente.elementAt(6));
-		taNotas.setText(""+cliente.elementAt(7));
+		
+		Vector telTemp=(Vector) cliente.elementAt(4);
+		Iterator i=telTemp.iterator();
+		
+		while(i.hasNext()){
+			
+			modeloLista.addElement(((String) i.next()));
+			
+		}
+		
+		Vector emailTemp=(Vector) cliente.elementAt(5);
+		Iterator e=emailTemp.iterator();
+		
+		while(e.hasNext()){
+			
+			modeloListaEmail.addElement(((String) e.next()));
+			
+		}
+		
+		
+		tfDireccion.setText(""+cliente.elementAt(6));
+		tfCiudad.setText(""+cliente.elementAt(7));
+		tfEmpresa.setText(""+cliente.elementAt(8));
+		taNotas.setText(""+cliente.elementAt(9));
 		
 	}
 
@@ -456,19 +483,46 @@ public class PanelDatosClientes extends JPanel {
 	private JButton getBtnAddTel() {
 		if (btnAddTel == null) {
 			btnAddTel = new JButton();
-			btnAddTel.setText("+");
+			btnAddTel.setText("");
+			btnAddTel.setPreferredSize(new Dimension(40, 34));
+			btnAddTel.setIcon(new ImageIcon(getClass().getResource("/img/add.png")));
 			btnAddTel.addActionListener(new java.awt.event.ActionListener() {
 				public void actionPerformed(java.awt.event.ActionEvent e) {
 					
-					try{
-						int telefono=Integer.parseInt(tfTelefono.getText());
-						
-						modeloLista.addElement(telefono);
-						
+					
+					if(agregar){
+						try{
+							int telefono=Integer.parseInt(tfTelefono.getText());
+							
+							modeloLista.addElement(telefono);
+							
+							tfTelefono.setText("");
+							
+						}catch (NumberFormatException e1) {
+							JOptionPane.showMessageDialog(null, "Debe introducir solo numeros en el telefono");
+						}
+					}else{
+
+						try {
+							
+							int telefono=Integer.parseInt(tfTelefono.getText());
+							
+							psInsertarTel.setInt(1, idCliente);
+							psInsertarTel.setString(2, ""+telefono);
+							
+							psInsertarTel.executeUpdate();
+							
+							modeloLista.addElement(telefono);
+							
+						} catch (SQLException e1) {
+							JOptionPane.showMessageDialog(null, e1.getMessage());
+						} catch (NumberFormatException e1) {
+							JOptionPane.showMessageDialog(null, "Debe introducir solo numeros en el telefono");
+						}
+
 						tfTelefono.setText("");
 						
-					}catch (NumberFormatException e1) {
-						JOptionPane.showMessageDialog(null, "Debe introducir solo numeros en el telefono");
+						
 					}
 					
 				}
@@ -485,18 +539,25 @@ public class PanelDatosClientes extends JPanel {
 	private JButton getBtnDelTel() {
 		if (btnDelTel == null) {
 			btnDelTel = new JButton();
-			btnDelTel.setText("-");
-			btnDelTel.setMinimumSize(new Dimension(41, 26));
-			btnDelTel.setPreferredSize(new Dimension(41, 26));
-			btnDelTel.setMaximumSize(new Dimension(41, 26));
+			btnDelTel.setText("");
+			btnDelTel.setMinimumSize(new Dimension(40, 34));
+			btnDelTel.setPreferredSize(new Dimension(40, 34));
+			btnDelTel.setIcon(new ImageIcon(getClass().getResource("/img/delete.png")));
+			btnDelTel.setMaximumSize(new Dimension(40, 34));
 			btnDelTel.addActionListener(new java.awt.event.ActionListener() {
 				public void actionPerformed(java.awt.event.ActionEvent e) {
 					
+					
 					int indice=jlTelefonos.getSelectedIndex();
+					
 					
 					if(agregar){
 						
 						modeloLista.removeElementAt(indice);
+						
+					}else{
+						
+						
 						
 					}
 					
@@ -543,7 +604,11 @@ public class PanelDatosClientes extends JPanel {
 	private JButton getBtnAddEmail() {
 		if (btnAddEmail == null) {
 			btnAddEmail = new JButton();
-			btnAddEmail.setText("+");
+			btnAddEmail.setText("");
+			btnAddEmail.setMinimumSize(new Dimension(40, 34));
+			btnAddEmail.setPreferredSize(new Dimension(40, 34));
+			btnAddEmail.setIcon(new ImageIcon(getClass().getResource("/img/add.png")));
+			btnAddEmail.setMaximumSize(new Dimension(40, 34));
 			btnAddEmail.addActionListener(new java.awt.event.ActionListener() {
 				public void actionPerformed(java.awt.event.ActionEvent e) {
 					
@@ -572,7 +637,11 @@ public class PanelDatosClientes extends JPanel {
 	private JButton getBtnDelEmail() {
 		if (btnDelEmail == null) {
 			btnDelEmail = new JButton();
-			btnDelEmail.setText("-");
+			btnDelEmail.setText("");
+			btnDelEmail.setMinimumSize(new Dimension(40, 34));
+			btnDelEmail.setPreferredSize(new Dimension(40, 34));
+			btnDelEmail.setIcon(new ImageIcon(getClass().getResource("/img/delete.png")));
+			btnDelEmail.setMaximumSize(new Dimension(40, 34));
 			btnDelEmail.addActionListener(new java.awt.event.ActionListener() {
 				public void actionPerformed(java.awt.event.ActionEvent e) {
 					
@@ -721,8 +790,8 @@ public class PanelDatosClientes extends JPanel {
 			GridBagConstraints gridBagConstraints5 = new GridBagConstraints();
 			gridBagConstraints5.anchor = GridBagConstraints.WEST;
 			gridBagConstraints5.insets = new Insets(2, 10, 2, 2);
-			gridBagConstraints5.gridx = 1;
-			gridBagConstraints5.gridy = 2;
+			gridBagConstraints5.gridx = 3;
+			gridBagConstraints5.gridy = 0;
 			gridBagConstraints5.fill = GridBagConstraints.NONE;
 			GridBagConstraints gridBagConstraints1 = new GridBagConstraints();
 			gridBagConstraints1.anchor = GridBagConstraints.WEST;
@@ -733,8 +802,8 @@ public class PanelDatosClientes extends JPanel {
 			GridBagConstraints gridBagConstraints6 = new GridBagConstraints();
 			gridBagConstraints6.anchor = GridBagConstraints.WEST;
 			gridBagConstraints6.insets = new Insets(2, 10, 2, 2);
-			gridBagConstraints6.gridx = 3;
-			gridBagConstraints6.gridy = 0;
+			gridBagConstraints6.gridx = 1;
+			gridBagConstraints6.gridy = 2;
 			gridBagConstraints6.fill = GridBagConstraints.NONE;
 			GridBagConstraints gridBagConstraints = new GridBagConstraints();
 			gridBagConstraints.anchor = GridBagConstraints.WEST;
