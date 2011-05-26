@@ -4,6 +4,7 @@
 package conexion;
 
 import java.io.File;
+import org.sqlite.*;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -27,6 +28,7 @@ public class Conectar {
 	public Connection makeConnection() throws ClassNotFoundException, SQLException{
 		
 			File base=new File(bd);
+			
 			
 			if(base.exists()){
 				

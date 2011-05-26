@@ -81,6 +81,8 @@ public class PanelDatosClientes extends JPanel {
 	private JLabel lblEmail = null;
 	private JPanel panelAddTel = null;
 	private JPanel panelAddEmail = null;
+	private JLabel lblProvincia = null;
+	private JTextField tfProvincia = null;
 	/**
 	 * This is the default constructor
 	 */
@@ -94,21 +96,22 @@ public class PanelDatosClientes extends JPanel {
 		if(dbConnect!=null){
 			
 			try {
-				psInsertar=dbConnect.prepareStatement("INSERT INTO clientes(dni, nombre, apellidos, direccion, ciudad, empresa, notas)" +
-						" VALUES (?,?,?,?,?,?,?)");
+				psInsertar=dbConnect.prepareStatement("INSERT INTO clientes(dni, nombre, apellidos, direccion, ciudad, provincia, empresa, notas)" +
+						" VALUES (?,?,?,?,?,?,?,?)");
 				
 				psInsertarTel=dbConnect.prepareStatement("INSERT INTO telefonos(idCliente, telefono) VALUES (?,?)");
 				
 				psInsertarEmail=dbConnect.prepareStatement("INSERT INTO email(idCliente, email) VALUES (?,?)");
 				
-				psActualizar=dbConnect.prepareStatement("UPDATE clientes SET dni=?, nombre=?, apellidos=?, direccion=?, ciudad=?, empresa=?, notas=?" +
+				psActualizar=dbConnect.prepareStatement("UPDATE clientes SET dni=?, nombre=?, apellidos=?, direccion=?, ciudad=?, provincia=?, empresa=?, notas=?" +
 						"WHERE idCliente=?");
 				
 				psBorrarTel=dbConnect.prepareStatement("DELETE FROM telefonos WHERE idCliente=? AND telefono=?");
 				
 				psBorrarEmail=dbConnect.prepareStatement("DELETE FROM email WHERE idCliente=? AND email=?");
 			} catch (SQLException e) {
-				JOptionPane.showMessageDialog(null, e.getMessage());
+				//JOptionPane.showMessageDialog(null, e.getMessage());
+				e.printStackTrace();
 			}
 			
 		}
@@ -276,16 +279,17 @@ public class PanelDatosClientes extends JPanel {
 			btnAceptar.addActionListener(new java.awt.event.ActionListener() {
 				public void actionPerformed(java.awt.event.ActionEvent e) {
 					
-					
+					//cargo los datos en variables
 					String dni=tfDni.getText();
 					String nombre=tfNombre.getText();
 					String apellidos=tfApellidos.getText();
 					String direccion=tfDireccion.getText();
 					String ciudad=tfCiudad.getText();
+					String provincia=tfProvincia.getText();
 					String empresa=tfEmpresa.getText();
 					String notas=taNotas.getText();
 					
-					
+					//si es agregar la accion entonces de inserta
 					if(agregar){
 						
 						int id;
@@ -297,8 +301,9 @@ public class PanelDatosClientes extends JPanel {
 							psInsertar.setString(3, apellidos);
 							psInsertar.setString(4, direccion);
 							psInsertar.setString(5, ciudad);
-							psInsertar.setString(6, empresa);
-							psInsertar.setString(7, notas);
+							psInsertar.setString(6, provincia);
+							psInsertar.setString(7, empresa);
+							psInsertar.setString(8, notas);
 							//lo inserto
 							psInsertar.executeUpdate();
 							//pido el id generado
@@ -345,15 +350,15 @@ public class PanelDatosClientes extends JPanel {
 							psActualizar.setString(3, apellidos);
 							psActualizar.setString(4, direccion);
 							psActualizar.setString(5, ciudad);
-							psActualizar.setString(6, empresa);
-							psActualizar.setString(7, notas);
-							psActualizar.setInt(8, idCliente);
+							psActualizar.setString(6, provincia);
+							psActualizar.setString(7, empresa);
+							psActualizar.setString(8, notas);
+							psActualizar.setInt(9, idCliente);
 							
 							psActualizar.executeUpdate();
 							
 						} catch (SQLException e1) {
-							// TODO Auto-generated catch block
-							e1.printStackTrace();
+							JOptionPane.showMessageDialog(null, e1.getMessage());
 						}
 						
 					}
@@ -398,6 +403,7 @@ public class PanelDatosClientes extends JPanel {
 		tfApellidos.setText("");
 		tfDireccion.setText("");
 		tfCiudad.setText("");
+		tfProvincia.setText("");
 		tfEmpresa.setText("");
 		taNotas.setText("");
 		
@@ -441,8 +447,9 @@ public class PanelDatosClientes extends JPanel {
 		
 		tfDireccion.setText(""+cliente.elementAt(6));
 		tfCiudad.setText(""+cliente.elementAt(7));
-		tfEmpresa.setText(""+cliente.elementAt(8));
-		taNotas.setText(""+cliente.elementAt(9));
+		tfProvincia.setText(""+cliente.elementAt(8));
+		tfEmpresa.setText(""+cliente.elementAt(9));
+		taNotas.setText(""+cliente.elementAt(10));
 		
 	}
 
@@ -550,14 +557,25 @@ public class PanelDatosClientes extends JPanel {
 					
 					int indice=jlTelefonos.getSelectedIndex();
 					
-					
 					if(agregar){
 						
 						modeloLista.removeElementAt(indice);
 						
 					}else{
 						
-						
+						String telefono=(String) modeloLista.getElementAt(indice);
+							
+						try {
+							psBorrarTel.setInt(1, idCliente);
+							psBorrarTel.setString(2, telefono);
+							
+							psBorrarTel.executeUpdate();
+							
+							modeloLista.removeElementAt(indice);
+							
+						} catch (SQLException e1) {
+							JOptionPane.showMessageDialog(null, e1.getMessage());
+						}
 						
 					}
 					
@@ -651,6 +669,24 @@ public class PanelDatosClientes extends JPanel {
 						
 						modeloListaEmail.removeElementAt(indice);
 						
+					}else{
+						
+						String email=(String) modeloListaEmail.getElementAt(indice);
+						
+						
+						try {
+							psBorrarEmail.setInt(1, idCliente);
+							psBorrarEmail.setString(2, email);
+							
+							psBorrarEmail.executeUpdate();
+							
+							modeloListaEmail.removeElementAt(indice);
+						} catch (SQLException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						}
+						
+						
 					}
 				}
 			});
@@ -711,6 +747,19 @@ public class PanelDatosClientes extends JPanel {
 	 */
 	private JPanel getJPanel() {
 		if (jPanel == null) {
+			GridBagConstraints gridBagConstraints22 = new GridBagConstraints();
+			gridBagConstraints22.fill = GridBagConstraints.VERTICAL;
+			gridBagConstraints22.gridy = 4;
+			gridBagConstraints22.weightx = 1.0;
+			gridBagConstraints22.anchor = GridBagConstraints.WEST;
+			gridBagConstraints22.insets = new Insets(2, 10, 2, 2);
+			gridBagConstraints22.gridx = 3;
+			GridBagConstraints gridBagConstraints18 = new GridBagConstraints();
+			gridBagConstraints18.gridx = 2;
+			gridBagConstraints18.insets = new Insets(2, 10, 2, 2);
+			gridBagConstraints18.gridy = 4;
+			lblProvincia = new JLabel();
+			lblProvincia.setText("Provincia:");
 			GridBagConstraints gridBagConstraints21 = new GridBagConstraints();
 			gridBagConstraints21.gridx = 3;
 			gridBagConstraints21.fill = GridBagConstraints.HORIZONTAL;
@@ -754,14 +803,14 @@ public class PanelDatosClientes extends JPanel {
 			GridBagConstraints gridBagConstraints11 = new GridBagConstraints();
 			gridBagConstraints11.anchor = GridBagConstraints.WEST;
 			gridBagConstraints11.insets = new Insets(2, 10, 2, 2);
-			gridBagConstraints11.gridx = 3;
-			gridBagConstraints11.gridy = 4;
+			gridBagConstraints11.gridx = 1;
+			gridBagConstraints11.gridy = 5;
 			gridBagConstraints11.fill = GridBagConstraints.NONE;
 			GridBagConstraints gridBagConstraints9 = new GridBagConstraints();
 			gridBagConstraints9.anchor = GridBagConstraints.WEST;
 			gridBagConstraints9.insets = new Insets(2, 10, 2, 2);
-			gridBagConstraints9.gridx = 2;
-			gridBagConstraints9.gridy = 4;
+			gridBagConstraints9.gridx = 0;
+			gridBagConstraints9.gridy = 5;
 			gridBagConstraints9.fill = GridBagConstraints.HORIZONTAL;
 			GridBagConstraints gridBagConstraints7 = new GridBagConstraints();
 			gridBagConstraints7.anchor = GridBagConstraints.WEST;
@@ -846,6 +895,8 @@ public class PanelDatosClientes extends JPanel {
 			jPanel.add(lblEmail, gridBagConstraints101);
 			jPanel.add(getPanelAddTel(), gridBagConstraints17);
 			jPanel.add(getPanelAddEmail(), gridBagConstraints21);
+			jPanel.add(lblProvincia, gridBagConstraints18);
+			jPanel.add(getTfProvincia(), gridBagConstraints22);
 		}
 		return jPanel;
 	}
@@ -912,6 +963,20 @@ public class PanelDatosClientes extends JPanel {
 			panelAddEmail.add(getBtnDelEmail(), null);
 		}
 		return panelAddEmail;
+	}
+
+	/**
+	 * This method initializes tfProvincia	
+	 * 	
+	 * @return javax.swing.JTextField	
+	 */
+	private JTextField getTfProvincia() {
+		if (tfProvincia == null) {
+			tfProvincia = new JTextField();
+			tfProvincia.setPreferredSize(new Dimension(110, 20));
+			tfProvincia.setMinimumSize(new Dimension(110, 20));
+		}
+		return tfProvincia;
 	}
 
 }  //  @jve:decl-index=0:visual-constraint="10,10"

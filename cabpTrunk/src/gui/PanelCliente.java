@@ -114,6 +114,7 @@ public class PanelCliente extends JPanel {
 			head.addElement("E-Mail");
 			head.addElement("Direccion");
 			head.addElement("Ciudad");
+			head.addElement("Provincia");
 			head.addElement("Empresa");
 
 			modelo.setHeader(head);
@@ -291,6 +292,7 @@ public class PanelCliente extends JPanel {
 				tupla.addElement(rs.getString(6));
 				tupla.addElement(rs.getString(7));
 				tupla.addElement(rs.getString(8));
+				tupla.addElement(rs.getString(9));
 
 				//asigno el vector de cada tupla al de las filas
 				data.add(tupla);
