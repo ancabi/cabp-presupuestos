@@ -505,7 +505,23 @@ public class PanelDatosClientes extends JPanel {
 							try{
 								int telefono=Integer.parseInt(telefonoText);
 								
+								try {
+								//recorro los numeros que hay agregados	
+								for(int x=0; x<modeloLista.getSize(); x++){
+									//si hay coincidencia
+									if(telefono==(Integer) modeloLista.getElementAt(x)){
+										//tiro la excepcion para que no se agregue a la lista
+										throw new Exception("No puede haber dos telefonos iguales");
+										
+									}
+									
+								}
+								
 								modeloLista.addElement(telefono);
+								
+								} catch (Exception e1) {
+									JOptionPane.showMessageDialog(null, e1.getMessage());
+								}
 								
 							}catch (NumberFormatException e1) {
 								JOptionPane.showMessageDialog(null, "Debe introducir solo numeros en el telefono");
@@ -649,12 +665,30 @@ public class PanelDatosClientes extends JPanel {
 				public void actionPerformed(java.awt.event.ActionEvent e) {
 					
 					String email=tfEmail.getText();
-					
+					//miro que el campo no este vacio
 					if(!email.equals("")){
-						
+						//si la accion es agregar
 						if(agregar){
+							
+							try {
+								//recorro la lista en busca de coincidencias
+								for(int x=0; x<modeloListaEmail.getSize(); x++){
+									//si hay coincidencias, entonces lanzo la excepcion y no se agrega
+									//solo lo hago en agregar ya que cuando actualizo, lo hago directo en la bd
+									//y al ser clave primaria ya tira una SQLException
+									if(email.equals(modeloListaEmail.getElementAt(x))){
+									
+										throw new Exception("No pueden haber dos e-mails iguales");
+									
+									}
+								
+								}
 								
 								modeloListaEmail.addElement(email);
+							
+							} catch (Exception e1) {
+								JOptionPane.showMessageDialog(null, e1.getMessage());
+							}
 								
 						}else{
 	
