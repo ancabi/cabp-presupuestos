@@ -15,6 +15,8 @@ public class TabCliente extends JTabbedPane {
 	private JPanel panelClientePres = null;
 	private Connection dbConnect;
 	private JFrame mainFrame;
+	private JPanel panelImg = null;
+	private JPanel panelPdf = null;
 
 	/**
 	 * This is the default constructor
@@ -37,6 +39,8 @@ public class TabCliente extends JTabbedPane {
 		this.setSize(548, 334);
 
 		this.addTab("Datos", null, getPanelDatos(), null);
+		this.addTab("Imagenes", null, getPanelImg(), null);
+		this.addTab("PDF", null, getPanelPdf(), null);
 		this.addTab("Presupuestos", null, getPanelClientePres(), null);
 	}
 
@@ -72,6 +76,30 @@ public class TabCliente extends JTabbedPane {
 		
 		((PanelDatosClientes) panelDatos).setAgregar();
 		
+	}
+
+	/**
+	 * This method initializes panelImg	
+	 * 	
+	 * @return javax.swing.JPanel	
+	 */
+	private JPanel getPanelImg() {
+		if (panelImg == null) {
+			panelImg = new JPanel();
+		}
+		return panelImg;
+	}
+
+	/**
+	 * This method initializes panelPdf	
+	 * 	
+	 * @return javax.swing.JPanel	
+	 */
+	private JPanel getPanelPdf() {
+		if (panelPdf == null) {
+			panelPdf = new JPanel();
+		}
+		return panelPdf;
 	}
 
 }  //  @jve:decl-index=0:visual-constraint="10,10"
