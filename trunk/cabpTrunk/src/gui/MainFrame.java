@@ -12,6 +12,7 @@ import javax.swing.JButton;
 import java.awt.GridBagLayout;
 import java.awt.CardLayout;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.Vector;
 
@@ -59,6 +60,10 @@ public class MainFrame extends JFrame {
 		try {
 			
 			dbConnect=con.makeConnection();
+			
+			PreparedStatement psFK=dbConnect.prepareStatement("PRAGMA foreign_keys=ON;");
+			
+			psFK.execute();
 			
 		} catch (ClassNotFoundException ex) {
 			JOptionPane.showMessageDialog(null, ex.getMessage());
