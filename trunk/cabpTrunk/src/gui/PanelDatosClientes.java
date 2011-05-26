@@ -496,40 +496,49 @@ public class PanelDatosClientes extends JPanel {
 			btnAddTel.addActionListener(new java.awt.event.ActionListener() {
 				public void actionPerformed(java.awt.event.ActionEvent e) {
 					
+					String telefonoText=tfTelefono.getText();
 					
-					if(agregar){
-						try{
-							int telefono=Integer.parseInt(tfTelefono.getText());
+					
+					if(!telefonoText.equals("")){
+					
+						if(agregar){
+							try{
+								int telefono=Integer.parseInt(telefonoText);
+								
+								modeloLista.addElement(telefono);
+								
+							}catch (NumberFormatException e1) {
+								JOptionPane.showMessageDialog(null, "Debe introducir solo numeros en el telefono");
+							}
+						}else{
+	
+							try {
+								
+								int telefono=Integer.parseInt(telefonoText);
+								
+								psInsertarTel.setInt(1, idCliente);
+								psInsertarTel.setString(2, ""+telefono);
+								
+								psInsertarTel.executeUpdate();
+								
+								modeloLista.addElement(telefono);
+								
+							} catch (SQLException e1) {
+								JOptionPane.showMessageDialog(null, e1.getMessage());
+							} catch (NumberFormatException e1) {
+								JOptionPane.showMessageDialog(null, "Debe introducir solo numeros en el telefono");
+							}
 							
-							modeloLista.addElement(telefono);
-							
-							tfTelefono.setText("");
-							
-						}catch (NumberFormatException e1) {
-							JOptionPane.showMessageDialog(null, "Debe introducir solo numeros en el telefono");
 						}
-					}else{
-
-						try {
-							
-							int telefono=Integer.parseInt(tfTelefono.getText());
-							
-							psInsertarTel.setInt(1, idCliente);
-							psInsertarTel.setString(2, ""+telefono);
-							
-							psInsertarTel.executeUpdate();
-							
-							modeloLista.addElement(telefono);
-							
-						} catch (SQLException e1) {
-							JOptionPane.showMessageDialog(null, e1.getMessage());
-						} catch (NumberFormatException e1) {
-							JOptionPane.showMessageDialog(null, "Debe introducir solo numeros en el telefono");
-						}
-
+						
 						tfTelefono.setText("");
-						
-						
+					
+					}else{
+						try {
+							throw new Exception("Debe rellenar el campo");
+						} catch (Exception e1) {
+							JOptionPane.showMessageDialog(null, e1.getMessage());
+						}
 					}
 					
 				}
@@ -557,26 +566,35 @@ public class PanelDatosClientes extends JPanel {
 					
 					int indice=jlTelefonos.getSelectedIndex();
 					
-					if(agregar){
-						
-						modeloLista.removeElementAt(indice);
-						
-					}else{
-						
-						String telefono=(String) modeloLista.getElementAt(indice);
-							
-						try {
-							psBorrarTel.setInt(1, idCliente);
-							psBorrarTel.setString(2, telefono);
-							
-							psBorrarTel.executeUpdate();
+					if(indice>-1){
+					
+						if(agregar){
 							
 							modeloLista.removeElementAt(indice);
 							
-						} catch (SQLException e1) {
+						}else{
+							
+							String telefono=(String) modeloLista.getElementAt(indice);
+								
+							try {
+								psBorrarTel.setInt(1, idCliente);
+								psBorrarTel.setString(2, telefono);
+								
+								psBorrarTel.executeUpdate();
+								
+								modeloLista.removeElementAt(indice);
+								
+							} catch (SQLException e1) {
+								JOptionPane.showMessageDialog(null, e1.getMessage());
+							}
+							
+						}
+					}else{
+						try {
+							throw new Exception("Debe seleccionar un telefono");
+						} catch (Exception e1) {
 							JOptionPane.showMessageDialog(null, e1.getMessage());
 						}
-						
 					}
 					
 				}
@@ -632,13 +650,37 @@ public class PanelDatosClientes extends JPanel {
 					
 					String email=tfEmail.getText();
 					
-					if(email.length()>0){
+					if(!email.equals("")){
 						
-						
-						modeloListaEmail.addElement(email);
+						if(agregar){
+								
+								modeloListaEmail.addElement(email);
+								
+						}else{
+	
+							try {
+								
+								psInsertarEmail.setInt(1, idCliente);
+								psInsertarEmail.setString(2, email);
+								
+								psInsertarEmail.executeUpdate();
+								
+								modeloListaEmail.addElement(email);
+								
+							} catch (SQLException e1) {
+								JOptionPane.showMessageDialog(null, e1.getMessage());
+							}
+							
+						}
 						
 						tfEmail.setText("");
-						
+					
+					}else{
+						try {
+							throw new Exception("Debe rellenar el campo");
+						} catch (Exception e1) {
+							JOptionPane.showMessageDialog(null, e1.getMessage());
+						}
 					}
 					
 				}
@@ -665,28 +707,35 @@ public class PanelDatosClientes extends JPanel {
 					
 					int indice=jlEmail.getSelectedIndex();
 					
-					if(agregar){
-						
-						modeloListaEmail.removeElementAt(indice);
-						
-					}else{
-						
-						String email=(String) modeloListaEmail.getElementAt(indice);
-						
-						
-						try {
-							psBorrarEmail.setInt(1, idCliente);
-							psBorrarEmail.setString(2, email);
-							
-							psBorrarEmail.executeUpdate();
+					if(indice>-1){
+					
+						if(agregar){
 							
 							modeloListaEmail.removeElementAt(indice);
-						} catch (SQLException e1) {
-							// TODO Auto-generated catch block
-							e1.printStackTrace();
+							
+						}else{
+							
+							String email=(String) modeloListaEmail.getElementAt(indice);
+								
+							try {
+								psBorrarEmail.setInt(1, idCliente);
+								psBorrarEmail.setString(2, email);
+								
+								psBorrarEmail.executeUpdate();
+								
+								modeloListaEmail.removeElementAt(indice);
+								
+							} catch (SQLException e1) {
+								JOptionPane.showMessageDialog(null, e1.getMessage());
+							}
+							
 						}
-						
-						
+					}else{
+						try {
+							throw new Exception("Debe seleccionar un E-mail");
+						} catch (Exception e1) {
+							JOptionPane.showMessageDialog(null, e1.getMessage());
+						}
 					}
 				}
 			});

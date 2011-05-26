@@ -38,9 +38,6 @@ public class PanelCliente extends JPanel {
 	private PreparedStatement psBorrarCliente;
 	private ModeloGeneral modelo=new ModeloGeneral();
 	private JFrame mainFrame;
-	private JTextField tf = null;
-	private JButton btn = null;
-
 	/**
 	 * This is the default constructor
 	 */
@@ -153,8 +150,6 @@ public class PanelCliente extends JPanel {
 			paneBtnUser.add(getBtnAgregar(), null);
 			paneBtnUser.add(getJButton(), null);
 			paneBtnUser.add(getJButton1(), null);
-			paneBtnUser.add(getBtn(), null);
-			paneBtnUser.add(getTf(), null);
 		}
 		return paneBtnUser;
 	}
@@ -308,35 +303,6 @@ public class PanelCliente extends JPanel {
 
 		}
 		
-	}
-
-	/**
-	 * This method initializes tf	
-	 * 	
-	 * @return javax.swing.JTextField	
-	 */
-	private JTextField getTf() {
-		if (tf == null) {
-			tf = new JTextField();
-		}
-		return tf;
-	}
-
-	/**
-	 * This method initializes btn	
-	 * 	
-	 * @return javax.swing.JButton	
-	 */
-	private JButton getBtn() {
-		if (btn == null) {
-			btn = new JButton();
-			btn.addActionListener(new java.awt.event.ActionListener() {
-				public void actionPerformed(java.awt.event.ActionEvent e) {
-					
-				}
-			});
-		}
-		return btn;
 	}
 	
 }  //  @jve:decl-index=0:visual-constraint="10,10"
