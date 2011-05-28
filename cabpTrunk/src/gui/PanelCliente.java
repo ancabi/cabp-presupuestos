@@ -20,6 +20,8 @@ import javax.swing.JButton;
 import modelo.ModeloGeneral;
 import javax.swing.JTextField;
 
+import clases.Cliente;
+
 public class PanelCliente extends JPanel {
 
 	private static final long serialVersionUID = 1L;
@@ -38,14 +40,15 @@ public class PanelCliente extends JPanel {
 	private PreparedStatement psBorrarCliente;
 	private ModeloGeneral modelo=new ModeloGeneral();
 	private JFrame mainFrame;
+	private Vector<Cliente> clientes=new Vector<Cliente>();
 	/**
 	 * This is the default constructor
 	 */
-	public PanelCliente( Connection con, JFrame mainFrame) {
+	public PanelCliente( JFrame mainFrame) {
 		super();
 		initialize();
 		//recibo la conexion con la base de datos
-		dbConnect=con;
+		dbConnect=((MainFrame) mainFrame).getConnection();
 		this.mainFrame=mainFrame;
 		
 		if(dbConnect!=null){
@@ -124,9 +127,11 @@ public class PanelCliente extends JPanel {
 									
 									int fila = jTable.rowAtPoint(evt.getPoint());
 									
-									Vector row=modelo.getRow(fila);
+									Cliente c=clientes.elementAt(fila);
+									
+									//Vector row=c.getCliente();
 							        
-									((MainFrame) mainFrame).rowSelected(row);
+									((MainFrame) mainFrame).rowSelected(c);
 							        
 									((MainFrame) mainFrame).cambiarCapa("tabCliente");
 									
@@ -245,8 +250,9 @@ public class PanelCliente extends JPanel {
 			rs=psCliente.executeQuery();
 			
 			Vector<Object> tupla;
+			Cliente c;
 			Vector<Vector> data=new Vector<Vector>();
-			
+			clientes.clear();
 			
 			while(rs.next()){
 				
@@ -255,10 +261,11 @@ public class PanelCliente extends JPanel {
 				//construyo de nuevo el vector para que no se me acumulen todo en un solo vector
 				tupla=new Vector<Object>();
 				
-				tupla.addElement(""+rs.getInt(1));
-				tupla.addElement(rs.getString(2));
-				tupla.addElement(rs.getString(3));
-				tupla.addElement(rs.getString(4));
+				int idCliente=rs.getInt(1);
+				String dni=rs.getString(2);
+				String nombre=rs.getString(3);
+				String apellidos=rs.getString(4);
+				String direccion=rs.getString(5);
 				
 				psTelefono.setInt(1, rs.getInt(1));
 				rsSec=psTelefono.executeQuery();
@@ -270,7 +277,7 @@ public class PanelCliente extends JPanel {
 					
 				}
 
-				tupla.addElement(telefono);
+				//tupla.addElement(telefono);
 				
 				psEmail.setInt(1, rs.getInt(1));
 				rsSec=psEmail.executeQuery();
@@ -280,23 +287,31 @@ public class PanelCliente extends JPanel {
 					email.addElement(rsSec.getString(1));
 					
 				}
-				tupla.addElement(email);
+				//tupla.addElement(email);
 				
 				
-				tupla.addElement(rs.getString(5));
-				tupla.addElement(rs.getString(6));
-				tupla.addElement(rs.getString(7));
-				tupla.addElement(rs.getString(8));
-				tupla.addElement(rs.getString(9));
-
-				//asigno el vector de cada tupla al de las filas
-				data.add(tupla);
+				String ciudad=rs.getString(6);
+				String provincia=rs.getString(7);
+				String empresa=rs.getString(8);
+				String notas=rs.getString(9);
+				
+				c=new Cliente(idCliente, dni, nombre, apellidos, direccion, telefono, email, ciudad, provincia, empresa,
+						notas);
+				
+				clientes.add(c);
+				
+			}
+			
+			for(int x=0; x<clientes.size(); x++){
+				
+				c=clientes.get(x);
+				
+				data.add(c.getCliente());
+				
 			}
 			
 			//asigno al modelo el vector con las filas
 			modelo.setData(data);
-			//aviso a la tabla que se cambiaron los datos
-			modelo.fireTableDataChanged();
 			
 		} catch (SQLException e) {
 			JOptionPane.showMessageDialog(null, e.getMessage()+"Actualizar tabla cliente");

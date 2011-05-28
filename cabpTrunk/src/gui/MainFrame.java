@@ -17,6 +17,8 @@ import java.sql.SQLException;
 import java.util.Vector;
 
 import javax.swing.ImageIcon;
+
+import clases.Cliente;
 import conexion.Conectar;
 import javax.swing.JTabbedPane;
 
@@ -220,7 +222,7 @@ public class MainFrame extends JFrame {
 	 */
 	private JPanel getPanelCliente() {
 		if (panelCliente == null) {
-			panelCliente = new PanelCliente(dbConnect, this);
+			panelCliente = new PanelCliente(this);
 			panelCliente.setName("panelCliente");
 		}
 		return panelCliente;
@@ -247,7 +249,7 @@ public class MainFrame extends JFrame {
 	 */
 	private JTabbedPane getTabCliente() {
 		if (tabCliente == null) {
-			tabCliente = new TabCliente(dbConnect, this);
+			tabCliente = new TabCliente(this);
 			tabCliente.setName("tabCliente");
 		}
 		return tabCliente;
@@ -260,15 +262,21 @@ public class MainFrame extends JFrame {
 	 */
 	private JPanel getPanelAddClientes() {
 		if (panelAddClientes == null) {
-			panelAddClientes = new PanelDatosClientes(dbConnect, this);
+			panelAddClientes = new PanelDatosClientes(this);
 			panelAddClientes.setName("panelAddClientes");
 		}
 		return panelAddClientes;
 	}
 	
-	public void rowSelected(Vector row){
+	public void rowSelected(Cliente c){
 	
-		 ((TabCliente) tabCliente).rowSelected(row);
+		 ((TabCliente) tabCliente).rowSelected(c);
+		
+	}
+	
+	public Connection getConnection(){
+		
+		return dbConnect;
 		
 	}
 

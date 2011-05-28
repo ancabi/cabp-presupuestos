@@ -4,6 +4,9 @@ import javax.swing.JFrame;
 import javax.swing.JTabbedPane;
 import java.awt.Dimension;
 import javax.swing.JPanel;
+
+import clases.Cliente;
+
 import java.awt.GridBagLayout;
 import java.sql.Connection;
 import java.util.Vector;
@@ -21,10 +24,10 @@ public class TabCliente extends JTabbedPane {
 	/**
 	 * This is the default constructor
 	 */
-	public TabCliente(Connection con, JFrame mainFrame) {
+	public TabCliente(JFrame mainFrame) {
 		super();
 		
-		dbConnect=con;
+		dbConnect=((MainFrame) mainFrame).getConnection();
 		this.mainFrame=mainFrame;
 		
 		initialize();
@@ -51,7 +54,7 @@ public class TabCliente extends JTabbedPane {
 	 */
 	private JPanel getPanelDatos() {
 		if (panelDatos == null) {
-			panelDatos = new PanelDatosClientes(dbConnect, mainFrame);
+			panelDatos = new PanelDatosClientes(mainFrame);
 			
 		}
 		return panelDatos;
@@ -70,10 +73,11 @@ public class TabCliente extends JTabbedPane {
 		return panelClientePres;
 	}
 	
-	public void rowSelected(Vector row){
+	public void rowSelected(Cliente c){
 		
-		((PanelDatosClientes) panelDatos).setCliente(row);
+		((PanelDatosClientes) panelDatos).setCliente(c);
 		
+		//pongo agregar a false
 		((PanelDatosClientes) panelDatos).setAgregar();
 		
 	}

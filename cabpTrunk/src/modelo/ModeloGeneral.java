@@ -40,7 +40,7 @@ public class ModeloGeneral extends AbstractTableModel {
 	@Override
 	public Object getValueAt(int rowIndex, int columnIndex) {
 		
-		if(columnIndex==4 || columnIndex==5){
+		if(columnIndex==5 || columnIndex==6){
 			
 			Vector rowVector = (Vector)data.elementAt(rowIndex);
 			
@@ -68,9 +68,10 @@ public class ModeloGeneral extends AbstractTableModel {
 	}
 	
 	public void setData(Vector d){
-		//fireTableDataChanged();
 		
 		data=d;
+		
+		fireTableDataChanged();
 
 	}
 	

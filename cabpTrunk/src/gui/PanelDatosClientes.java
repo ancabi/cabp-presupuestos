@@ -31,6 +31,8 @@ import javax.swing.JScrollPane;
 import java.awt.FlowLayout;
 import javax.swing.ImageIcon;
 
+import clases.Cliente;
+
 public class PanelDatosClientes extends JPanel {
 
 	private static final long serialVersionUID = 1L;
@@ -86,11 +88,11 @@ public class PanelDatosClientes extends JPanel {
 	/**
 	 * This is the default constructor
 	 */
-	public PanelDatosClientes(Connection con, JFrame mainFrame) {
+	public PanelDatosClientes(JFrame mainFrame) {
 		super();
 		initialize();
 		
-		dbConnect=con;
+		dbConnect=((MainFrame) mainFrame).getConnection();
 		this.mainFrame=mainFrame;
 		
 		if(dbConnect!=null){
@@ -110,8 +112,7 @@ public class PanelDatosClientes extends JPanel {
 				
 				psBorrarEmail=dbConnect.prepareStatement("DELETE FROM email WHERE idCliente=? AND email=?");
 			} catch (SQLException e) {
-				//JOptionPane.showMessageDialog(null, e.getMessage());
-				e.printStackTrace();
+				JOptionPane.showMessageDialog(null, e.getMessage());
 			}
 			
 		}
@@ -419,14 +420,14 @@ public class PanelDatosClientes extends JPanel {
 		agregar=false;
 	}
 	
-	public void setCliente(Vector cliente){
+	public void setCliente(Cliente c){
 		
-		idCliente=Integer.parseInt((String) cliente.elementAt(0));
-		tfDni.setText(""+cliente.elementAt(1));
-		tfNombre.setText(""+cliente.elementAt(2));
-		tfApellidos.setText(""+cliente.elementAt(3));
+		idCliente=c.getIdCliente();
+		tfDni.setText(c.getDni());
+		tfNombre.setText(c.getNombre());
+		tfApellidos.setText(c.getApellidos());
 		
-		Vector telTemp=(Vector) cliente.elementAt(4);
+		Vector telTemp=c.getTelefonos();
 		Iterator i=telTemp.iterator();
 		
 		while(i.hasNext()){
@@ -435,7 +436,7 @@ public class PanelDatosClientes extends JPanel {
 			
 		}
 		
-		Vector emailTemp=(Vector) cliente.elementAt(5);
+		Vector emailTemp=c.getEmail();
 		Iterator e=emailTemp.iterator();
 		
 		while(e.hasNext()){
@@ -445,11 +446,11 @@ public class PanelDatosClientes extends JPanel {
 		}
 		
 		
-		tfDireccion.setText(""+cliente.elementAt(6));
-		tfCiudad.setText(""+cliente.elementAt(7));
-		tfProvincia.setText(""+cliente.elementAt(8));
-		tfEmpresa.setText(""+cliente.elementAt(9));
-		taNotas.setText(""+cliente.elementAt(10));
+		tfDireccion.setText(c.getDireccion());
+		tfCiudad.setText(c.getCiudad());
+		tfProvincia.setText(c.getProvincia());
+		tfEmpresa.setText(c.getEmpresa());
+		taNotas.setText(c.getNotas());
 		
 	}
 
