@@ -68,7 +68,7 @@ public class ModeloGeneral extends AbstractTableModel {
 	}
 	
 	public void setData(Vector d){
-		
+
 		data=d;
 		
 		fireTableDataChanged();

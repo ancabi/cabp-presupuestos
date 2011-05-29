@@ -3,7 +3,13 @@
  */
 package clases;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.Vector;
+
+import javax.swing.JOptionPane;
 
 /**
  * @author ancabi
@@ -22,6 +28,10 @@ public class Cliente {
 	private String notas;
 	private Vector telefonos;
 	private Vector email;
+	private PreparedStatement psInsertar;
+	private ResultSet rs;
+	private PreparedStatement psInsertarTel;
+	private PreparedStatement psInsertarEmail;
 	
 	
 	/**
@@ -51,6 +61,34 @@ public class Cliente {
 		this.notas = notas;
 		this.telefonos = telefonos;
 		this.email = email;
+	}
+	
+	/**
+	 * @param nombre
+	 * @param apellidos
+	 * @param direccion
+	 * @param ciudad
+	 * @param provincia
+	 * @param empresa
+	 * @param notas
+	 * @param telefonos
+	 * @param email
+	 */
+	public Cliente(String dni, String nombre, String apellidos,
+			String direccion, Vector telefonos, Vector email, String ciudad, String provincia, String empresa,
+			String notas) {
+
+		this.dni = dni;
+		this.nombre = nombre;
+		this.apellidos = apellidos;
+		this.direccion = direccion;
+		this.ciudad = ciudad;
+		this.provincia = provincia;
+		this.empresa = empresa;
+		this.notas = notas;
+		this.telefonos = telefonos;
+		this.email = email;
+		
 	}
 
 
@@ -249,9 +287,21 @@ public class Cliente {
 	/**
 	 * @param newtelefono the telefono to add new telefono
 	 */
-	public void addTelefono(String newTelefono){
+	public void addTelefono(String newTelefono, Connection dbConnect){
 		
-		telefonos.addElement(newTelefono);
+		try {
+			psInsertarTel=dbConnect.prepareStatement("INSERT INTO telefonos(idCliente, telefono) VALUES (?,?)");
+			
+			psInsertarTel.setInt(1, idCliente);
+			psInsertarTel.setString(2, newTelefono);
+			
+			psInsertarTel.executeUpdate();
+			
+			telefonos.addElement(newTelefono);
+			
+		} catch (SQLException e) {
+			JOptionPane.showMessageDialog(null, e.getMessage());
+		}
 		
 	}
 	
@@ -283,6 +333,62 @@ public class Cliente {
 		v.addElement(idCliente);
 		
 		return v;
+	}
+	
+	public void insertarClienteBD(Connection dbConnect){
+		
+		try {
+			psInsertar=dbConnect.prepareStatement("INSERT INTO clientes(dni, nombre, apellidos, direccion, ciudad, provincia, empresa, notas)" +
+			" VALUES (?,?,?,?,?,?,?,?)");
+			
+			
+			
+			psInsertarEmail=dbConnect.prepareStatement("INSERT INTO email(idCliente, email) VALUES (?,?)");
+			
+			//asigno los campos al preparedStatement
+			psInsertar.setString(1, dni);
+			psInsertar.setString(2, nombre);
+			psInsertar.setString(3, apellidos);
+			psInsertar.setString(4, direccion);
+			psInsertar.setString(5, ciudad);
+			psInsertar.setString(6, provincia);
+			psInsertar.setString(7, empresa);
+			psInsertar.setString(8, notas);
+			
+			//lo inserto
+			psInsertar.executeUpdate();
+			//pido el id generado
+			rs=psInsertar.getGeneratedKeys();
+			//paso 1 ya que siempre deolvera solo 1
+			rs.next();
+			//guardo el id
+			idCliente=rs.getInt(1);
+			
+			//recorro el modelo de la lista
+			for(int x=0; x<telefonos.size(); x++){
+				
+				this.addTelefono((String) telefonos.get(x), dbConnect);
+				
+			}
+			
+			//recorro el modelo de la lista
+			for(int x=0; x<email.size(); x++){
+				
+				//asigno el id y el telefono, hago el parseInt sin try-catch porque ya esta controlado antes
+				psInsertarEmail.setInt(1, idCliente);
+				String emailTemp=email.elementAt(x).toString();
+				psInsertarEmail.setString(2, emailTemp);
+				
+				psInsertarEmail.executeUpdate();
+				
+			}
+			
+		} catch (SQLException e) {
+			JOptionPane.showMessageDialog(null, e.getMessage());
+		}
+		
+		
+		
 	}
 	
 
