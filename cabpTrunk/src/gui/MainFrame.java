@@ -13,6 +13,7 @@ import java.awt.GridBagLayout;
 import java.awt.CardLayout;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Vector;
 
@@ -38,7 +39,7 @@ public class MainFrame extends JFrame {
 	private Conectar con;  //  @jve:decl-index=0:
 	private JTabbedPane tabCliente = null;
 	private JPanel panelAddClientes = null;
-	
+	private Vector<Cliente> clientes=new Vector<Cliente>();
 	/**
 	 * This is the default constructor
 	 */
@@ -63,9 +64,71 @@ public class MainFrame extends JFrame {
 			
 			dbConnect=con.makeConnection();
 			
-			PreparedStatement psFK=dbConnect.prepareStatement("PRAGMA foreign_keys=ON;");
+			if(dbConnect!=null){
+				//declaracion de variables locales
+				ResultSet rs;
+				ResultSet rsSec;
+				Vector<String> telefonos=new Vector<String>();
+				Vector<String> emails=new Vector<String>();
+				//creo el prepare statement para activar las foreing keys
+				PreparedStatement psFK=dbConnect.prepareStatement("PRAGMA foreign_keys=ON;");
+				//ejecuto la sentencia
+				psFK.execute();
+				//creo los prepare statements de los clientes, emails y telefonos
+				PreparedStatement psClientes=dbConnect.prepareStatement("SELECT * FROM clientes");
+				PreparedStatement psClientesTel=dbConnect.prepareStatement("SELECT telefono FROM telefonos WHERE idCliente=?");
+				PreparedStatement psClientesEmail=dbConnect.prepareStatement("SELECT email FROM email WHERE idCliente=?");
+				//traigo todos los clientes
+				rs=psClientes.executeQuery();
+				//itero sobre los clientes
+				while(rs.next()){
+					//guardo los datos de los clientes
+					int idCliente=rs.getInt("idCliente");
+					String dni=rs.getString("dni");
+					String nombre=rs.getString("nombre");
+					String apellidos=rs.getString("apellidos");
+					String direccion=rs.getString("direccion");
+					String ciudad=rs.getString("ciudad");
+					String provincia=rs.getString("provincia");
+					String empresa=rs.getString("empresa");
+					String notas=rs.getString("notas");
+					//le digo al telefono el idCliente actual
+					psClientesTel.setInt(1, idCliente);
+					//ejecuto la sentencia
+					rsSec=psClientesTel.executeQuery();
+					
+					telefonos=new Vector();
+					
+					//itero sobre los telefonos
+					while(rsSec.next()){
+						//lo asigno
+						String telefono=rsSec.getString("telefono");
+						//guardo el vector de telefonos
+						telefonos.add(telefono);
+						
+					}
+					//asigno el idCliente para los emails
+					psClientesEmail.setInt(1, idCliente);
+					
+					//ejecuto la consulta
+					rsSec=psClientesEmail.executeQuery();
+					
+					emails=new Vector();
+					
+					//itero sobre los emails
+					while(rsSec.next()){
+						//lo asigno
+						String email=rsSec.getString("email");
+						//guardo el vector de emails
+						emails.add(email);
+						
+					}
+					
+					clientes.add(new Cliente(idCliente, dni, nombre, apellidos, direccion, telefonos, emails, ciudad, provincia, empresa, notas));
+					
+				}
 			
-			psFK.execute();
+			}
 			
 		} catch (ClassNotFoundException ex) {
 			JOptionPane.showMessageDialog(null, ex.getMessage());
@@ -277,6 +340,31 @@ public class MainFrame extends JFrame {
 	public Connection getConnection(){
 		
 		return dbConnect;
+		
+	}
+	
+	public Cliente getCliente(int id){
+		
+		//guardo el cliente que piden
+		Cliente c=clientes.get(id);
+		//pido el vector con los datos y lo devuelvo
+		return c;
+
+	}
+	
+	public Vector getClientes(){
+		
+		return clientes;
+		
+	}
+	
+	public void addCliente(Cliente c){
+
+		c.insertarClienteBD(dbConnect);
+		
+		clientes.add(c);
+		
+		((PanelCliente) panelCliente).actualizarTablaClientes();
 		
 	}
 

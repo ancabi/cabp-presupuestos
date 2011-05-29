@@ -8,6 +8,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Iterator;
 import java.util.Vector;
 
 import javax.swing.JFrame;
@@ -110,9 +111,9 @@ public class PanelCliente extends JPanel {
 			head.addElement("DNI");
 			head.addElement("Nombre");
 			head.addElement("Apellidos");
+			head.addElement("Direccion");
 			head.addElement("Telefono");
 			head.addElement("E-Mail");
-			head.addElement("Direccion");
 			head.addElement("Ciudad");
 			head.addElement("Provincia");
 			head.addElement("Empresa");
@@ -125,9 +126,9 @@ public class PanelCliente extends JPanel {
 							public void mouseClicked(java.awt.event.MouseEvent evt) {    
 								if (evt.getClickCount() >= 2){// si es doble click
 									
-									int fila = jTable.rowAtPoint(evt.getPoint());
+									int x = jTable.rowAtPoint(evt.getPoint());
 									
-									Cliente c=clientes.elementAt(fila);
+									Cliente c=((MainFrame) mainFrame).getCliente(x);
 									
 									//Vector row=c.getCliente();
 							        
@@ -245,7 +246,7 @@ public class PanelCliente extends JPanel {
 
 	
 	public void actualizarTablaClientes(){
-		
+		/*
 		try {
 			rs=psCliente.executeQuery();
 			
@@ -317,6 +318,22 @@ public class PanelCliente extends JPanel {
 			JOptionPane.showMessageDialog(null, e.getMessage()+"Actualizar tabla cliente");
 
 		}
+		*/
+		
+		Vector clientes=((MainFrame) mainFrame).getClientes();
+		Vector data=new Vector();
+		
+		Iterator i=clientes.iterator();
+		
+		while(i.hasNext()){
+			
+			Cliente c=(Cliente) i.next();
+			
+			data.add(c.getCliente());
+			
+		}
+		
+		modelo.setData(data);
 		
 	}
 	

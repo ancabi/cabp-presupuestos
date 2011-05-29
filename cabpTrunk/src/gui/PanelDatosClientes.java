@@ -85,6 +85,7 @@ public class PanelDatosClientes extends JPanel {
 	private JPanel panelAddEmail = null;
 	private JLabel lblProvincia = null;
 	private JTextField tfProvincia = null;
+	private Cliente clienteActual;
 	/**
 	 * This is the default constructor
 	 */
@@ -293,7 +294,34 @@ public class PanelDatosClientes extends JPanel {
 					//si es agregar la accion entonces de inserta
 					if(agregar){
 						
-						int id;
+						Cliente c;
+						Vector telefonos=new Vector();
+						Vector email=new Vector();
+						
+						//recorro el modelo de la lista
+						for(int x=0; x<modeloLista.getSize(); x++){
+
+							String telTemp=modeloLista.getElementAt(x).toString();
+							
+							telefonos.add(telTemp);
+							
+						}
+						
+						//recorro el modelo de la lista
+						for(int x=0; x<modeloListaEmail.getSize(); x++){
+							
+							
+							String emailTemp=modeloListaEmail.getElementAt(x).toString();
+
+							email.add(emailTemp);
+							
+						}
+						
+						c=new Cliente(dni, nombre, apellidos, direccion, telefonos, email, ciudad, provincia, empresa, notas);
+						
+						((MainFrame) mainFrame).addCliente(c);
+						
+						/*int id;
 						
 						try {
 							//asigno los campos al preparedStatement
@@ -341,11 +369,20 @@ public class PanelDatosClientes extends JPanel {
 							
 						} catch (SQLException e1) {
 							JOptionPane.showMessageDialog(null, e1.getMessage());
-						}
+						}*/
 						
 					}else{
 						
-						try {
+						clienteActual.setDni(dni);
+						clienteActual.setNombre(nombre);
+						clienteActual.setApellidos(apellidos);
+						clienteActual.setDireccion(direccion);
+						clienteActual.setCiudad(ciudad);
+						clienteActual.setProvincia(provincia);
+						clienteActual.setEmpresa(empresa);
+						clienteActual.setNotas(notas);
+						
+						/*try {
 							psActualizar.setString(1, dni);
 							psActualizar.setString(2, nombre);
 							psActualizar.setString(3, apellidos);
@@ -361,7 +398,7 @@ public class PanelDatosClientes extends JPanel {
 						} catch (SQLException e1) {
 							JOptionPane.showMessageDialog(null, e1.getMessage());
 						}
-						
+						*/
 					}
 					
 					limpiarCampos();
@@ -422,12 +459,14 @@ public class PanelDatosClientes extends JPanel {
 	
 	public void setCliente(Cliente c){
 		
-		idCliente=c.getIdCliente();
-		tfDni.setText(c.getDni());
-		tfNombre.setText(c.getNombre());
-		tfApellidos.setText(c.getApellidos());
+		clienteActual=c;
 		
-		Vector telTemp=c.getTelefonos();
+		idCliente=clienteActual.getIdCliente();
+		tfDni.setText(clienteActual.getDni());
+		tfNombre.setText(clienteActual.getNombre());
+		tfApellidos.setText(clienteActual.getApellidos());
+		
+		Vector telTemp=clienteActual.getTelefonos();
 		Iterator i=telTemp.iterator();
 		
 		while(i.hasNext()){
@@ -436,7 +475,7 @@ public class PanelDatosClientes extends JPanel {
 			
 		}
 		
-		Vector emailTemp=c.getEmail();
+		Vector emailTemp=clienteActual.getEmail();
 		Iterator e=emailTemp.iterator();
 		
 		while(e.hasNext()){
@@ -446,11 +485,11 @@ public class PanelDatosClientes extends JPanel {
 		}
 		
 		
-		tfDireccion.setText(c.getDireccion());
-		tfCiudad.setText(c.getCiudad());
-		tfProvincia.setText(c.getProvincia());
-		tfEmpresa.setText(c.getEmpresa());
-		taNotas.setText(c.getNotas());
+		tfDireccion.setText(clienteActual.getDireccion());
+		tfCiudad.setText(clienteActual.getCiudad());
+		tfProvincia.setText(clienteActual.getProvincia());
+		tfEmpresa.setText(clienteActual.getEmpresa());
+		taNotas.setText(clienteActual.getNotas());
 		
 	}
 
@@ -497,56 +536,44 @@ public class PanelDatosClientes extends JPanel {
 			btnAddTel.addActionListener(new java.awt.event.ActionListener() {
 				public void actionPerformed(java.awt.event.ActionEvent e) {
 					
+					
 					String telefonoText=tfTelefono.getText();
 					
 					
 					if(!telefonoText.equals("")){
 					
-						if(agregar){
-							try{
-								int telefono=Integer.parseInt(telefonoText);
+						
+						try{
+							int telefono=Integer.parseInt(telefonoText);
 								
-								try {
+							try {
 								//recorro los numeros que hay agregados	
 								for(int x=0; x<modeloLista.getSize(); x++){
 									//si hay coincidencia
-									if(telefono==(Integer) modeloLista.getElementAt(x)){
+									if(telefonoText.equals((String) modeloLista.getElementAt(x))){
 										//tiro la excepcion para que no se agregue a la lista
 										throw new Exception("No puede haber dos telefonos iguales");
 										
 									}
 									
 								}
-								
-								modeloLista.addElement(telefono);
+								//lo agrego a la lista
+								modeloLista.addElement(""+telefonoText);
+								//si no es agregar, entonces lo agrego al cliente para que se actualice
+								if(!agregar){
+									
+									clienteActual.addTelefono(telefonoText, dbConnect);
+									
+								}
 								
 								} catch (Exception e1) {
 									JOptionPane.showMessageDialog(null, e1.getMessage());
 								}
-								
+									
 							}catch (NumberFormatException e1) {
 								JOptionPane.showMessageDialog(null, "Debe introducir solo numeros en el telefono");
 							}
-						}else{
-	
-							try {
-								
-								int telefono=Integer.parseInt(telefonoText);
-								
-								psInsertarTel.setInt(1, idCliente);
-								psInsertarTel.setString(2, ""+telefono);
-								
-								psInsertarTel.executeUpdate();
-								
-								modeloLista.addElement(telefono);
-								
-							} catch (SQLException e1) {
-								JOptionPane.showMessageDialog(null, e1.getMessage());
-							} catch (NumberFormatException e1) {
-								JOptionPane.showMessageDialog(null, "Debe introducir solo numeros en el telefono");
-							}
-							
-						}
+						
 						
 						tfTelefono.setText("");
 					
@@ -593,17 +620,7 @@ public class PanelDatosClientes extends JPanel {
 							
 							String telefono=(String) modeloLista.getElementAt(indice);
 								
-							try {
-								psBorrarTel.setInt(1, idCliente);
-								psBorrarTel.setString(2, telefono);
-								
-								psBorrarTel.executeUpdate();
-								
-								modeloLista.removeElementAt(indice);
-								
-							} catch (SQLException e1) {
-								JOptionPane.showMessageDialog(null, e1.getMessage());
-							}
+							clienteActual.delTelefono(telefono);
 							
 						}
 					}else{
@@ -668,46 +685,31 @@ public class PanelDatosClientes extends JPanel {
 					String email=tfEmail.getText();
 					//miro que el campo no este vacio
 					if(!email.equals("")){
-						//si la accion es agregar
-						if(agregar){
 							
-							try {
-								//recorro la lista en busca de coincidencias
-								for(int x=0; x<modeloListaEmail.getSize(); x++){
-									//si hay coincidencias, entonces lanzo la excepcion y no se agrega
-									//solo lo hago en agregar ya que cuando actualizo, lo hago directo en la bd
-									//y al ser clave primaria ya tira una SQLException
-									if(email.equals(modeloListaEmail.getElementAt(x))){
+						try {
+							//recorro la lista en busca de coincidencias
+							for(int x=0; x<modeloListaEmail.getSize(); x++){
+								//si hay coincidencias, entonces lanzo la excepcion y no se agrega
+								//solo lo hago en agregar ya que cuando actualizo, lo hago directo en la bd
+								//y al ser clave primaria ya tira una SQLException
+								if(email.equals(modeloListaEmail.getElementAt(x))){
 									
-										throw new Exception("No pueden haber dos e-mails iguales");
+									throw new Exception("No pueden haber dos e-mails iguales");
 									
-									}
-								
 								}
 								
-								modeloListaEmail.addElement(email);
-							
-							} catch (Exception e1) {
-								JOptionPane.showMessageDialog(null, e1.getMessage());
 							}
 								
-						}else{
-	
-							try {
+							modeloListaEmail.addElement(email);
 								
-								psInsertarEmail.setInt(1, idCliente);
-								psInsertarEmail.setString(2, email);
-								
-								psInsertarEmail.executeUpdate();
-								
-								modeloListaEmail.addElement(email);
-								
-							} catch (SQLException e1) {
-								JOptionPane.showMessageDialog(null, e1.getMessage());
+							if(!agregar){
+								clienteActual.addEmail(email);
 							}
 							
+						} catch (Exception e1) {
+							JOptionPane.showMessageDialog(null, e1.getMessage());
 						}
-						
+
 						tfEmail.setText("");
 					
 					}else{
@@ -752,17 +754,7 @@ public class PanelDatosClientes extends JPanel {
 							
 							String email=(String) modeloListaEmail.getElementAt(indice);
 								
-							try {
-								psBorrarEmail.setInt(1, idCliente);
-								psBorrarEmail.setString(2, email);
-								
-								psBorrarEmail.executeUpdate();
-								
-								modeloListaEmail.removeElementAt(indice);
-								
-							} catch (SQLException e1) {
-								JOptionPane.showMessageDialog(null, e1.getMessage());
-							}
+							clienteActual.delEmail(email);
 							
 						}
 					}else{
