@@ -317,7 +317,7 @@ public class PanelDatosClientes extends JPanel {
 							
 						}
 						
-						c=new Cliente(dni, nombre, apellidos, direccion, telefonos, email, ciudad, provincia, empresa, notas);
+						c=new Cliente(dni, nombre, apellidos, direccion, telefonos, email, ciudad, provincia, empresa, notas, mainFrame);
 						
 						((MainFrame) mainFrame).addCliente(c);
 						
@@ -562,7 +562,7 @@ public class PanelDatosClientes extends JPanel {
 								//si no es agregar, entonces lo agrego al cliente para que se actualice
 								if(!agregar){
 									
-									clienteActual.addTelefono(telefonoText, dbConnect);
+									clienteActual.addTelefono(telefonoText);
 									
 								}
 								
@@ -699,15 +699,15 @@ public class PanelDatosClientes extends JPanel {
 								}
 								
 							}
-								
-							modeloListaEmail.addElement(email);
-								
+	
 							if(!agregar){
 								clienteActual.addEmail(email);
 							}
 							
+							modeloListaEmail.addElement(email);
+							
 						} catch (Exception e1) {
-							JOptionPane.showMessageDialog(null, e1.getMessage());
+							JOptionPane.showMessageDialog(null, e1.getMessage()+"boton add Email");
 						}
 
 						tfEmail.setText("");
