@@ -124,7 +124,7 @@ public class MainFrame extends JFrame {
 						
 					}
 					
-					clientes.add(new Cliente(idCliente, dni, nombre, apellidos, direccion, telefonos, emails, ciudad, provincia, empresa, notas));
+					clientes.add(new Cliente(idCliente, dni, nombre, apellidos, direccion, telefonos, emails, ciudad, provincia, empresa, notas, this));
 					
 				}
 			
@@ -360,7 +360,7 @@ public class MainFrame extends JFrame {
 	
 	public void addCliente(Cliente c){
 
-		c.insertarClienteBD(dbConnect);
+		c.insertarClienteBD();
 		
 		clientes.add(c);
 		
