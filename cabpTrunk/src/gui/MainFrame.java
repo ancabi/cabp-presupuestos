@@ -22,6 +22,9 @@ import javax.swing.ImageIcon;
 import clases.Cliente;
 import conexion.Conectar;
 import javax.swing.JTabbedPane;
+import java.awt.Dimension;
+import javax.swing.JLabel;
+import java.awt.GridBagConstraints;
 
 public class MainFrame extends JFrame {
 
@@ -40,6 +43,8 @@ public class MainFrame extends JFrame {
 	private JTabbedPane tabCliente = null;
 	private JPanel panelAddClientes = null;
 	private Vector<Cliente> clientes=new Vector<Cliente>();
+	private JPanel panelPresupuesto = null;
+	private JButton btnPresupuesto = null;
 	/**
 	 * This is the default constructor
 	 */
@@ -221,6 +226,7 @@ public class MainFrame extends JFrame {
 		if (jJToolBarBar == null) {
 			jJToolBarBar = new JToolBar();
 			jJToolBarBar.add(getJButton());
+			jJToolBarBar.add(getBtnPresupuesto());
 		}
 		return jJToolBarBar;
 	}
@@ -260,6 +266,7 @@ public class MainFrame extends JFrame {
 			panelCard.add(getPanelCliente(), getPanelCliente().getName());
 			panelCard.add(getTabCliente(), getTabCliente().getName());
 			panelCard.add(getPanelAddClientes(), getPanelAddClientes().getName());
+			panelCard.add(getPanelPresupuesto(), getPanelPresupuesto().getName());
 		}
 		return panelCard;
 	}
@@ -366,6 +373,39 @@ public class MainFrame extends JFrame {
 		
 		((PanelCliente) panelCliente).actualizarTablaClientes();
 		
+	}
+
+	/**
+	 * This method initializes panelPresupuesto	
+	 * 	
+	 * @return javax.swing.JPanel	
+	 */
+	private JPanel getPanelPresupuesto() {
+		if (panelPresupuesto == null) {
+			panelPresupuesto = new PanelPresupuesto();
+			panelPresupuesto.setName("panelPresupuesto");
+		}
+		return panelPresupuesto;
+	}
+
+	/**
+	 * This method initializes btnPresupuesto	
+	 * 	
+	 * @return javax.swing.JButton	
+	 */
+	private JButton getBtnPresupuesto() {
+		if (btnPresupuesto == null) {
+			btnPresupuesto = new JButton();
+			btnPresupuesto.setIcon(new ImageIcon(getClass().getResource("/img/presupuesto.png")));
+			btnPresupuesto.addActionListener(new java.awt.event.ActionListener() {
+				public void actionPerformed(java.awt.event.ActionEvent e) {
+					
+					//cambio la capa para el panel de presupuestos
+					cambiarCapa("panelPresupuesto");
+				}
+			});
+		}
+		return btnPresupuesto;
 	}
 
 }  //  @jve:decl-index=0:visual-constraint="10,10"
