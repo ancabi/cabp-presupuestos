@@ -86,6 +86,8 @@ public class PanelDatosClientes extends JPanel {
 	private JLabel lblProvincia = null;
 	private JTextField tfProvincia = null;
 	private Cliente clienteActual;
+	private JPanel panelTitulo = null;
+	private JLabel lblTitulo = null;
 	/**
 	 * This is the default constructor
 	 */
@@ -146,6 +148,7 @@ public class PanelDatosClientes extends JPanel {
 		this.setPreferredSize(new Dimension(110, 20));
 		this.add(getPanelBotones(), BorderLayout.SOUTH);
 		this.add(getPanelContenedor(), BorderLayout.CENTER);
+		this.add(getPanelTitulo(), BorderLayout.NORTH);
 	}
 
 	/**
@@ -449,12 +452,14 @@ public class PanelDatosClientes extends JPanel {
 		modeloListaEmail.clear();
 		
 		agregar=true;
+		lblTitulo.setText("Agregar cliente");
 		
 		
 	}
 	
 	public void setAgregar(){
 		agregar=false;
+		lblTitulo.setText("Modificar cliente");
 	}
 	
 	public void setCliente(Cliente c){
@@ -1053,6 +1058,25 @@ public class PanelDatosClientes extends JPanel {
 			tfProvincia.setMinimumSize(new Dimension(110, 20));
 		}
 		return tfProvincia;
+	}
+
+	/**
+	 * This method initializes panelTitulo	
+	 * 	
+	 * @return javax.swing.JPanel	
+	 */
+	private JPanel getPanelTitulo() {
+		if (panelTitulo == null) {
+			FlowLayout flowLayout2 = new FlowLayout();
+			flowLayout2.setAlignment(java.awt.FlowLayout.LEFT);
+			lblTitulo = new JLabel();
+			lblTitulo.setText("Agregar cliente");
+			lblTitulo.setFont(new Font("Times New Roman", Font.BOLD, 18));
+			panelTitulo = new JPanel();
+			panelTitulo.setLayout(flowLayout2);
+			panelTitulo.add(lblTitulo, null);
+		}
+		return panelTitulo;
 	}
 
 }  //  @jve:decl-index=0:visual-constraint="10,10"

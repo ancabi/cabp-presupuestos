@@ -22,6 +22,11 @@ import modelo.ModeloGeneral;
 import javax.swing.JTextField;
 
 import clases.Cliente;
+import javax.swing.JLabel;
+import java.awt.GridBagConstraints;
+import java.awt.Insets;
+import java.awt.FlowLayout;
+import java.awt.Font;
 
 public class PanelCliente extends JPanel {
 
@@ -42,6 +47,8 @@ public class PanelCliente extends JPanel {
 	private ModeloGeneral modelo=new ModeloGeneral();
 	private JFrame mainFrame;
 	private Vector<Cliente> clientes=new Vector<Cliente>();
+	private JPanel panelTitulo = null;
+	private JLabel lblTitulo = null;
 	/**
 	 * This is the default constructor
 	 */
@@ -82,6 +89,7 @@ public class PanelCliente extends JPanel {
 		this.setLayout(new BorderLayout());
 		this.add(getJScrollPane(), BorderLayout.CENTER);
 		this.add(getPaneBtnUser(), BorderLayout.EAST);
+		this.add(getPanelTitulo(), BorderLayout.NORTH);
 	}
 
 	/**
@@ -335,6 +343,36 @@ public class PanelCliente extends JPanel {
 		
 		modelo.setData(data);
 		
+	}
+
+	/**
+	 * This method initializes panelTitulo	
+	 * 	
+	 * @return javax.swing.JPanel	
+	 */
+	private JPanel getPanelTitulo() {
+		if (panelTitulo == null) {
+			FlowLayout flowLayout = new FlowLayout();
+			flowLayout.setAlignment(java.awt.FlowLayout.LEFT);
+			panelTitulo = new JPanel();
+			panelTitulo.setLayout(flowLayout);
+			panelTitulo.add(getLblTitulo(), null);
+		}
+		return panelTitulo;
+	}
+
+	/**
+	 * This method initializes lblTitulo	
+	 * 	
+	 * @return javax.swing.JLabel	
+	 */
+	private JLabel getLblTitulo() {
+		if (lblTitulo == null) {
+			lblTitulo = new JLabel();
+			lblTitulo.setText("Gestión de clientes");
+			lblTitulo.setFont(new Font("Times New Roman", Font.BOLD, 18));
+		}
+		return lblTitulo;
 	}
 	
 }  //  @jve:decl-index=0:visual-constraint="10,10"
