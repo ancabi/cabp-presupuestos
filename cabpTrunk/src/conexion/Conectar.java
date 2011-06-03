@@ -16,7 +16,8 @@ import javax.swing.JOptionPane;
  */
 public class Conectar {
 	
-	private String bd="cabp2011.sqlite";
+	private static String bd="cabp2011.sqlite";
+	private static Connection dbConnect;
 
 	
 	/**
@@ -25,7 +26,7 @@ public class Conectar {
 	 * @throws ClassNotFoundException
 	 * @throws SQLException
 	 */
-	public Connection makeConnection() throws ClassNotFoundException, SQLException{
+	public static void makeConnection() throws ClassNotFoundException, SQLException{
 		
 			File base=new File(bd);
 			
@@ -34,11 +35,10 @@ public class Conectar {
 				
 				Class.forName("org.sqlite.JDBC");
 				
-				return DriverManager.getConnection("jdbc:sqlite:"+bd);
+				dbConnect=DriverManager.getConnection("jdbc:sqlite:"+bd);
 				
 			}else{
 				JOptionPane.showMessageDialog(null, "La base de datos no existe o no se encuentra en la ruta especificada.");  
-				return null;
 				
 			}
 		
@@ -51,11 +51,17 @@ public class Conectar {
 	 * 
 	 * @throws SQLException
 	 */
-	public void closeConnection(Connection con) throws SQLException{
+	public static void closeConnection() throws SQLException{
 		
-		if(con!=null){ 
-			con.close();
+		if(dbConnect!=null){ 
+			dbConnect.close();
 		}
+		
+	}
+	
+	public static Connection getConnection(){
+		
+		return dbConnect;
 		
 	}
 

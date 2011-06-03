@@ -51,7 +51,7 @@ public class ModeloGeneral extends AbstractTableModel {
 				return "";
 				
 			}else{
-				return temp.elementAt(0);
+				return temp.elementAt(0).toString();
 			}
 			
 		}else{

@@ -20,6 +20,7 @@ import java.util.Vector;
 import javax.swing.ImageIcon;
 
 import clases.Cliente;
+import clases.ListadoClientes;
 import conexion.Conectar;
 import javax.swing.JTabbedPane;
 import java.awt.Dimension;
@@ -38,13 +39,12 @@ public class MainFrame extends JFrame {
 	private JPanel panelCard = null;
 	private JPanel panelVacio = null;
 	private JPanel panelCliente = null;
-	private Connection dbConnect;
-	private Conectar con;  //  @jve:decl-index=0:
+	private Connection dbConnect;  //  @jve:decl-index=0:
 	private JTabbedPane tabCliente = null;
 	private JPanel panelAddClientes = null;
-	private Vector<Cliente> clientes=new Vector<Cliente>();
 	private JPanel panelPresupuesto = null;
 	private JButton btnPresupuesto = null;
+	private ListadoClientes listadoClientes= null;
 	/**
 	 * This is the default constructor
 	 */
@@ -62,86 +62,26 @@ public class MainFrame extends JFrame {
 		
 		this.setSize(925, 629);
 		this.setJMenuBar(getJJMenuBar());
-		
-		con=new Conectar();
-		
+			
 		try {
-			
-			dbConnect=con.makeConnection();
-			
-			if(dbConnect!=null){
-				//declaracion de variables locales
-				ResultSet rs;
-				ResultSet rsSec;
-				Vector<String> telefonos=new Vector<String>();
-				Vector<String> emails=new Vector<String>();
-				//creo el prepare statement para activar las foreing keys
-				PreparedStatement psFK=dbConnect.prepareStatement("PRAGMA foreign_keys=ON;");
-				//ejecuto la sentencia
-				psFK.execute();
-				//creo los prepare statements de los clientes, emails y telefonos
-				PreparedStatement psClientes=dbConnect.prepareStatement("SELECT * FROM clientes");
-				PreparedStatement psClientesTel=dbConnect.prepareStatement("SELECT telefono FROM telefonos WHERE idCliente=?");
-				PreparedStatement psClientesEmail=dbConnect.prepareStatement("SELECT email FROM email WHERE idCliente=?");
-				//traigo todos los clientes
-				rs=psClientes.executeQuery();
-				//itero sobre los clientes
-				while(rs.next()){
-					//guardo los datos de los clientes
-					int idCliente=rs.getInt("idCliente");
-					String dni=rs.getString("dni");
-					String nombre=rs.getString("nombre");
-					String apellidos=rs.getString("apellidos");
-					String direccion=rs.getString("direccion");
-					String ciudad=rs.getString("ciudad");
-					String provincia=rs.getString("provincia");
-					String empresa=rs.getString("empresa");
-					String notas=rs.getString("notas");
-					//le digo al telefono el idCliente actual
-					psClientesTel.setInt(1, idCliente);
-					//ejecuto la sentencia
-					rsSec=psClientesTel.executeQuery();
-					
-					telefonos=new Vector();
-					
-					//itero sobre los telefonos
-					while(rsSec.next()){
-						//lo asigno
-						String telefono=rsSec.getString("telefono");
-						//guardo el vector de telefonos
-						telefonos.add(telefono);
-						
-					}
-					//asigno el idCliente para los emails
-					psClientesEmail.setInt(1, idCliente);
-					
-					//ejecuto la consulta
-					rsSec=psClientesEmail.executeQuery();
-					
-					emails=new Vector();
-					
-					//itero sobre los emails
-					while(rsSec.next()){
-						//lo asigno
-						String email=rsSec.getString("email");
-						//guardo el vector de emails
-						emails.add(email);
-						
-					}
-					
-					clientes.add(new Cliente(idCliente, dni, nombre, apellidos, direccion, telefonos, emails, ciudad, provincia, empresa, notas, this));
-					
-				}
-			
-			}
-			
-		} catch (ClassNotFoundException ex) {
-			JOptionPane.showMessageDialog(null, ex.getMessage());
-		} catch (SQLException ex) {
-			JOptionPane.showMessageDialog(null, ex.getMessage());
+			//conecto con la BD
+			Conectar.makeConnection();
+		} catch (ClassNotFoundException e1) {
+			JOptionPane.showMessageDialog(null, e1.getMessage());
+		} catch (SQLException e1) {
+			JOptionPane.showMessageDialog(null, e1.getMessage());
 		}
-		
-		
+
+		dbConnect=Conectar.getConnection();
+			
+		if(dbConnect!=null){
+			
+			listadoClientes=new ListadoClientes();
+				
+			listadoClientes.cargarClientes();
+			
+		}
+
 		this.setContentPane(getJContentPane());
 		this.setTitle("CABP");
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -149,14 +89,14 @@ public class MainFrame extends JFrame {
 		this.setVisible(true);
 		this.addWindowListener(new java.awt.event.WindowAdapter() {
 			public void windowClosing(java.awt.event.WindowEvent e) {
+				
 				try {
-					
-					if(dbConnect!=null){
-						con.closeConnection(dbConnect);
-					}
+					//cierro la conexion
+					Conectar.closeConnection();
 				} catch (SQLException e1) {
 					JOptionPane.showMessageDialog(null, e1.getMessage());
 				}
+				
 			}
 		});
 		
@@ -351,25 +291,20 @@ public class MainFrame extends JFrame {
 	}
 	
 	public Cliente getCliente(int id){
-		
-		//guardo el cliente que piden
-		Cliente c=clientes.get(id);
 		//pido el vector con los datos y lo devuelvo
-		return c;
+		return listadoClientes.getCliente(id);
 
 	}
 	
 	public Vector getClientes(){
 		
-		return clientes;
+		return listadoClientes.getClientes();
 		
 	}
 	
-	public void addCliente(Cliente c){
+	public void addCliente(Vector cliente){
 
-		c.insertarClienteBD();
-		
-		clientes.add(c);
+		listadoClientes.addCliente(cliente);
 		
 		((PanelCliente) panelCliente).actualizarTablaClientes();
 		
@@ -406,6 +341,14 @@ public class MainFrame extends JFrame {
 			});
 		}
 		return btnPresupuesto;
+	}
+
+	public void delCliente(Cliente c) {
+		
+		listadoClientes.delCliente(c);
+		
+		((PanelCliente) panelCliente).actualizarTablaClientes();
+		
 	}
 
 }  //  @jve:decl-index=0:visual-constraint="10,10"

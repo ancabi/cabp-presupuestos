@@ -32,6 +32,8 @@ import java.awt.FlowLayout;
 import javax.swing.ImageIcon;
 
 import clases.Cliente;
+import clases.Emails;
+import clases.Telefonos;
 
 public class PanelDatosClientes extends JPanel {
 
@@ -296,17 +298,16 @@ public class PanelDatosClientes extends JPanel {
 					
 					//si es agregar la accion entonces de inserta
 					if(agregar){
-						
-						Cliente c;
-						Vector telefonos=new Vector();
-						Vector email=new Vector();
+
+						Vector<Telefonos> telefonos=new Vector<Telefonos>();
+						Vector<Emails> email=new Vector<Emails>();
 						
 						//recorro el modelo de la lista
 						for(int x=0; x<modeloLista.getSize(); x++){
 
 							String telTemp=modeloLista.getElementAt(x).toString();
 							
-							telefonos.add(telTemp);
+							telefonos.add(new Telefonos(telTemp));
 							
 						}
 						
@@ -316,63 +317,26 @@ public class PanelDatosClientes extends JPanel {
 							
 							String emailTemp=modeloListaEmail.getElementAt(x).toString();
 
-							email.add(emailTemp);
+							email.add(new Emails(emailTemp));
 							
 						}
 						
-						c=new Cliente(dni, nombre, apellidos, direccion, telefonos, email, ciudad, provincia, empresa, notas, mainFrame);
+						Vector cliente=new Vector();
 						
-						((MainFrame) mainFrame).addCliente(c);
+						cliente.addElement(dni);
+						cliente.addElement(nombre);
+						cliente.addElement(apellidos);
+						cliente.addElement(direccion);
+						cliente.addElement(telefonos);
+						cliente.addElement(email);
+						cliente.addElement(ciudad);
+						cliente.addElement(provincia);
+						cliente.addElement(empresa);
+						cliente.addElement(notas);
 						
-						/*int id;
+						((MainFrame) mainFrame).addCliente(cliente);
 						
-						try {
-							//asigno los campos al preparedStatement
-							psInsertar.setString(1, dni);
-							psInsertar.setString(2, nombre);
-							psInsertar.setString(3, apellidos);
-							psInsertar.setString(4, direccion);
-							psInsertar.setString(5, ciudad);
-							psInsertar.setString(6, provincia);
-							psInsertar.setString(7, empresa);
-							psInsertar.setString(8, notas);
-							//lo inserto
-							psInsertar.executeUpdate();
-							//pido el id generado
-							rs=psInsertar.getGeneratedKeys();
-							//paso 1 ya que siempre deolvera solo 1
-							rs.next();
-							//guardo el id
-							id=rs.getInt(1);
-							//recorro el modelo de la lista
-							for(int x=0; x<modeloLista.getSize(); x++){
-								
-								//asigno el id y el telefono, hago el parseInt sin try-catch porque ya esta controlado antes
-								psInsertarTel.setInt(1, id);
-								String telTemp=""+modeloLista.getElementAt(x);
-								psInsertarTel.setString(2, telTemp);
-								
-								psInsertarTel.executeUpdate();
-								
-							}
-							
-							//recorro el modelo de la lista
-							for(int x=0; x<modeloListaEmail.getSize(); x++){
-								
-								//asigno el id y el telefono, hago el parseInt sin try-catch porque ya esta controlado antes
-								psInsertarEmail.setInt(1, id);
-								String emailTemp=""+modeloListaEmail.getElementAt(x);
-								psInsertarEmail.setString(2, emailTemp);
-								
-								psInsertarEmail.executeUpdate();
-								
-							}
-							
-							
-							
-						} catch (SQLException e1) {
-							JOptionPane.showMessageDialog(null, e1.getMessage());
-						}*/
+						
 						
 					}else{
 						
@@ -385,23 +349,7 @@ public class PanelDatosClientes extends JPanel {
 						clienteActual.setEmpresa(empresa);
 						clienteActual.setNotas(notas);
 						
-						/*try {
-							psActualizar.setString(1, dni);
-							psActualizar.setString(2, nombre);
-							psActualizar.setString(3, apellidos);
-							psActualizar.setString(4, direccion);
-							psActualizar.setString(5, ciudad);
-							psActualizar.setString(6, provincia);
-							psActualizar.setString(7, empresa);
-							psActualizar.setString(8, notas);
-							psActualizar.setInt(9, idCliente);
-							
-							psActualizar.executeUpdate();
-							
-						} catch (SQLException e1) {
-							JOptionPane.showMessageDialog(null, e1.getMessage());
-						}
-						*/
+						
 					}
 					
 					limpiarCampos();
@@ -476,7 +424,7 @@ public class PanelDatosClientes extends JPanel {
 		
 		while(i.hasNext()){
 			
-			modeloLista.addElement(((String) i.next()));
+			modeloLista.addElement(( i.next().toString()));
 			
 		}
 		
@@ -485,7 +433,7 @@ public class PanelDatosClientes extends JPanel {
 		
 		while(e.hasNext()){
 			
-			modeloListaEmail.addElement(((String) e.next()));
+			modeloListaEmail.addElement((e.next().toString()));
 			
 		}
 		
@@ -571,13 +519,13 @@ public class PanelDatosClientes extends JPanel {
 									
 								}
 								
-								} catch (Exception e1) {
-									JOptionPane.showMessageDialog(null, e1.getMessage());
-								}
-									
-							}catch (NumberFormatException e1) {
-								JOptionPane.showMessageDialog(null, "Debe introducir solo numeros en el telefono");
+							} catch (Exception e1) {
+								JOptionPane.showMessageDialog(null, e1.getMessage());
 							}
+									
+						}catch (NumberFormatException e1) {
+							JOptionPane.showMessageDialog(null, "Debe introducir solo numeros en el telefono");
+						}
 						
 						
 						tfTelefono.setText("");
