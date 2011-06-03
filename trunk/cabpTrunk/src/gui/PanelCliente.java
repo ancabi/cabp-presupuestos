@@ -69,8 +69,6 @@ public class PanelCliente extends JPanel {
 				
 				psEmail=dbConnect.prepareStatement("SELECT email FROM email WHERE idCliente=?");
 				
-				psBorrarCliente=dbConnect.prepareStatement("DELETE FROM clientes WHERE idCliente=?");
-				
 				
 			} catch (SQLException e) {
 				JOptionPane.showMessageDialog(null, e.getMessage()+"Constructor panelUsuario");
@@ -227,22 +225,9 @@ public class PanelCliente extends JPanel {
 					
 					if(seleccionado>=0){
 						
-						int idCliente= Integer.parseInt(""+modelo.getValueAt(seleccionado, 0));
+						Cliente c=((MainFrame) mainFrame).getCliente(seleccionado);
 						
-						try {
-							psBorrarCliente.setInt(1, idCliente);
-							
-							psBorrarCliente.executeUpdate();
-							
-							modelo.deleteRow(seleccionado);
-							
-							modelo.fireTableDataChanged();
-							
-						} catch (SQLException e1) {
-							JOptionPane.showMessageDialog(null, e1.getMessage());
-						}
-						
-						
+						((MainFrame) mainFrame).delCliente(c);
 						
 					}
 					
@@ -254,79 +239,7 @@ public class PanelCliente extends JPanel {
 
 	
 	public void actualizarTablaClientes(){
-		/*
-		try {
-			rs=psCliente.executeQuery();
-			
-			Vector<Object> tupla;
-			Cliente c;
-			Vector<Vector> data=new Vector<Vector>();
-			clientes.clear();
-			
-			while(rs.next()){
-				
-				Vector<String> telefono=new Vector<String>();
-				Vector<String> email=new Vector<String>();
-				//construyo de nuevo el vector para que no se me acumulen todo en un solo vector
-				tupla=new Vector<Object>();
-				
-				int idCliente=rs.getInt(1);
-				String dni=rs.getString(2);
-				String nombre=rs.getString(3);
-				String apellidos=rs.getString(4);
-				String direccion=rs.getString(5);
-				
-				psTelefono.setInt(1, rs.getInt(1));
-				rsSec=psTelefono.executeQuery();
-
-				
-				while(rsSec.next()){
-					
-					telefono.addElement(""+rsSec.getInt(1));
-					
-				}
-
-				//tupla.addElement(telefono);
-				
-				psEmail.setInt(1, rs.getInt(1));
-				rsSec=psEmail.executeQuery();
-				
-				while(rsSec.next()){
-					
-					email.addElement(rsSec.getString(1));
-					
-				}
-				//tupla.addElement(email);
-				
-				
-				String ciudad=rs.getString(6);
-				String provincia=rs.getString(7);
-				String empresa=rs.getString(8);
-				String notas=rs.getString(9);
-				
-				c=new Cliente(idCliente, dni, nombre, apellidos, direccion, telefono, email, ciudad, provincia, empresa,
-						notas);
-				
-				clientes.add(c);
-				
-			}
-			
-			for(int x=0; x<clientes.size(); x++){
-				
-				c=clientes.get(x);
-				
-				data.add(c.getCliente());
-				
-			}
-			
-			//asigno al modelo el vector con las filas
-			modelo.setData(data);
-			
-		} catch (SQLException e) {
-			JOptionPane.showMessageDialog(null, e.getMessage()+"Actualizar tabla cliente");
-
-		}
-		*/
+		
 		
 		Vector clientes=((MainFrame) mainFrame).getClientes();
 		Vector data=new Vector();
@@ -369,7 +282,7 @@ public class PanelCliente extends JPanel {
 	private JLabel getLblTitulo() {
 		if (lblTitulo == null) {
 			lblTitulo = new JLabel();
-			lblTitulo.setText("Gestión de clientes");
+			lblTitulo.setText("Gestiï¿½n de clientes");
 			lblTitulo.setFont(new Font("Times New Roman", Font.BOLD, 18));
 		}
 		return lblTitulo;

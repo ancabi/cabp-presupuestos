@@ -30,16 +30,16 @@ public class Cliente {
 	private String provincia;
 	private String empresa;
 	private String notas;
-	private Vector telefonos;
-	private Vector email;
+	private Vector<Telefonos> telefonos;
+	private Vector<Emails> email;
 	private PreparedStatement psInsertar;
 	private ResultSet rs;
 	private PreparedStatement psInsertarTel;
 	private PreparedStatement psInsertarEmail;
 	private PreparedStatement psBorrarTel;
 	private PreparedStatement psBorrarEmail;
-	private JFrame mainFrame;
-	private Connection dbConnect;
+	private Connection dbConnect=null;
+	private PreparedStatement psBorrarCliente;
 	
 	
 	/**
@@ -55,8 +55,8 @@ public class Cliente {
 	 * @param email
 	 */
 	public Cliente(int idCliente, String dni, String nombre, String apellidos,
-			String direccion, Vector telefonos, Vector email, String ciudad, String provincia, String empresa,
-			String notas, JFrame mainFrame) {
+			String direccion, Vector<Telefonos> telefonos, Vector<Emails> email, String ciudad, String provincia, String empresa,
+			String notas) {
 
 		this.idCliente = idCliente;
 		this.dni = dni;
@@ -69,7 +69,6 @@ public class Cliente {
 		this.notas = notas;
 		this.telefonos = telefonos;
 		this.email = email;
-		this.mainFrame=mainFrame;
 	}
 	
 	/**
@@ -84,8 +83,8 @@ public class Cliente {
 	 * @param email
 	 */
 	public Cliente(String dni, String nombre, String apellidos,
-			String direccion, Vector telefonos, Vector email, String ciudad, String provincia, String empresa,
-			String notas, JFrame mainFrame) {
+			String direccion, Vector<Telefonos> telefonos, Vector<Emails> email, String ciudad, String provincia, String empresa,
+			String notas) {
 
 		this.dni = dni;
 		this.nombre = nombre;
@@ -97,7 +96,6 @@ public class Cliente {
 		this.notas = notas;
 		this.telefonos = telefonos;
 		this.email = email;
-		this.mainFrame=mainFrame;
 	}
 
 
@@ -275,47 +273,21 @@ public class Cliente {
 		this.email = email;
 	}
 	
-	/**
-	 * @param newEmail the email to add new email
-	 */
-	public void addEmail(String newEmail){
-
-		if(dbConnect==null){
-			dbConnect=((MainFrame) mainFrame).getConnection();
-		}
-		
-		try {
-			psInsertarEmail=dbConnect.prepareStatement("INSERT INTO email(idCliente, email) VALUES (?,?)");
-			
-			psInsertarEmail.setInt(1, idCliente);
-			psInsertarEmail.setString(2, newEmail);
-			
-			psInsertarEmail.executeUpdate();
-			
-			email.addElement(newEmail);
-			
-		} catch (SQLException e) {
-			JOptionPane.showMessageDialog(null, e.getMessage());
-		}
-		
-	}
+	
 	
 	/**
 	 * @param email the email to delete
 	 */
 	public void delEmail(String oldEmail){
-		
-		if(dbConnect==null){
-			dbConnect=((MainFrame) mainFrame).getConnection();
-		}
+
 		
 		try {
 			psBorrarEmail=dbConnect.prepareStatement("DELETE FROM email WHERE idCliente=? AND telefono=?");
 			
-			psInsertarEmail.setInt(1, idCliente);
-			psInsertarEmail.setString(2, oldEmail);
+			psBorrarEmail.setInt(1, idCliente);
+			psBorrarEmail.setString(2, oldEmail);
 			
-			psInsertarEmail.executeUpdate();
+			psBorrarEmail.executeUpdate();
 			
 			email.remove(oldEmail);
 			
@@ -325,39 +297,13 @@ public class Cliente {
 		
 	}
 	
-	/**
-	 * @param newtelefono the telefono to add new telefono
-	 */
-	public void addTelefono(String newTelefono){
-		
-		if(dbConnect==null){
-			dbConnect=((MainFrame) mainFrame).getConnection();
-		}
-		
-		try {
-			psInsertarTel=dbConnect.prepareStatement("INSERT INTO telefonos(idCliente, telefono) VALUES (?,?)");
-			
-			psInsertarTel.setInt(1, idCliente);
-			psInsertarTel.setString(2, newTelefono);
-			
-			psInsertarTel.executeUpdate();
-			
-			telefonos.addElement(newTelefono);
-			
-		} catch (SQLException e) {
-			JOptionPane.showMessageDialog(null, e.getMessage());
-		}
-		
-	}
+	
 	
 	/**
 	 * @param telefono the telefono to delete
 	 */
 	public void delTelefono(String oldTelefono){
 		
-		if(dbConnect==null){
-			dbConnect=((MainFrame) mainFrame).getConnection();
-		}
 		
 		try {
 			psBorrarTel=dbConnect.prepareStatement("DELETE FROM email WHERE idCliente=? AND telefono=?");
@@ -372,6 +318,18 @@ public class Cliente {
 		} catch (SQLException e) {
 			JOptionPane.showMessageDialog(null, e.getMessage());
 		}
+		
+	}
+	
+	public void addTelefono(String newTelefono){
+		
+		telefonos.add(new Telefonos(newTelefono));
+		
+	}
+	
+	public void addEmail(String newEmail){
+		
+		email.add(new Emails(newEmail));
 		
 	}
 	
@@ -394,59 +352,6 @@ public class Cliente {
 		v.addElement(idCliente);
 		
 		return v;
-	}
-	
-	public void insertarClienteBD(){
-		
-		try {
-			dbConnect=((MainFrame) mainFrame).getConnection();
-			
-			psInsertar=dbConnect.prepareStatement("INSERT INTO clientes(dni, nombre, apellidos, direccion, ciudad, provincia, empresa, notas)" +
-			" VALUES (?,?,?,?,?,?,?,?)");
-			
-			
-			
-			psInsertarEmail=dbConnect.prepareStatement("INSERT INTO email(idCliente, email) VALUES (?,?)");
-			
-			//asigno los campos al preparedStatement
-			psInsertar.setString(1, dni);
-			psInsertar.setString(2, nombre);
-			psInsertar.setString(3, apellidos);
-			psInsertar.setString(4, direccion);
-			psInsertar.setString(5, ciudad);
-			psInsertar.setString(6, provincia);
-			psInsertar.setString(7, empresa);
-			psInsertar.setString(8, notas);
-			
-			//lo inserto
-			psInsertar.executeUpdate();
-			//pido el id generado
-			rs=psInsertar.getGeneratedKeys();
-			//paso 1 ya que siempre deolvera solo 1
-			rs.next();
-			//guardo el id
-			idCliente=rs.getInt(1);
-			
-			//recorro el vector
-			for(int x=0; x<telefonos.size(); x++){
-				
-				this.addTelefono((String) telefonos.get(x));
-				
-			}
-			
-			//recorro el vector
-			for(int x=0; x<email.size(); x++){
-				
-				this.addEmail((String) email.get(x));
-				
-			}
-			
-		} catch (SQLException e) {
-			JOptionPane.showMessageDialog(null, e.getMessage());
-		}
-		
-		
-		
 	}
 	
 
