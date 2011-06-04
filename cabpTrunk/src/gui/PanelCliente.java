@@ -1,6 +1,5 @@
 package gui;
 
-import java.awt.GridBagLayout;
 import javax.swing.JPanel;
 import java.awt.Dimension;
 import java.awt.BorderLayout;
@@ -49,6 +48,8 @@ public class PanelCliente extends JPanel {
 	private Vector<Cliente> clientes=new Vector<Cliente>();
 	private JPanel panelTitulo = null;
 	private JLabel lblTitulo = null;
+	private DialogoAddCliente dialogoAddCliente;
+	private DialogoModCliente dialogoModCliente;
 	/**
 	 * This is the default constructor
 	 */
@@ -56,25 +57,7 @@ public class PanelCliente extends JPanel {
 		super();
 		initialize();
 		//recibo la conexion con la base de datos
-		dbConnect=((MainFrame) mainFrame).getConnection();
 		this.mainFrame=mainFrame;
-		
-		if(dbConnect!=null){
-			
-			try {
-				
-				psCliente=dbConnect.prepareStatement("SELECT * FROM clientes");
-				
-				psTelefono=dbConnect.prepareStatement("SELECT telefono FROM telefonos WHERE idCliente=?");
-				
-				psEmail=dbConnect.prepareStatement("SELECT email FROM email WHERE idCliente=?");
-				
-				
-			} catch (SQLException e) {
-				JOptionPane.showMessageDialog(null, e.getMessage()+"Constructor panelUsuario");
-			}
-			
-		}
 	}
 
 	/**
@@ -136,11 +119,19 @@ public class PanelCliente extends JPanel {
 									
 									Cliente c=((MainFrame) mainFrame).getCliente(x);
 									
-									//Vector row=c.getCliente();
-							        
-									((MainFrame) mainFrame).rowSelected(c);
-							        
-									((MainFrame) mainFrame).cambiarCapa("tabCliente");
+									dialogoModCliente=getDialogoModCliente();
+									
+									dialogoModCliente.setCliente(c);
+									
+									dialogoModCliente.setVisible(true);
+									
+									if(dialogoModCliente.getValorPulsado()==dialogoModCliente.VALOR_ACEPTAR){
+										
+										((MainFrame) mainFrame).actualizarCliente(dialogoModCliente.getClienteActual());
+										
+										actualizarTablaClientes();
+										
+									}
 									
 							    }
 							    
@@ -180,14 +171,48 @@ public class PanelCliente extends JPanel {
 			btnAgregar.addActionListener(new java.awt.event.ActionListener() {
 				public void actionPerformed(java.awt.event.ActionEvent e) {
 					//muestro el panel en el que se insertan los datos
-					((MainFrame) mainFrame).cambiarCapa("panelAddClientes");
+					//((MainFrame) mainFrame).cambiarCapa("panelAddClientes");
 					
+					dialogoAddCliente=getDialogoAddCliente();
 					
+					dialogoAddCliente.setVisible(true);
+					
+					if(dialogoAddCliente.getValorPulsado()==dialogoAddCliente.VALOR_ACEPTAR){
+						
+						((MainFrame) mainFrame).addCliente(dialogoAddCliente.getNewCliente());
+						
+						
+						
+					}
 					
 				}
 			});
 		}
 		return btnAgregar;
+	}
+	
+	private DialogoAddCliente getDialogoAddCliente(){
+		
+		if(dialogoAddCliente == null){
+			
+			dialogoAddCliente=new DialogoAddCliente(mainFrame);
+			
+		}
+		
+		return dialogoAddCliente;
+		
+	}
+	
+	private DialogoModCliente getDialogoModCliente(){
+		
+		if(dialogoModCliente == null){
+			
+			dialogoModCliente=new DialogoModCliente(mainFrame);
+			
+		}
+		
+		return dialogoModCliente;
+		
 	}
 
 	/**
@@ -282,7 +307,7 @@ public class PanelCliente extends JPanel {
 	private JLabel getLblTitulo() {
 		if (lblTitulo == null) {
 			lblTitulo = new JLabel();
-			lblTitulo.setText("Gesti�n de clientes");
+			lblTitulo.setText("Gestion de clientes");
 			lblTitulo.setFont(new Font("Times New Roman", Font.BOLD, 18));
 		}
 		return lblTitulo;

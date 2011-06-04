@@ -17,19 +17,14 @@ public class TabCliente extends JTabbedPane {
 	private JPanel panelDatos = null;
 	private JPanel panelClientePres = null;
 	private Connection dbConnect;
-	private JFrame mainFrame;
 	private JPanel panelImg = null;
 	private JPanel panelPdf = null;
 
 	/**
 	 * This is the default constructor
 	 */
-	public TabCliente(JFrame mainFrame) {
+	public TabCliente() {
 		super();
-		
-		dbConnect=((MainFrame) mainFrame).getConnection();
-		this.mainFrame=mainFrame;
-		
 		initialize();
 	}
 
@@ -54,7 +49,7 @@ public class TabCliente extends JTabbedPane {
 	 */
 	private JPanel getPanelDatos() {
 		if (panelDatos == null) {
-			panelDatos = new PanelDatosClientes(mainFrame);
+			panelDatos = new PanelDatosClientes();
 			
 		}
 		return panelDatos;
@@ -73,12 +68,24 @@ public class TabCliente extends JTabbedPane {
 		return panelClientePres;
 	}
 	
-	public void rowSelected(Cliente c){
+	public void setCliente(Cliente c){
 		
 		((PanelDatosClientes) panelDatos).setCliente(c);
 		
 		//pongo agregar a false
 		((PanelDatosClientes) panelDatos).setAgregar();
+		
+	}
+	
+	public void guardarCliente(){
+		
+		((PanelDatosClientes) panelDatos).guardarCliente();
+		
+	}
+	
+	public void limpiarCampos(){
+		
+		((PanelDatosClientes) panelDatos).limpiarCampos();
 		
 	}
 
@@ -104,6 +111,11 @@ public class TabCliente extends JTabbedPane {
 			panelPdf = new JPanel();
 		}
 		return panelPdf;
+	}
+
+	public Cliente getClienteActual() {
+
+		return ((PanelDatosClientes) panelDatos).getClienteActual();
 	}
 
 }  //  @jve:decl-index=0:visual-constraint="10,10"

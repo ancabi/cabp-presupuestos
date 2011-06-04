@@ -30,8 +30,8 @@ public class Cliente {
 	private String provincia;
 	private String empresa;
 	private String notas;
-	private Vector<Telefonos> telefonos;
-	private Vector<Emails> email;
+	private ListadoTelefonos telefonos;
+	private ListadoEmails email;
 	private PreparedStatement psInsertar;
 	private ResultSet rs;
 	private PreparedStatement psInsertarTel;
@@ -55,7 +55,7 @@ public class Cliente {
 	 * @param email
 	 */
 	public Cliente(int idCliente, String dni, String nombre, String apellidos,
-			String direccion, Vector<Telefonos> telefonos, Vector<Emails> email, String ciudad, String provincia, String empresa,
+			String direccion, ListadoTelefonos telefonos, ListadoEmails email, String ciudad, String provincia, String empresa,
 			String notas) {
 
 		this.idCliente = idCliente;
@@ -83,7 +83,7 @@ public class Cliente {
 	 * @param email
 	 */
 	public Cliente(String dni, String nombre, String apellidos,
-			String direccion, Vector<Telefonos> telefonos, Vector<Emails> email, String ciudad, String provincia, String empresa,
+			String direccion, ListadoTelefonos telefonos, ListadoEmails email, String ciudad, String provincia, String empresa,
 			String notas) {
 
 		this.dni = dni;
@@ -246,14 +246,16 @@ public class Cliente {
 	 * @return the telefonos
 	 */
 	public Vector getTelefonos() {
-		return telefonos;
+		
+		return telefonos.getTelefonos();
+
 	}
 
 
 	/**
 	 * @param telefonos the telefonos to set
 	 */
-	public void setTelefonos(Vector telefonos) {
+	public void setTelefonos(ListadoTelefonos telefonos) {
 		this.telefonos = telefonos;
 	}
 
@@ -262,14 +264,14 @@ public class Cliente {
 	 * @return the email
 	 */
 	public Vector getEmail() {
-		return email;
+		return email.getEmails();
 	}
 
 
 	/**
 	 * @param email the email to set
 	 */
-	public void setEmail(Vector email) {
+	public void setEmail(ListadoEmails email) {
 		this.email = email;
 	}
 	
@@ -278,58 +280,26 @@ public class Cliente {
 	/**
 	 * @param email the email to delete
 	 */
-	public void delEmail(String oldEmail){
+	public void delEmail(int index){
 
-		
-		try {
-			psBorrarEmail=dbConnect.prepareStatement("DELETE FROM email WHERE idCliente=? AND telefono=?");
-			
-			psBorrarEmail.setInt(1, idCliente);
-			psBorrarEmail.setString(2, oldEmail);
-			
-			psBorrarEmail.executeUpdate();
-			
-			email.remove(oldEmail);
-			
-		} catch (SQLException e) {
-			JOptionPane.showMessageDialog(null, e.getMessage());
-		}
-		
+		email.delEmail(index);
 	}
 	
-	
-	
-	/**
-	 * @param telefono the telefono to delete
-	 */
-	public void delTelefono(String oldTelefono){
+	public void delTelefono(int index){
 		
-		
-		try {
-			psBorrarTel=dbConnect.prepareStatement("DELETE FROM email WHERE idCliente=? AND telefono=?");
-			
-			psInsertarTel.setInt(1, idCliente);
-			psInsertarTel.setString(2, oldTelefono);
-			
-			psInsertarTel.executeUpdate();
-			
-			telefonos.remove(oldTelefono);
-			
-		} catch (SQLException e) {
-			JOptionPane.showMessageDialog(null, e.getMessage());
-		}
+		telefonos.delTelefono(index);
 		
 	}
 	
 	public void addTelefono(String newTelefono){
 		
-		telefonos.add(new Telefonos(newTelefono));
+		telefonos.setTelefono(new Telefonos(newTelefono));
 		
 	}
 	
 	public void addEmail(String newEmail){
 		
-		email.add(new Emails(newEmail));
+		email.setEmail(new Emails(newEmail));
 		
 	}
 	

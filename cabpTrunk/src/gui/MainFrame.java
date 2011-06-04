@@ -44,7 +44,7 @@ public class MainFrame extends JFrame {
 	private JPanel panelAddClientes = null;
 	private JPanel panelPresupuesto = null;
 	private JButton btnPresupuesto = null;
-	private ListadoClientes listadoClientes= null;
+	private ListadoClientes listadoClientes= null;  //  @jve:decl-index=0:
 	/**
 	 * This is the default constructor
 	 */
@@ -259,7 +259,7 @@ public class MainFrame extends JFrame {
 	 */
 	private JTabbedPane getTabCliente() {
 		if (tabCliente == null) {
-			tabCliente = new TabCliente(this);
+			tabCliente = new TabCliente();
 			tabCliente.setName("tabCliente");
 		}
 		return tabCliente;
@@ -272,22 +272,10 @@ public class MainFrame extends JFrame {
 	 */
 	private JPanel getPanelAddClientes() {
 		if (panelAddClientes == null) {
-			panelAddClientes = new PanelDatosClientes(this);
+			panelAddClientes = new PanelDatosClientes();
 			panelAddClientes.setName("panelAddClientes");
 		}
 		return panelAddClientes;
-	}
-	
-	public void rowSelected(Cliente c){
-	
-		 ((TabCliente) tabCliente).rowSelected(c);
-		
-	}
-	
-	public Connection getConnection(){
-		
-		return dbConnect;
-		
 	}
 	
 	public Cliente getCliente(int id){
@@ -302,11 +290,17 @@ public class MainFrame extends JFrame {
 		
 	}
 	
-	public void addCliente(Vector cliente){
+	public void addCliente(Vector<Object> cliente){
 
 		listadoClientes.addCliente(cliente);
 		
 		((PanelCliente) panelCliente).actualizarTablaClientes();
+		
+	}
+	
+	public void actualizarCliente(Cliente c){
+		
+		listadoClientes.actualizarCliente(c);
 		
 	}
 
