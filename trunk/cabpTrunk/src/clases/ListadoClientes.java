@@ -21,30 +21,35 @@ public class ListadoClientes {
 	private PreparedStatement psClientesTel;
 	private PreparedStatement psClientesEmail;
 	private PreparedStatement psInsertar;
-	private PreparedStatement psInsertarTel;
 	private PreparedStatement psInsertarEmail;
 	private PreparedStatement psBorrarCliente;
+	private PreparedStatement psBorrarTelCliente;
+	private PreparedStatement psBorrarEmailCliente;
+	private PreparedStatement psActualizarCliente;
 	
 	public ListadoClientes(){
 		
 		try {
 			psClientes = dbConnect.prepareStatement("SELECT * FROM clientes");
 			
-			psClientesTel=dbConnect.prepareStatement("SELECT telefono FROM telefonos WHERE idCliente=?");
+			psClientesTel=dbConnect.prepareStatement("SELECT telefono FROM telefonos WHERE idCliente=? ORDER BY rowid");
 			
-			psClientesEmail=dbConnect.prepareStatement("SELECT email FROM email WHERE idCliente=?");
+			psClientesEmail=dbConnect.prepareStatement("SELECT email FROM email WHERE idCliente=? ORDER BY rowid");
 			
 			psInsertar=dbConnect.prepareStatement("INSERT INTO clientes(dni, nombre, apellidos, direccion, ciudad, provincia, empresa, notas)" +
 			" VALUES (?,?,?,?,?,?,?,?)");
 			
-			psInsertarTel=dbConnect.prepareStatement("INSERT INTO telefonos(idCliente, telefono) VALUES (?,?)");
-			
-			psInsertarEmail=dbConnect.prepareStatement("INSERT INTO email(idCliente, email) VALUES (?,?)");
-			
 			psBorrarCliente=dbConnect.prepareStatement("DELETE FROM clientes WHERE idCliente=?");
 			
+			psBorrarTelCliente=dbConnect.prepareStatement("DELETE FROM telefonos WHERE idCliente=?");
+			
+			psBorrarEmailCliente=dbConnect.prepareStatement("DELETE FROM email WHERE idCliente=?");
+			
+			psActualizarCliente=dbConnect.prepareStatement("UPDATE clientes SET dni=?, nombre=?, apellidos=?, direccion=?, ciudad=?, provincia=?, " +
+					"empresa=?, notas=? WHERE idCliente=?");
+			
 		} catch (SQLException e) {
-			JOptionPane.showMessageDialog(null, e.getMessage());
+			JOptionPane.showMessageDialog(null, e.getMessage()+"Constructor listadoClientes");
 		}
 		
 	}
@@ -53,8 +58,6 @@ public class ListadoClientes {
 		
 		ResultSet rs;
 		ResultSet rsSec;
-		Vector<Telefonos> telefonos=new Vector<Telefonos>();
-		Vector<Emails> emails=new Vector<Emails>();
 		
 		try {
 			
@@ -74,6 +77,8 @@ public class ListadoClientes {
 				String provincia=rs.getString("provincia");
 				String empresa=rs.getString("empresa");
 				String notas=rs.getString("notas");
+				ListadoTelefonos listTelefonos=new ListadoTelefonos(idCliente);
+				ListadoEmails listEmails=new ListadoEmails(idCliente);
 				
 				//le digo al telefono el idCliente actual
 				psClientesTel.setInt(1, idCliente);
@@ -81,14 +86,13 @@ public class ListadoClientes {
 				//ejecuto la sentencia
 				rsSec=psClientesTel.executeQuery();
 				
-				telefonos=new Vector<Telefonos>();
-				
 				//itero sobre los telefonos
 				while(rsSec.next()){
+					
 					//lo asigno
 					String telefono=rsSec.getString("telefono");
 					//guardo el vector de telefonos
-					telefonos.add(new Telefonos(telefono));
+					listTelefonos.addTelefono(new Telefonos(telefono));
 					
 				}
 				//asigno el idCliente para los emails
@@ -97,23 +101,21 @@ public class ListadoClientes {
 				//ejecuto la consulta
 				rsSec=psClientesEmail.executeQuery();
 				
-				emails=new Vector<Emails>();
-				
 				//itero sobre los emails
 				while(rsSec.next()){
 					//lo asigno
 					String email=rsSec.getString("email");
 					//guardo el vector de emails
-					emails.add(new Emails(email));
+					listEmails.addEmail(new Emails(email));
 					
 				}
 				
-				clientes.add(new Cliente(idCliente, dni, nombre, apellidos, direccion, telefonos, emails, ciudad, provincia, empresa, notas));
+				clientes.add(new Cliente(idCliente, dni, nombre, apellidos, direccion, listTelefonos, listEmails, ciudad, provincia, empresa, notas));
 				
 			}
 		
 		} catch (SQLException e) {
-			JOptionPane.showMessageDialog(null, e.getMessage());
+			JOptionPane.showMessageDialog(null, e.getMessage()+"cargarClientes");
 		}
 		
 	}
@@ -162,52 +164,37 @@ public class ListadoClientes {
 			rs.next();
 			//guardo el id
 			idCliente=rs.getInt(1);
+			//creo el listado de telefonos
+			ListadoTelefonos listTelefonos=new ListadoTelefonos(idCliente);
 			
 			//recorro el vector
 			for(int x=0; x<telefonos.size(); x++){
-				System.out.println(x);
+
 				String telefono=telefonos.get(x).getTelefono();
 				
-				this.addTelefono(telefono, idCliente);
+				listTelefonos.setTelefono(new Telefonos(telefono));
 				
 			}
+			
+			ListadoEmails listEmails=new ListadoEmails(idCliente);
 			
 			//recorro el vector
 			for(int x=0; x<emails.size(); x++){
-				System.out.println(x);
+
 				String email=emails.get(x).getEmail();
 				
-				this.addEmail(email, idCliente);
+				listEmails.setEmail(new Emails(email));
 				
 			}
 			
-			clientes.add(new Cliente(idCliente, dni, nombre, apellidos, direccion, telefonos, emails, ciudad, provincia, 
+			clientes.add(new Cliente(idCliente, dni, nombre, apellidos, direccion, listTelefonos, listEmails, ciudad, provincia, 
 					empresa, notas));
 			
 		} catch (SQLException e) {
-			JOptionPane.showMessageDialog(null, e.getMessage());
+			JOptionPane.showMessageDialog(null, e.getMessage()+"addCliente");
 		}
 		
 		
-		
-	}
-	
-	/**
-	 * @param newtelefono the telefono to add new telefono
-	 */
-	public void addTelefono(String newTelefono, int idCliente){
-
-		
-		try {
-
-			psInsertarTel.setInt(1, idCliente);
-			psInsertarTel.setString(2, newTelefono);
-			
-			psInsertarTel.executeUpdate();
-			
-		} catch (SQLException e) {
-			JOptionPane.showMessageDialog(null, e.getMessage());
-		}
 		
 	}
 	
@@ -230,26 +217,7 @@ public class ListadoClientes {
 		
 	}
 	
-	/**
-	 * @param newtelefono the telefono to add new telefono
-	 */
-	public void addTelefono(String newTelefono, Cliente c){
-
-		
-		try {
-
-			psInsertarTel.setInt(1, c.getIdCliente());
-			psInsertarTel.setString(2, newTelefono);
-			
-			psInsertarTel.executeUpdate();
-			
-			c.addTelefono(newTelefono);
-			
-		} catch (SQLException e) {
-			JOptionPane.showMessageDialog(null, e.getMessage());
-		}
-		
-	}
+	
 	
 	/**
 	 * @param newEmail the email to add new email
@@ -279,6 +247,14 @@ public class ListadoClientes {
 			
 			psBorrarCliente.executeUpdate();
 			
+			psBorrarTelCliente.setInt(1, c.getIdCliente());
+			
+			psBorrarTelCliente.executeUpdate();
+			
+			psBorrarEmailCliente.setInt(1, c.getIdCliente());
+			
+			psBorrarEmailCliente.executeUpdate();
+			
 			clientes.removeElement(c);
 			
 		} catch (SQLException e) {
@@ -290,6 +266,38 @@ public class ListadoClientes {
 	public Vector getClientes(){
 		
 		return clientes;
+		
+	}
+
+	public void actualizarCliente(Cliente c) {
+		
+		int idCliente=c.getIdCliente();
+		String dni=c.getDni();
+		String nombre=c.getNombre();
+		String apellidos=c.getApellidos();
+		String direccion=c.getDireccion();
+		String ciudad=c.getCiudad();
+		String provincia=c.getProvincia();
+		String empresa=c.getEmpresa();
+		String notas=c.getNotas();
+		
+		try {
+			
+			psActualizarCliente.setString(1, dni);
+			psActualizarCliente.setString(2, nombre);
+			psActualizarCliente.setString(3, apellidos);
+			psActualizarCliente.setString(4, direccion);
+			psActualizarCliente.setString(5, ciudad);
+			psActualizarCliente.setString(6, provincia);
+			psActualizarCliente.setString(7, empresa);
+			psActualizarCliente.setString(8, notas);
+			psActualizarCliente.setInt(9, idCliente);
+			
+			psActualizarCliente.executeUpdate();
+			
+		} catch (SQLException e) {
+			JOptionPane.showMessageDialog(null, e.getMessage());
+		}
 		
 	}
 

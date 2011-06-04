@@ -7,6 +7,9 @@ import java.util.Vector;
 
 import javax.swing.table.AbstractTableModel;
 
+import clases.ListadoEmails;
+import clases.ListadoTelefonos;
+
 /**
  * @author Administrador
  *
@@ -40,20 +43,35 @@ public class ModeloGeneral extends AbstractTableModel {
 	@Override
 	public Object getValueAt(int rowIndex, int columnIndex) {
 		
-		if(columnIndex==5 || columnIndex==6){
+		if(columnIndex==5){
 			
 			Vector rowVector = (Vector)data.elementAt(rowIndex);
-			
-			Vector temp=(Vector) rowVector.elementAt(columnIndex);
 
-			if(temp.isEmpty()){
+			ListadoTelefonos temp=(ListadoTelefonos) rowVector.elementAt(columnIndex);
+
+			if(temp.getTelefonos().isEmpty()){
 				
 				return "";
 				
 			}else{
-				return temp.elementAt(0).toString();
+				return temp.getTelefonos().get(0);
 			}
 			
+			
+		}if(columnIndex==6){
+			
+			Vector rowVector = (Vector)data.elementAt(rowIndex);
+
+			ListadoEmails temp=(ListadoEmails) rowVector.elementAt(columnIndex);
+
+			if(temp.getEmails().isEmpty()){
+				
+				return "";
+				
+			}else{
+				return temp.getEmails().get(0);
+			}
+				
 		}else{
 		
 			Vector rowVector = (Vector)data.elementAt(rowIndex);

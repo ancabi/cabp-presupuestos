@@ -52,9 +52,6 @@ public class PanelDatosClientes extends JPanel {
 	private JTextField tfEmpresa = null;
 	private JLabel lblNotas = null;
 	private JTextArea taNotas = null;
-	private JPanel panelBotones = null;
-	private JButton btnAceptar = null;
-	private JButton btnVolver = null;
 	private boolean agregar=true;
 	private Connection dbConnect;
 	private PreparedStatement psInsertar;
@@ -64,7 +61,6 @@ public class PanelDatosClientes extends JPanel {
 	private PreparedStatement psBorrarEmail;
 	private ResultSet rs;
 	private PreparedStatement psActualizar;
-	private JFrame mainFrame;
 	private int idCliente;
 	private JTextField tfTelefono = null;
 	private JList jlTelefonos = null;
@@ -87,41 +83,15 @@ public class PanelDatosClientes extends JPanel {
 	private JPanel panelAddEmail = null;
 	private JLabel lblProvincia = null;
 	private JTextField tfProvincia = null;
-	private Cliente clienteActual;
+	private Cliente clienteActual;  //  @jve:decl-index=0:
 	private JPanel panelTitulo = null;
 	private JLabel lblTitulo = null;
 	/**
 	 * This is the default constructor
 	 */
-	public PanelDatosClientes(JFrame mainFrame) {
+	public PanelDatosClientes() {
 		super();
 		initialize();
-		
-		dbConnect=((MainFrame) mainFrame).getConnection();
-		this.mainFrame=mainFrame;
-		
-		if(dbConnect!=null){
-			
-			try {
-				psInsertar=dbConnect.prepareStatement("INSERT INTO clientes(dni, nombre, apellidos, direccion, ciudad, provincia, empresa, notas)" +
-						" VALUES (?,?,?,?,?,?,?,?)");
-				
-				psInsertarTel=dbConnect.prepareStatement("INSERT INTO telefonos(idCliente, telefono) VALUES (?,?)");
-				
-				psInsertarEmail=dbConnect.prepareStatement("INSERT INTO email(idCliente, email) VALUES (?,?)");
-				
-				psActualizar=dbConnect.prepareStatement("UPDATE clientes SET dni=?, nombre=?, apellidos=?, direccion=?, ciudad=?, provincia=?, empresa=?, notas=?" +
-						"WHERE idCliente=?");
-				
-				psBorrarTel=dbConnect.prepareStatement("DELETE FROM telefonos WHERE idCliente=? AND telefono=?");
-				
-				psBorrarEmail=dbConnect.prepareStatement("DELETE FROM email WHERE idCliente=? AND email=?");
-			} catch (SQLException e) {
-				JOptionPane.showMessageDialog(null, e.getMessage());
-			}
-			
-		}
-		
 	}
 
 	/**
@@ -148,7 +118,6 @@ public class PanelDatosClientes extends JPanel {
 		this.setLayout(new BorderLayout());
 		this.setMinimumSize(new Dimension(70, 20));
 		this.setPreferredSize(new Dimension(110, 20));
-		this.add(getPanelBotones(), BorderLayout.SOUTH);
 		this.add(getPanelContenedor(), BorderLayout.CENTER);
 		this.add(getPanelTitulo(), BorderLayout.NORTH);
 	}
@@ -246,146 +215,12 @@ public class PanelDatosClientes extends JPanel {
 		if (taNotas == null) {
 			taNotas = new JTextArea();
 			taNotas.setMinimumSize(new Dimension(400, 300));
-			taNotas.setPreferredSize(new Dimension(250, 200));
+			taNotas.setPreferredSize(new Dimension(250, 150));
 		}
 		return taNotas;
 	}
 
-	/**
-	 * This method initializes panelBotones	
-	 * 	
-	 * @return javax.swing.JPanel	
-	 */
-	private JPanel getPanelBotones() {
-		if (panelBotones == null) {
-			GridBagConstraints gridBagConstraints15 = new GridBagConstraints();
-			gridBagConstraints15.insets = new Insets(2, 10, 2, 2);
-			gridBagConstraints15.fill = GridBagConstraints.NONE;
-			gridBagConstraints15.anchor = GridBagConstraints.EAST;
-			GridBagConstraints gridBagConstraints14 = new GridBagConstraints();
-			gridBagConstraints14.insets = new Insets(2, 10, 2, 2);
-			gridBagConstraints14.fill = GridBagConstraints.NONE;
-			gridBagConstraints14.anchor = GridBagConstraints.EAST;
-			panelBotones = new JPanel();
-			panelBotones.setLayout(new GridBagLayout());
-			panelBotones.add(getBtnAceptar(), gridBagConstraints14);
-			panelBotones.add(getBtnVolver(), gridBagConstraints15);
-		}
-		return panelBotones;
-	}
-
-	/**
-	 * This method initializes btnAceptar	
-	 * 	
-	 * @return javax.swing.JButton	
-	 */
-	private JButton getBtnAceptar() {
-		if (btnAceptar == null) {
-			btnAceptar = new JButton();
-			btnAceptar.setText("Aceptar");
-			btnAceptar.addActionListener(new java.awt.event.ActionListener() {
-				public void actionPerformed(java.awt.event.ActionEvent e) {
-					
-					//cargo los datos en variables
-					String dni=tfDni.getText();
-					String nombre=tfNombre.getText();
-					String apellidos=tfApellidos.getText();
-					String direccion=tfDireccion.getText();
-					String ciudad=tfCiudad.getText();
-					String provincia=tfProvincia.getText();
-					String empresa=tfEmpresa.getText();
-					String notas=taNotas.getText();
-					
-					//si es agregar la accion entonces de inserta
-					if(agregar){
-
-						Vector<Telefonos> telefonos=new Vector<Telefonos>();
-						Vector<Emails> email=new Vector<Emails>();
-						
-						//recorro el modelo de la lista
-						for(int x=0; x<modeloLista.getSize(); x++){
-
-							String telTemp=modeloLista.getElementAt(x).toString();
-							
-							telefonos.add(new Telefonos(telTemp));
-							
-						}
-						
-						//recorro el modelo de la lista
-						for(int x=0; x<modeloListaEmail.getSize(); x++){
-							
-							
-							String emailTemp=modeloListaEmail.getElementAt(x).toString();
-
-							email.add(new Emails(emailTemp));
-							
-						}
-						
-						Vector cliente=new Vector();
-						
-						cliente.addElement(dni);
-						cliente.addElement(nombre);
-						cliente.addElement(apellidos);
-						cliente.addElement(direccion);
-						cliente.addElement(telefonos);
-						cliente.addElement(email);
-						cliente.addElement(ciudad);
-						cliente.addElement(provincia);
-						cliente.addElement(empresa);
-						cliente.addElement(notas);
-						
-						((MainFrame) mainFrame).addCliente(cliente);
-						
-						
-						
-					}else{
-						
-						clienteActual.setDni(dni);
-						clienteActual.setNombre(nombre);
-						clienteActual.setApellidos(apellidos);
-						clienteActual.setDireccion(direccion);
-						clienteActual.setCiudad(ciudad);
-						clienteActual.setProvincia(provincia);
-						clienteActual.setEmpresa(empresa);
-						clienteActual.setNotas(notas);
-						
-						
-					}
-					
-					limpiarCampos();
-					
-					((MainFrame) mainFrame).cambiarCapa("panelCliente");
-					
-				}
-			});
-		}
-		return btnAceptar;
-	}
-
-	/**
-	 * This method initializes btnVolver	
-	 * 	
-	 * @return javax.swing.JButton	
-	 */
-	private JButton getBtnVolver() {
-		if (btnVolver == null) {
-			btnVolver = new JButton();
-			btnVolver.setText("Volver");
-			btnVolver.setPreferredSize(new Dimension(79, 26));
-			btnVolver.addActionListener(new java.awt.event.ActionListener() {
-				public void actionPerformed(java.awt.event.ActionEvent e) {
-					
-					((MainFrame) mainFrame).cambiarCapa("panelCliente");
-					
-					limpiarCampos();
-					
-				}
-			});
-		}
-		return btnVolver;
-	}
-	
-	private void limpiarCampos(){
+	public void limpiarCampos(){
 		
 		tfDni.setText("");
 		tfNombre.setText("");
@@ -511,7 +346,7 @@ public class PanelDatosClientes extends JPanel {
 									
 								}
 								//lo agrego a la lista
-								modeloLista.addElement(""+telefonoText);
+								modeloLista.addElement(telefonoText);
 								//si no es agregar, entonces lo agrego al cliente para que se actualice
 								if(!agregar){
 									
@@ -561,21 +396,18 @@ public class PanelDatosClientes extends JPanel {
 				public void actionPerformed(java.awt.event.ActionEvent e) {
 					
 					
-					int indice=jlTelefonos.getSelectedIndex();
+					int index=jlTelefonos.getSelectedIndex();
 					
-					if(indice>-1){
+					if(index>-1){
 					
-						if(agregar){
+						
 							
-							modeloLista.removeElementAt(indice);
+						modeloLista.removeElementAt(index);
 							
-						}else{
-							
-							String telefono=(String) modeloLista.getElementAt(indice);
-								
-							clienteActual.delTelefono(telefono);
-							
+						if(!agregar){		
+							clienteActual.delTelefono(index);
 						}
+
 					}else{
 						try {
 							throw new Exception("Debe seleccionar un telefono");
@@ -695,20 +527,16 @@ public class PanelDatosClientes extends JPanel {
 			btnDelEmail.addActionListener(new java.awt.event.ActionListener() {
 				public void actionPerformed(java.awt.event.ActionEvent e) {
 					
-					int indice=jlEmail.getSelectedIndex();
+					int index=jlEmail.getSelectedIndex();
 					
-					if(indice>-1){
-					
-						if(agregar){
+					if(index>-1){
+	
+						modeloListaEmail.removeElementAt(index);
 							
-							modeloListaEmail.removeElementAt(indice);
-							
-						}else{
-							
-							String email=(String) modeloListaEmail.getElementAt(indice);
+						if(!agregar){
 								
-							clienteActual.delEmail(email);
-							
+							clienteActual.delEmail(index);
+					
 						}
 					}else{
 						try {
@@ -1025,6 +853,89 @@ public class PanelDatosClientes extends JPanel {
 			panelTitulo.add(lblTitulo, null);
 		}
 		return panelTitulo;
+	}
+	
+	public Vector<Object> getDatosNewCliente(){
+		
+		//cargo los datos en variables
+		String dni=tfDni.getText();
+		String nombre=tfNombre.getText();
+		String apellidos=tfApellidos.getText();
+		String direccion=tfDireccion.getText();
+		String ciudad=tfCiudad.getText();
+		String provincia=tfProvincia.getText();
+		String empresa=tfEmpresa.getText();
+		String notas=taNotas.getText();
+		
+		//si es agregar la accion entonces de inserta
+		//if(agregar){
+
+			Vector<Telefonos> telefonos=new Vector<Telefonos>();
+			Vector<Emails> email=new Vector<Emails>();
+			
+			//recorro el modelo de la lista
+			for(int x=0; x<modeloLista.getSize(); x++){
+
+				String telTemp=modeloLista.getElementAt(x).toString();
+				
+				telefonos.add(new Telefonos(telTemp));
+				
+			}
+			
+			//recorro el modelo de la lista
+			for(int x=0; x<modeloListaEmail.getSize(); x++){
+				
+				
+				String emailTemp=modeloListaEmail.getElementAt(x).toString();
+
+				email.add(new Emails(emailTemp));
+				
+			}
+			//limpio los campos despues ya que sino se me borran los datos del cliente
+			limpiarCampos();
+			
+			Vector<Object> cliente=new Vector<Object>();
+			
+			cliente.addElement(dni);
+			cliente.addElement(nombre);
+			cliente.addElement(apellidos);
+			cliente.addElement(direccion);
+			cliente.addElement(telefonos);
+			cliente.addElement(email);
+			cliente.addElement(ciudad);
+			cliente.addElement(provincia);
+			cliente.addElement(empresa);
+			cliente.addElement(notas);
+			
+			return cliente;
+		
+		//}
+	}
+	
+	public void guardarCliente(){
+		
+		String dni=tfDni.getText();
+		String nombre=tfNombre.getText();
+		String apellidos=tfApellidos.getText();
+		String direccion=tfDireccion.getText();
+		String ciudad=tfCiudad.getText();
+		String provincia=tfProvincia.getText();
+		String empresa=tfEmpresa.getText();
+		String notas=taNotas.getText();
+		
+		clienteActual.setDni(dni);
+		clienteActual.setNombre(nombre);
+		clienteActual.setApellidos(apellidos);
+		clienteActual.setDireccion(direccion);
+		clienteActual.setCiudad(ciudad);
+		clienteActual.setProvincia(provincia);
+		clienteActual.setEmpresa(empresa);
+		clienteActual.setNotas(notas);
+		
+	}
+	
+	public Cliente getClienteActual(){
+		return clienteActual;
 	}
 
 }  //  @jve:decl-index=0:visual-constraint="10,10"
