@@ -3,17 +3,7 @@
  */
 package clases;
 
-import gui.MainFrame;
-
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.Vector;
-
-import javax.swing.JFrame;
-import javax.swing.JOptionPane;
 
 /**
  * @author ancabi
@@ -32,14 +22,6 @@ public class Cliente {
 	private String notas;
 	private ListadoTelefonos telefonos;
 	private ListadoEmails email;
-	private PreparedStatement psInsertar;
-	private ResultSet rs;
-	private PreparedStatement psInsertarTel;
-	private PreparedStatement psInsertarEmail;
-	private PreparedStatement psBorrarTel;
-	private PreparedStatement psBorrarEmail;
-	private Connection dbConnect=null;
-	private PreparedStatement psBorrarCliente;
 	
 	
 	/**
@@ -304,9 +286,9 @@ public class Cliente {
 	}
 	
 	
-	public Vector getCliente(){
+	public Vector<Object> getCliente(){
 		
-		Vector v=new Vector();
+		Vector<Object> v=new Vector<Object>();
 		
 		v.addElement(idCliente);
 		v.addElement(dni);

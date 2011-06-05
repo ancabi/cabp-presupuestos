@@ -1,7 +1,6 @@
 package clases;
 
-import gui.MainFrame;
-import gui.PanelCliente;
+
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -129,10 +128,12 @@ public class ListadoClientes {
 
 	}
 	
-	public void addCliente(Vector cliente){
+	public void addCliente(Vector<Object> cliente){
 		
 		ResultSet rs;
+		@SuppressWarnings("unchecked")
 		Vector<Telefonos> telefonos=(Vector<Telefonos>) cliente.get(4);
+		@SuppressWarnings("unchecked")
 		Vector<Emails> emails=(Vector<Emails>) cliente.get(5);
 		int idCliente;
 		String dni=(String) cliente.get(0);
@@ -263,7 +264,7 @@ public class ListadoClientes {
 		
 	}
 	
-	public Vector getClientes(){
+	public Vector<Cliente> getClientes(){
 		
 		return clientes;
 		
