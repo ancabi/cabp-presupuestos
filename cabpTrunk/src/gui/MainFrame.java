@@ -30,6 +30,12 @@ import javax.swing.JLabel;
 import java.awt.GridBagConstraints;
 import java.awt.FlowLayout;
 import java.awt.Insets;
+import java.awt.Toolkit;
+import java.awt.Color;
+import javax.swing.BorderFactory;
+import javax.swing.border.SoftBevelBorder;
+import javax.swing.border.TitledBorder;
+import java.awt.Font;
 
 public class MainFrame extends JFrame {
 
@@ -63,6 +69,8 @@ public class MainFrame extends JFrame {
 	private void initialize() {
 		
 		this.setSize(925, 629);
+		this.setForeground(Color.black);
+		this.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/img/cabp1.jpg")));
 		this.setJMenuBar(getJJMenuBar());
 			
 		try {
@@ -182,6 +190,8 @@ public class MainFrame extends JFrame {
 		if (jButton == null) {
 			jButton = new JButton();
 			jButton.setIcon(new ImageIcon(getClass().getResource("/img/user.png")));
+			jButton.setMargin(new Insets(20, 34, 2, 34));
+			jButton.setBorder(BorderFactory.createTitledBorder(null, "", TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, new Font("Dialog", Font.BOLD, 12), new Color(51, 51, 51)));
 			jButton.addActionListener(new java.awt.event.ActionListener() {
 				public void actionPerformed(java.awt.event.ActionEvent e) {
 					
@@ -269,6 +279,8 @@ public class MainFrame extends JFrame {
 		if (btnPresupuesto == null) {
 			btnPresupuesto = new JButton();
 			btnPresupuesto.setIcon(new ImageIcon(getClass().getResource("/img/presupuesto.png")));
+			btnPresupuesto.setMargin(new Insets(20, 34, 2, 34));
+			btnPresupuesto.setBorder(BorderFactory.createTitledBorder(null, "", TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, new Font("Dialog", Font.BOLD, 12), new Color(51, 51, 51)));
 			btnPresupuesto.addActionListener(new java.awt.event.ActionListener() {
 				public void actionPerformed(java.awt.event.ActionEvent e) {
 					

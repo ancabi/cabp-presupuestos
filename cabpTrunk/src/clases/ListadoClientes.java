@@ -308,5 +308,76 @@ public class ListadoClientes {
 		}
 		
 	}
+	
+	public Vector<Object> buscarCliente(String buscar, String criterio){
+		//coleccion donde guardo los clientes que coinciden con la busqueda
+		Vector<Object> datos=new Vector<Object>();
+		buscar=buscar.toLowerCase();
+		//si el criterio de busqueda es DNI, comparo buscar con los dni de los clientes
+		if(criterio.equals("DNI")){
+			String dni;
+			//recorro los clientes
+			for(int x=0; x<clientes.size(); x++){
+				dni=clientes.get(x).getDni().toLowerCase();
+				//si coinciden los dni, lo guardo en el vector
+				if(dni.startsWith(buscar)){
+					datos.add(clientes.get(x).getCliente());
+				}
+				
+			}
+			
+		}else if(criterio.equals("Nombre")){
+			String nombre;
+			//recorro los clientes
+			for(int x=0; x<clientes.size(); x++){
+				nombre=clientes.get(x).getNombre().toLowerCase();
+				//si coinciden los nombres, lo guardo en el vector
+				if(nombre.startsWith(buscar)){
+					datos.add(clientes.get(x).getCliente());
+				}
+				
+			}
+			
+		}else if(criterio.equals("Apellidos")){
+			String apellidos;
+			//recorro los clientes
+			for(int x=0; x<clientes.size(); x++){
+				apellidos=clientes.get(x).getApellidos().toLowerCase();
+				//si coinciden los apellidos, lo guardo en el vector
+				if(apellidos.startsWith(buscar)){
+					datos.add(clientes.get(x).getCliente());
+				}
+				
+			}
+			
+		}else if(criterio.equals("Ciudad")){
+			String ciudad;
+			//recorro los clientes
+			for(int x=0; x<clientes.size(); x++){
+				ciudad=clientes.get(x).getCiudad().toLowerCase();
+				//si coinciden los ciudades, lo guardo en el vector
+				if(ciudad.startsWith(buscar)){
+					datos.add(clientes.get(x).getCliente());
+				}
+				
+			}
+			
+		}else if(criterio.equals("Provincia")){
+			String provincia;
+			//recorro los clientes
+			for(int x=0; x<clientes.size(); x++){
+				provincia=clientes.get(x).getProvincia().toLowerCase();
+				//si coinciden los provincias, lo guardo en el vector
+				if(provincia.startsWith(buscar)){
+					datos.add(clientes.get(x).getCliente());
+				}
+				
+			}
+			
+		}
+		
+		return datos;
+		
+	}
 
 }

@@ -343,7 +343,7 @@ public class PanelDatosClientes extends JPanel {
 								//recorro los numeros que hay agregados	
 								for(int x=0; x<modeloLista.getSize(); x++){
 									//si hay coincidencia
-									if(telefonoText.equals((String) modeloLista.getElementAt(x))){
+									if(telefonoText.equals(modeloLista.getElementAt(x).toString())){
 										//tiro la excepcion para que no se agregue a la lista
 										throw new Exception("No puede haber dos telefonos iguales");
 										
