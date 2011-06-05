@@ -69,21 +69,33 @@ public class ListadoTelefonos {
 	/**
 	 * @param telefono the telefono to delete
 	 */
-	public void delTelefono(int index){
+	public void delTelefono(Telefonos t){
 		
-		Telefonos oldTelefono=telefonos.get(index);
+		String oldTelefono=t.getTelefono();
 		
 		try {
 			psBorrarTel.setInt(1, idCliente);
-			psBorrarTel.setString(2, oldTelefono.getTelefono());
+			psBorrarTel.setString(2, oldTelefono);
 			
 			psBorrarTel.executeUpdate();
 			
-			telefonos.remove(oldTelefono);
+			telefonos.remove(t);
 			
 		} catch (SQLException e) {
 			JOptionPane.showMessageDialog(null, e.getMessage());
 		}
+		
+	}
+	
+	public int getSize(){
+		
+		return telefonos.size();
+		
+	}
+	
+	public Telefonos getTelefono(int index){
+		
+		return telefonos.get(index);
 		
 	}
 
