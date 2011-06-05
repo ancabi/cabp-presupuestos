@@ -245,9 +245,9 @@ public class Cliente {
 	/**
 	 * @return the telefonos
 	 */
-	public Vector getTelefonos() {
+	public ListadoTelefonos getTelefonos() {
 		
-		return telefonos.getTelefonos();
+		return telefonos;
 
 	}
 
@@ -263,8 +263,8 @@ public class Cliente {
 	/**
 	 * @return the email
 	 */
-	public Vector getEmail() {
-		return email.getEmails();
+	public ListadoEmails getEmail() {
+		return email;
 	}
 
 
@@ -280,14 +280,14 @@ public class Cliente {
 	/**
 	 * @param email the email to delete
 	 */
-	public void delEmail(int index){
+	public void delEmail(Emails e){
 
-		email.delEmail(index);
+		email.delEmail(e);
 	}
 	
-	public void delTelefono(int index){
+	public void delTelefono(Telefonos t){
 		
-		telefonos.delTelefono(index);
+		telefonos.delTelefono(t);
 		
 	}
 	

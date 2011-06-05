@@ -69,21 +69,31 @@ public class ListadoEmails {
 	/**
 	 * @param telefono the telefono to delete
 	 */
-	public void delEmail(int index){
+	public void delEmail(Emails e){
 		
-		Emails oldEmail=emails.get(index);
+		String email=e.getEmail();
 		
 		try {
 			psBorrarEmail.setInt(1, idCliente);
-			psBorrarEmail.setString(2, oldEmail.getEmail());
+			psBorrarEmail.setString(2, email);
 			
 			psBorrarEmail.executeUpdate();
 			
-			emails.remove(oldEmail);
+			emails.remove(e);
 			
-		} catch (SQLException e) {
-			JOptionPane.showMessageDialog(null, e.getMessage());
+		} catch (SQLException e1) {
+			JOptionPane.showMessageDialog(null, e1.getMessage());
 		}
+		
+	}
+	
+	public int getSize(){
+		return emails.size();
+	}
+	
+	public Emails getEmail(int index){
+		
+		return emails.get(index);
 		
 	}
 

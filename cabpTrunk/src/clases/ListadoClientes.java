@@ -269,7 +269,7 @@ public class ListadoClientes {
 		
 	}
 
-	public void actualizarCliente(Cliente c) {
+	public void actualizarCliente(Cliente c, Vector<Telefonos> telefonosBorrar, Vector<Emails> emailsBorrar) {
 		
 		int idCliente=c.getIdCliente();
 		String dni=c.getDni();
@@ -294,6 +294,14 @@ public class ListadoClientes {
 			psActualizarCliente.setInt(9, idCliente);
 			
 			psActualizarCliente.executeUpdate();
+			
+			for(int x=0; x<telefonosBorrar.size(); x++){
+				c.delTelefono(telefonosBorrar.get(x));
+			}
+			
+			for(int x=0; x<emailsBorrar.size(); x++){
+				c.delEmail(emailsBorrar.get(x));
+			}
 			
 		} catch (SQLException e) {
 			JOptionPane.showMessageDialog(null, e.getMessage());
