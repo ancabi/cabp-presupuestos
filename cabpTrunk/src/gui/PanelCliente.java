@@ -21,6 +21,9 @@ import modelo.ModeloGeneral;
 import javax.swing.JTextField;
 
 import clases.Cliente;
+import clases.Emails;
+import clases.Telefonos;
+
 import javax.swing.JLabel;
 import java.awt.GridBagConstraints;
 import java.awt.Insets;
@@ -117,7 +120,7 @@ public class PanelCliente extends JPanel {
 									
 									int x = jTable.rowAtPoint(evt.getPoint());
 									
-									Cliente c=((MainFrame) mainFrame).getCliente(x);
+									Cliente c=((MainFrame) mainFrame).getListadoClientes().getCliente(x);
 									
 									dialogoModCliente=getDialogoModCliente();
 									
@@ -126,8 +129,14 @@ public class PanelCliente extends JPanel {
 									dialogoModCliente.setVisible(true);
 									
 									if(dialogoModCliente.getValorPulsado()==dialogoModCliente.VALOR_ACEPTAR){
-										
-										((MainFrame) mainFrame).actualizarCliente(dialogoModCliente.getClienteActual());
+										//traigo el vector de los telefonos a borrar
+										Vector<Telefonos> telefonosBorrar=dialogoModCliente.getTabbedCliente().getPanelDatosClientes().getTelefonoBorrar();
+										//y los emails
+										Vector<Emails> emailsBorrar=dialogoModCliente.getTabbedCliente().getPanelDatosClientes().getEmailsBorrar();
+										//se lo paso al panel para borrarlos
+										((MainFrame) mainFrame).getListadoClientes().actualizarCliente(c, telefonosBorrar, emailsBorrar);
+										//vacio los campos
+										dialogoModCliente.getTabbedCliente().getPanelDatosClientes().limpiarCampos();
 										
 										actualizarTablaClientes();
 										
@@ -179,9 +188,9 @@ public class PanelCliente extends JPanel {
 					
 					if(dialogoAddCliente.getValorPulsado()==dialogoAddCliente.VALOR_ACEPTAR){
 						
-						((MainFrame) mainFrame).addCliente(dialogoAddCliente.getNewCliente());
+						((MainFrame) mainFrame).getListadoClientes().addCliente(dialogoAddCliente.getNewCliente());
 						
-						
+						actualizarTablaClientes();
 						
 					}
 					
@@ -250,9 +259,11 @@ public class PanelCliente extends JPanel {
 					
 					if(seleccionado>=0){
 						
-						Cliente c=((MainFrame) mainFrame).getCliente(seleccionado);
+						Cliente c=((MainFrame) mainFrame).getListadoClientes().getCliente(seleccionado);
 						
-						((MainFrame) mainFrame).delCliente(c);
+						((MainFrame) mainFrame).getListadoClientes().delCliente(c);
+						
+						actualizarTablaClientes();
 						
 					}
 					
@@ -266,7 +277,7 @@ public class PanelCliente extends JPanel {
 	public void actualizarTablaClientes(){
 		
 		
-		Vector clientes=((MainFrame) mainFrame).getClientes();
+		Vector clientes=((MainFrame) mainFrame).getListadoClientes().getClientes();
 		Vector data=new Vector();
 		
 		Iterator i=clientes.iterator();
