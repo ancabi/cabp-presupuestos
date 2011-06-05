@@ -29,6 +29,8 @@ import java.awt.GridBagConstraints;
 import java.awt.Insets;
 import java.awt.FlowLayout;
 import java.awt.Font;
+import java.awt.GridBagLayout;
+import javax.swing.ImageIcon;
 
 public class PanelCliente extends JPanel {
 
@@ -53,6 +55,8 @@ public class PanelCliente extends JPanel {
 	private JLabel lblTitulo = null;
 	private DialogoAddCliente dialogoAddCliente;
 	private DialogoModCliente dialogoModCliente;
+	private DialogoBuscarCliente dialogoBuscarCliente;
+	private JButton btnVolver = null;
 	/**
 	 * This is the default constructor
 	 */
@@ -72,7 +76,6 @@ public class PanelCliente extends JPanel {
 		this.setSize(758, 507);
 		this.setLayout(new BorderLayout());
 		this.add(getJScrollPane(), BorderLayout.CENTER);
-		this.add(getPaneBtnUser(), BorderLayout.EAST);
 		this.add(getPanelTitulo(), BorderLayout.NORTH);
 	}
 
@@ -114,6 +117,10 @@ public class PanelCliente extends JPanel {
 			
 			jTable = new JTable(modelo);
 			jTable.setAutoCreateRowSorter(true);
+			jTable.getColumn("ID Cliente").setMaxWidth(70);
+			jTable.getColumn("DNI").setMaxWidth(75);
+			jTable.getColumn("Telefono").setMaxWidth(75);
+			
 						jTable.addMouseListener(new java.awt.event.MouseAdapter() { 
 							public void mouseClicked(java.awt.event.MouseEvent evt) {    
 								if (evt.getClickCount() >= 2){// si es doble click
@@ -158,10 +165,11 @@ public class PanelCliente extends JPanel {
 	private JPanel getPaneBtnUser() {
 		if (paneBtnUser == null) {
 			paneBtnUser = new JPanel();
-			paneBtnUser.setLayout(new BoxLayout(getPaneBtnUser(), BoxLayout.Y_AXIS));
+			paneBtnUser.setLayout(new FlowLayout());
 			paneBtnUser.add(getBtnAgregar(), null);
-			paneBtnUser.add(getJButton(), null);
 			paneBtnUser.add(getJButton1(), null);
+			paneBtnUser.add(getJButton(), null);
+			paneBtnUser.add(getBtnVolver(), null);
 		}
 		return paneBtnUser;
 	}
@@ -174,13 +182,12 @@ public class PanelCliente extends JPanel {
 	private JButton getBtnAgregar() {
 		if (btnAgregar == null) {
 			btnAgregar = new JButton();
-			btnAgregar.setText("Agregar");
+			btnAgregar.setText("");
 			btnAgregar.setMaximumSize(new Dimension(85, 25));
+			btnAgregar.setIcon(new ImageIcon(getClass().getResource("/img/add.png")));
 			btnAgregar.setMinimumSize(new Dimension(85, 25));
 			btnAgregar.addActionListener(new java.awt.event.ActionListener() {
 				public void actionPerformed(java.awt.event.ActionEvent e) {
-					//muestro el panel en el que se insertan los datos
-					//((MainFrame) mainFrame).cambiarCapa("panelAddClientes");
 					
 					dialogoAddCliente=getDialogoAddCliente();
 					
@@ -232,12 +239,53 @@ public class PanelCliente extends JPanel {
 	private JButton getJButton() {
 		if (jButton == null) {
 			jButton = new JButton();
-			jButton.setText("Buscar");
+			jButton.setText("");
 			jButton.setMinimumSize(new Dimension(85, 25));
 			jButton.setMaximumSize(new Dimension(85, 25));
-			jButton.setPreferredSize(new Dimension(85, 25));
+			jButton.setIcon(new ImageIcon(getClass().getResource("/img/search.png")));
+			jButton.setPreferredSize(new Dimension(58, 34));
+			jButton.addActionListener(new java.awt.event.ActionListener() {
+				public void actionPerformed(java.awt.event.ActionEvent e) {
+					
+					dialogoBuscarCliente=getDialogoBuscarCliente();
+					
+					dialogoBuscarCliente.setVisible(true);
+					
+					if(dialogoBuscarCliente.getValorPulsado()==dialogoBuscarCliente.VALOR_ACEPTAR){
+						
+						String buscar=dialogoBuscarCliente.getBuscar();
+						String criterio=dialogoBuscarCliente.getCriterio();
+						
+						Vector datos=((MainFrame) mainFrame).getListadoClientes().buscarCliente(buscar, criterio);
+						
+						
+						if(datos.isEmpty()){
+							try {
+								throw new Exception("No hubo coincidencias en la busqueda");
+							} catch (Exception e1) {
+								JOptionPane.showMessageDialog(null, e1.getMessage());
+							}
+						}else{
+							modelo.setData(datos);
+							btnVolver.setEnabled(true);
+						}
+					}
+				}
+			});
 		}
 		return jButton;
+	}
+	
+	private DialogoBuscarCliente getDialogoBuscarCliente(){
+		
+		if(dialogoBuscarCliente==null){
+			
+			dialogoBuscarCliente=new DialogoBuscarCliente(mainFrame);
+			
+		}
+		
+		return dialogoBuscarCliente;
+		
 	}
 
 	/**
@@ -248,10 +296,11 @@ public class PanelCliente extends JPanel {
 	private JButton getJButton1() {
 		if (jButton1 == null) {
 			jButton1 = new JButton();
-			jButton1.setText("Eliminar");
+			jButton1.setText("");
 			jButton1.setMaximumSize(new Dimension(85, 25));
 			jButton1.setMinimumSize(new Dimension(85, 25));
-			jButton1.setPreferredSize(new Dimension(85, 25));
+			jButton1.setIcon(new ImageIcon(getClass().getResource("/img/delete.png")));
+			jButton1.setPreferredSize(new Dimension(58, 34));
 			jButton1.addActionListener(new java.awt.event.ActionListener() {
 				public void actionPerformed(java.awt.event.ActionEvent e) {
 					
@@ -301,11 +350,10 @@ public class PanelCliente extends JPanel {
 	 */
 	private JPanel getPanelTitulo() {
 		if (panelTitulo == null) {
-			FlowLayout flowLayout = new FlowLayout();
-			flowLayout.setAlignment(java.awt.FlowLayout.LEFT);
 			panelTitulo = new JPanel();
-			panelTitulo.setLayout(flowLayout);
-			panelTitulo.add(getLblTitulo(), null);
+			panelTitulo.setLayout(new BorderLayout());
+			panelTitulo.add(getLblTitulo(), BorderLayout.WEST);
+			panelTitulo.add(getPaneBtnUser(), BorderLayout.EAST);
 		}
 		return panelTitulo;
 	}
@@ -322,6 +370,28 @@ public class PanelCliente extends JPanel {
 			lblTitulo.setFont(new Font("Times New Roman", Font.BOLD, 18));
 		}
 		return lblTitulo;
+	}
+
+	/**
+	 * This method initializes btnVolver	
+	 * 	
+	 * @return javax.swing.JButton	
+	 */
+	private JButton getBtnVolver() {
+		if (btnVolver == null) {
+			btnVolver = new JButton();
+			btnVolver.setText("");
+			btnVolver.setEnabled(false);
+			btnVolver.setIcon(new ImageIcon(getClass().getResource("/img/refresh.png")));
+			btnVolver.addActionListener(new java.awt.event.ActionListener() {
+				public void actionPerformed(java.awt.event.ActionEvent e) {
+					actualizarTablaClientes();
+					
+					btnVolver.setEnabled(false);
+				}
+			});
+		}
+		return btnVolver;
 	}
 	
 }  //  @jve:decl-index=0:visual-constraint="10,10"
