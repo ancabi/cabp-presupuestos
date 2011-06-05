@@ -33,6 +33,8 @@ import javax.swing.ImageIcon;
 
 import clases.Cliente;
 import clases.Emails;
+import clases.ListadoEmails;
+import clases.ListadoTelefonos;
 import clases.Telefonos;
 
 public class PanelDatosClientes extends JPanel {
@@ -86,6 +88,8 @@ public class PanelDatosClientes extends JPanel {
 	private Cliente clienteActual;  //  @jve:decl-index=0:
 	private JPanel panelTitulo = null;
 	private JLabel lblTitulo = null;
+	private Vector<Telefonos> telefonoBorrar=new Vector<Telefonos>();  //  @jve:decl-index=0:
+	private Vector<Emails> emailsBorrar=new Vector<Emails>();
 	/**
 	 * This is the default constructor
 	 */
@@ -234,6 +238,9 @@ public class PanelDatosClientes extends JPanel {
 		modeloLista.clear();
 		modeloListaEmail.clear();
 		
+		//telefonoBorrar.clear();
+		//emailsBorrar.clear();
+		
 		agregar=true;
 		lblTitulo.setText("Agregar cliente");
 		
@@ -254,21 +261,19 @@ public class PanelDatosClientes extends JPanel {
 		tfNombre.setText(clienteActual.getNombre());
 		tfApellidos.setText(clienteActual.getApellidos());
 		
-		Vector telTemp=clienteActual.getTelefonos();
-		Iterator i=telTemp.iterator();
+		ListadoTelefonos listTelefonos=clienteActual.getTelefonos();
 		
-		while(i.hasNext()){
+		for(int x=0; x<listTelefonos.getSize(); x++){
 			
-			modeloLista.addElement(( i.next().toString()));
+			modeloLista.addElement(listTelefonos.getTelefono(x));
 			
 		}
 		
-		Vector emailTemp=clienteActual.getEmail();
-		Iterator e=emailTemp.iterator();
+		ListadoEmails listEmails=clienteActual.getEmail();
 		
-		while(e.hasNext()){
+		for(int x=0; x<listEmails.getSize(); x++){
 			
-			modeloListaEmail.addElement((e.next().toString()));
+			modeloListaEmail.addElement(listEmails.getEmail(x));
 			
 		}
 		
@@ -399,14 +404,12 @@ public class PanelDatosClientes extends JPanel {
 					int index=jlTelefonos.getSelectedIndex();
 					
 					if(index>-1){
-					
-						
-							
-						modeloLista.removeElementAt(index);
 							
 						if(!agregar){		
-							clienteActual.delTelefono(index);
+							telefonoBorrar.add((Telefonos) modeloLista.get(index));
 						}
+						
+						modeloLista.removeElementAt(index);
 
 					}else{
 						try {
@@ -530,14 +533,16 @@ public class PanelDatosClientes extends JPanel {
 					int index=jlEmail.getSelectedIndex();
 					
 					if(index>-1){
+						
+						if(!agregar){
+							
+							emailsBorrar.add((Emails) modeloListaEmail.get(index));
+					
+						}
 	
 						modeloListaEmail.removeElementAt(index);
 							
-						if(!agregar){
-								
-							clienteActual.delEmail(index);
-					
-						}
+						
 					}else{
 						try {
 							throw new Exception("Debe seleccionar un E-mail");
@@ -937,5 +942,23 @@ public class PanelDatosClientes extends JPanel {
 	public Cliente getClienteActual(){
 		return clienteActual;
 	}
+
+	public Vector<Telefonos> getTelefonoBorrar() {
+		return telefonoBorrar;
+	}
+
+	public void setTelefonoBorrar(Vector<Telefonos> telefonoBorrar) {
+		this.telefonoBorrar = telefonoBorrar;
+	}
+
+	public Vector<Emails> getEmailsBorrar() {
+		return emailsBorrar;
+	}
+
+	public void setEmailsBorrar(Vector<Emails> emailsBorrar) {
+		this.emailsBorrar = emailsBorrar;
+	}
+	
+	
 
 }  //  @jve:decl-index=0:visual-constraint="10,10"

@@ -1,22 +1,16 @@
 package gui;
 
-import javax.swing.JFrame;
 import javax.swing.JTabbedPane;
-import java.awt.Dimension;
 import javax.swing.JPanel;
-
 import clases.Cliente;
-
 import java.awt.GridBagLayout;
-import java.sql.Connection;
-import java.util.Vector;
+
 
 public class TabCliente extends JTabbedPane {
 
 	private static final long serialVersionUID = 1L;
 	private JPanel panelDatos = null;
 	private JPanel panelClientePres = null;
-	private Connection dbConnect;
 	private JPanel panelImg = null;
 	private JPanel panelPdf = null;
 
@@ -83,10 +77,8 @@ public class TabCliente extends JTabbedPane {
 		
 	}
 	
-	public void limpiarCampos(){
-		
-		((PanelDatosClientes) panelDatos).limpiarCampos();
-		
+	public PanelDatosClientes getPanelDatosClientes(){
+		return (PanelDatosClientes) panelDatos;
 	}
 
 	/**
@@ -112,10 +104,4 @@ public class TabCliente extends JTabbedPane {
 		}
 		return panelPdf;
 	}
-
-	public Cliente getClienteActual() {
-
-		return ((PanelDatosClientes) panelDatos).getClienteActual();
-	}
-
 }  //  @jve:decl-index=0:visual-constraint="10,10"

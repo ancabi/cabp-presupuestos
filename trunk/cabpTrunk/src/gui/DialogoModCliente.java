@@ -9,6 +9,7 @@ import java.awt.BorderLayout;
 import javax.swing.JDialog;
 import javax.swing.JButton;
 import java.awt.FlowLayout;
+
 import javax.swing.JTabbedPane;
 
 import clases.Cliente;
@@ -51,7 +52,7 @@ public class DialogoModCliente extends JDialog {
 				
 				setVisible(false);
 				
-				((TabCliente) tabCliente).limpiarCampos();
+				((TabCliente) tabCliente).getPanelDatosClientes().limpiarCampos();
 				
 				valorPulsado=VALOR_CANCELAR;
 			}
@@ -101,11 +102,9 @@ public class DialogoModCliente extends JDialog {
 			btnAceptar.addActionListener(new java.awt.event.ActionListener() {
 				public void actionPerformed(java.awt.event.ActionEvent e) {
 					
-					((TabCliente) tabCliente).guardarCliente();
+					((TabCliente) tabCliente).getPanelDatosClientes().guardarCliente();
 					
 					setVisible(false);
-					
-					((TabCliente) tabCliente).limpiarCampos();
 					
 					valorPulsado=VALOR_ACEPTAR;
 					
@@ -129,7 +128,7 @@ public class DialogoModCliente extends JDialog {
 					
 					setVisible(false);
 					
-					((TabCliente) tabCliente).limpiarCampos();
+					((TabCliente) tabCliente).getPanelDatosClientes().limpiarCampos();
 					
 					valorPulsado=VALOR_CANCELAR;
 				}
@@ -143,7 +142,7 @@ public class DialogoModCliente extends JDialog {
 	}
 	
 	public Cliente getClienteActual(){
-		return ((TabCliente)tabCliente).getClienteActual();
+		return ((TabCliente) tabCliente).getPanelDatosClientes().getClienteActual();
 	}
 
 	/**
@@ -164,6 +163,11 @@ public class DialogoModCliente extends JDialog {
 		
 	}
 	
+	public TabCliente getTabbedCliente(){
+		
+		return (TabCliente) tabCliente;
+		
+	}
 	
 
 }  //  @jve:decl-index=0:visual-constraint="10,10"

@@ -20,12 +20,16 @@ import java.util.Vector;
 import javax.swing.ImageIcon;
 
 import clases.Cliente;
+import clases.Emails;
 import clases.ListadoClientes;
+import clases.Telefonos;
 import conexion.Conectar;
 import javax.swing.JTabbedPane;
 import java.awt.Dimension;
 import javax.swing.JLabel;
 import java.awt.GridBagConstraints;
+import java.awt.FlowLayout;
+import java.awt.Insets;
 
 public class MainFrame extends JFrame {
 
@@ -40,11 +44,9 @@ public class MainFrame extends JFrame {
 	private JPanel panelVacio = null;
 	private JPanel panelCliente = null;
 	private Connection dbConnect;  //  @jve:decl-index=0:
-	private JTabbedPane tabCliente = null;
-	private JPanel panelAddClientes = null;
-	private JPanel panelPresupuesto = null;
 	private JButton btnPresupuesto = null;
 	private ListadoClientes listadoClientes= null;  //  @jve:decl-index=0:
+	private JLabel lblLogo = null;
 	/**
 	 * This is the default constructor
 	 */
@@ -204,9 +206,6 @@ public class MainFrame extends JFrame {
 			panelCard.setLayout(new CardLayout());
 			panelCard.add(getPanelVacio(), getPanelVacio().getName());
 			panelCard.add(getPanelCliente(), getPanelCliente().getName());
-			panelCard.add(getTabCliente(), getTabCliente().getName());
-			panelCard.add(getPanelAddClientes(), getPanelAddClientes().getName());
-			panelCard.add(getPanelPresupuesto(), getPanelPresupuesto().getName());
 		}
 		return panelCard;
 	}
@@ -218,9 +217,18 @@ public class MainFrame extends JFrame {
 	 */
 	private JPanel getPanelVacio() {
 		if (panelVacio == null) {
+			GridBagConstraints gridBagConstraints = new GridBagConstraints();
+			gridBagConstraints.insets = new Insets(5, 318, 256, 318);
+			gridBagConstraints.gridy = 0;
+			gridBagConstraints.gridx = 0;
+			lblLogo = new JLabel();
+			lblLogo.setText("");
+			lblLogo.setPreferredSize(new Dimension(281, 271));
+			lblLogo.setIcon(new ImageIcon(getClass().getResource("/img/cabp1.jpg")));
 			panelVacio = new JPanel();
 			panelVacio.setLayout(new GridBagLayout());
 			panelVacio.setName("panelVacio");
+			panelVacio.add(lblLogo, gridBagConstraints);
 		}
 		return panelVacio;
 	}
@@ -253,71 +261,6 @@ public class MainFrame extends JFrame {
 	}
 
 	/**
-	 * This method initializes tabCliente	
-	 * 	
-	 * @return javax.swing.JTabbedPane	
-	 */
-	private JTabbedPane getTabCliente() {
-		if (tabCliente == null) {
-			tabCliente = new TabCliente();
-			tabCliente.setName("tabCliente");
-		}
-		return tabCliente;
-	}
-
-	/**
-	 * This method initializes panelAddClientes	
-	 * 	
-	 * @return javax.swing.JPanel	
-	 */
-	private JPanel getPanelAddClientes() {
-		if (panelAddClientes == null) {
-			panelAddClientes = new PanelDatosClientes();
-			panelAddClientes.setName("panelAddClientes");
-		}
-		return panelAddClientes;
-	}
-	
-	public Cliente getCliente(int id){
-		//pido el vector con los datos y lo devuelvo
-		return listadoClientes.getCliente(id);
-
-	}
-	
-	public Vector getClientes(){
-		
-		return listadoClientes.getClientes();
-		
-	}
-	
-	public void addCliente(Vector<Object> cliente){
-
-		listadoClientes.addCliente(cliente);
-		
-		((PanelCliente) panelCliente).actualizarTablaClientes();
-		
-	}
-	
-	public void actualizarCliente(Cliente c){
-		
-		listadoClientes.actualizarCliente(c);
-		
-	}
-
-	/**
-	 * This method initializes panelPresupuesto	
-	 * 	
-	 * @return javax.swing.JPanel	
-	 */
-	private JPanel getPanelPresupuesto() {
-		if (panelPresupuesto == null) {
-			panelPresupuesto = new PanelPresupuesto();
-			panelPresupuesto.setName("panelPresupuesto");
-		}
-		return panelPresupuesto;
-	}
-
-	/**
 	 * This method initializes btnPresupuesto	
 	 * 	
 	 * @return javax.swing.JButton	
@@ -337,12 +280,9 @@ public class MainFrame extends JFrame {
 		return btnPresupuesto;
 	}
 
-	public void delCliente(Cliente c) {
-		
-		listadoClientes.delCliente(c);
-		
-		((PanelCliente) panelCliente).actualizarTablaClientes();
-		
+	public ListadoClientes getListadoClientes() {
+
+		return listadoClientes;
 	}
 
 }  //  @jve:decl-index=0:visual-constraint="10,10"
