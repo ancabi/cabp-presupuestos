@@ -45,6 +45,7 @@ public class DialogoModCliente extends JDialog {
 	 */
 	private void initialize() {
 		this.setSize(781, 558);
+		this.setTitle("Modificar cliente");
 		this.setContentPane(getJContentPane());
 		this.setModal(true);
 		this.addWindowListener(new java.awt.event.WindowAdapter() {

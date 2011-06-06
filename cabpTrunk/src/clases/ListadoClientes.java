@@ -91,7 +91,7 @@ public class ListadoClientes {
 					//lo asigno
 					String telefono=rsSec.getString("telefono");
 					//guardo el vector de telefonos
-					listTelefonos.addTelefono(new Telefonos(telefono));
+					listTelefonos.setTelefono(new Telefonos(telefono));
 					
 				}
 				//asigno el idCliente para los emails
@@ -105,7 +105,7 @@ public class ListadoClientes {
 					//lo asigno
 					String email=rsSec.getString("email");
 					//guardo el vector de emails
-					listEmails.addEmail(new Emails(email));
+					listEmails.setEmail(new Emails(email));
 					
 				}
 				
@@ -119,15 +119,15 @@ public class ListadoClientes {
 		
 	}
 	
-	public Cliente getCliente(int id){
+	public Cliente getCliente(int index){
 		
 		//guardo el cliente que piden
-		Cliente c=clientes.get(id);
+		Cliente c=clientes.get(index);
 		//pido el vector con los datos y lo devuelvo
 		return c;
 
 	}
-	
+
 	public void addCliente(Vector<Object> cliente){
 		
 		ResultSet rs;
@@ -173,7 +173,7 @@ public class ListadoClientes {
 
 				String telefono=telefonos.get(x).getTelefono();
 				
-				listTelefonos.setTelefono(new Telefonos(telefono));
+				listTelefonos.addTelefono(new Telefonos(telefono));
 				
 			}
 			
@@ -269,7 +269,7 @@ public class ListadoClientes {
 		return clientes;
 		
 	}
-
+//quitar vectores
 	public void actualizarCliente(Cliente c, Vector<Telefonos> telefonosBorrar, Vector<Emails> emailsBorrar) {
 		
 		int idCliente=c.getIdCliente();
@@ -378,6 +378,12 @@ public class ListadoClientes {
 		}
 		
 		return datos;
+		
+	}
+	
+	public int getSize(){
+		
+		return clientes.size();
 		
 	}
 

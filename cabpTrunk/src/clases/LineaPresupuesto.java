@@ -9,41 +9,32 @@ package clases;
  */
 public class LineaPresupuesto {
 	
-	Productos producto;
+	int idProducto;
+	int idPresupuesto;
+	String nombre;
+	double precio;
 	int cantidad;
+	
+	
 	/**
-	 * @param producto
+	 * @param idProducto
+	 * @param idPresupuesto
+	 * @param nombre
+	 * @param precio
 	 * @param cantidad
 	 */
-	public LineaPresupuesto(Productos producto, int cantidad) {
-		this.producto = producto;
-		this.cantidad = cantidad;
-	}
-	/**
-	 * @return the producto
-	 */
-	public Productos getProducto() {
-		return producto;
-	}
-	/**
-	 * @param producto the producto to set
-	 */
-	public void setProducto(Productos producto) {
-		this.producto = producto;
-	}
-	/**
-	 * @return the cantidad
-	 */
-	public int getCantidad() {
-		return cantidad;
-	}
-	/**
-	 * @param cantidad the cantidad to set
-	 */
-	public void setCantidad(int cantidad) {
+	public LineaPresupuesto(int idProducto, int idPresupuesto, String nombre,
+			double precio, int cantidad) {
+		this.idProducto = idProducto;
+		this.idPresupuesto = idPresupuesto;
+		this.nombre = nombre;
+		this.precio = precio;
 		this.cantidad = cantidad;
 	}
 	
 	
-
+	
+	
+	
 }
+	

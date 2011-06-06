@@ -352,12 +352,7 @@ public class PanelDatosClientes extends JPanel {
 								}
 								//lo agrego a la lista
 								modeloLista.addElement(telefonoText);
-								//si no es agregar, entonces lo agrego al cliente para que se actualice
-								if(!agregar){
-									
-									clienteActual.addTelefono(telefonoText);
-									
-								}
+								
 								
 							} catch (Exception e1) {
 								JOptionPane.showMessageDialog(null, e1.getMessage());
@@ -404,10 +399,6 @@ public class PanelDatosClientes extends JPanel {
 					int index=jlTelefonos.getSelectedIndex();
 					
 					if(index>-1){
-							
-						if(!agregar){		
-							telefonoBorrar.add((Telefonos) modeloLista.get(index));
-						}
 						
 						modeloLista.removeElementAt(index);
 
@@ -487,10 +478,6 @@ public class PanelDatosClientes extends JPanel {
 								}
 								
 							}
-	
-							if(!agregar){
-								clienteActual.addEmail(email);
-							}
 							
 							modeloListaEmail.addElement(email);
 							
@@ -534,12 +521,6 @@ public class PanelDatosClientes extends JPanel {
 					
 					if(index>-1){
 						
-						if(!agregar){
-							
-							emailsBorrar.add((Emails) modeloListaEmail.get(index));
-					
-						}
-	
 						modeloListaEmail.removeElementAt(index);
 							
 						
@@ -936,6 +917,30 @@ public class PanelDatosClientes extends JPanel {
 		clienteActual.setProvincia(provincia);
 		clienteActual.setEmpresa(empresa);
 		clienteActual.setNotas(notas);
+		
+		clienteActual.delAllTelefonos();
+		
+		Vector<Telefonos> tel=new Vector<Telefonos>();
+		
+		for(int x=0; x<modeloLista.size(); x++){
+			
+			tel.add(new Telefonos( modeloLista.get(x).toString()));
+			
+		}
+		
+		clienteActual.setTelefonos(tel);
+		
+		clienteActual.delAllEmails();
+		
+		Vector<Emails> emails=new Vector<Emails>();
+		
+		for(int x=0; x<modeloListaEmail.size(); x++){
+			
+			emails.add(new Emails(modeloListaEmail.get(x).toString()));
+			
+		}
+		
+		clienteActual.setEmails(emails);
 		
 	}
 	
