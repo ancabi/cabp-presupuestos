@@ -23,19 +23,23 @@ public class ListadoTelefonos {
 	private PreparedStatement psInsertarTel;
 	private int idCliente;
 	private PreparedStatement psBorrarTel;
+	private PreparedStatement psBorrarAllTel;
 	
 	public ListadoTelefonos(int idCliente){
-		
-		this.idCliente=idCliente;
 		
 		try {
 			psInsertarTel=dbConnect.prepareStatement("INSERT INTO telefonos(idCliente, telefono) VALUES (?,?)");
 			
 			psBorrarTel=dbConnect.prepareStatement("DELETE FROM telefonos WHERE idCliente=? AND telefono=?");
+			
+			psBorrarAllTel=dbConnect.prepareStatement("DELETE FROM telefonos WHERE idCliente=?");
+			
 		} catch (SQLException e) {
 			JOptionPane.showMessageDialog(null, e.getMessage());
 		}
 		
+		this.idCliente=idCliente;
+
 	}
 
 	public Vector<Telefonos> getTelefonos() {
@@ -43,26 +47,23 @@ public class ListadoTelefonos {
 		return telefonos;
 		
 	}
+	
+	public void setTelefono(Telefonos telefono){
+		telefonos.add(telefono);
+	}
+	
+	public void addTelefono(Telefonos newTelefono) {
 
-	public void setTelefono(Telefonos newTelefono) {
-		
-		telefonos.add(newTelefono);
-		
 		try {
 			psInsertarTel.setInt(1, idCliente);
 			psInsertarTel.setString(2, newTelefono.getTelefono());
 			
 			psInsertarTel.executeUpdate();
+			
+			telefonos.add(newTelefono);
 		} catch (SQLException e) {
 			JOptionPane.showMessageDialog(null, e.getMessage());
 		}
-		
-		
-	}
-	
-	public void addTelefono(Telefonos newTelefono) {
-		
-		telefonos.add(newTelefono);		
 		
 	}
 	
@@ -97,6 +98,30 @@ public class ListadoTelefonos {
 		
 		return telefonos.get(index);
 		
+	}
+
+	public void delAllTelefonos() {
+		
+		try {
+			
+			psBorrarAllTel.setInt(1, idCliente);
+			
+			psBorrarAllTel.executeUpdate();
+			
+			telefonos.clear();
+		} catch (SQLException e) {
+			JOptionPane.showMessageDialog(null, e.getMessage());
+		}
+		
+	}
+
+	public void setTelefonos(Vector<Telefonos> tel) {
+		
+			for(int x=0; x<tel.size(); x++){
+					
+					this.addTelefono(tel.get(x));
+	
+			}
 	}
 
 }

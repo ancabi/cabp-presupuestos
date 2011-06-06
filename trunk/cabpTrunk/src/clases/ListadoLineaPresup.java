@@ -28,8 +28,15 @@ public class ListadoLineaPresup {
 	 * @param idPresupuesto
 	 */
 	public ListadoLineaPresup(int idPresupuesto) {
+		
+		this();
+		
 		this.idPresupuesto = idPresupuesto;
 		
+	}
+	
+	public ListadoLineaPresup() {
+
 		try {
 			psLineaPresup=dbConnect.prepareStatement("SELECT * FROM lineaPresup WHERE idPresupuesto=?");
 		} catch (SQLException e) {
@@ -51,9 +58,9 @@ public class ListadoLineaPresup {
 				String nombreProd=rs.getString("nomProducto");
 				int cantidad=rs.getInt("cantidad");
 				
-				Producto producto=new Producto()
+				Productos producto=new Productos();
 				
-				lineaPresupuesto.add(new LineaPresupuesto(producto, cantidad));
+				//lineaPresupuesto.add(new LineaPresupuesto(producto, cantidad));
 				
 			}
 			
@@ -62,6 +69,15 @@ public class ListadoLineaPresup {
 		}
 		
 	}
+
+	/**
+	 * @param idPresupuesto the idPresupuesto to set
+	 */
+	public void setIdPresupuesto(int idPresupuesto) {
+		this.idPresupuesto = idPresupuesto;
+	}
+	
+	
 	
 	
 

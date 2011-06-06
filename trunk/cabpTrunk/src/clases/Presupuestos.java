@@ -10,6 +10,7 @@ package clases;
 public class Presupuestos {
 	
 	private int idPresupuesto;
+	//cambiar a linea de gasto
 	private int ganancia;
 	private int restaurante;
 	private int pasaje;
@@ -22,7 +23,7 @@ public class Presupuestos {
 	private double total;
 	private int transporte;
 	private String texto;
-	private ListadoLineaPresup listadoLineaPresup;
+	private ListadoLineaPresup listadoLineaPresup=null;
 	
 	/**
 	 * @param idPresupuesto

@@ -52,7 +52,7 @@ public class MainFrame extends JFrame {
 	private Connection dbConnect;  //  @jve:decl-index=0:
 	private JButton btnPresupuesto = null;
 	private ListadoClientes listadoClientes= null;  //  @jve:decl-index=0:
-	private JLabel lblLogo = null;
+	private DialogoSeleccionCliente dialogoSeleccionCliente;
 	/**
 	 * This is the default constructor
 	 */
@@ -227,18 +227,9 @@ public class MainFrame extends JFrame {
 	 */
 	private JPanel getPanelVacio() {
 		if (panelVacio == null) {
-			GridBagConstraints gridBagConstraints = new GridBagConstraints();
-			gridBagConstraints.insets = new Insets(5, 318, 256, 318);
-			gridBagConstraints.gridy = 0;
-			gridBagConstraints.gridx = 0;
-			lblLogo = new JLabel();
-			lblLogo.setText("");
-			lblLogo.setPreferredSize(new Dimension(281, 271));
-			lblLogo.setIcon(new ImageIcon(getClass().getResource("/img/cabp1.jpg")));
 			panelVacio = new JPanel();
 			panelVacio.setLayout(new GridBagLayout());
 			panelVacio.setName("panelVacio");
-			panelVacio.add(lblLogo, gridBagConstraints);
 		}
 		return panelVacio;
 	}
@@ -284,8 +275,13 @@ public class MainFrame extends JFrame {
 			btnPresupuesto.addActionListener(new java.awt.event.ActionListener() {
 				public void actionPerformed(java.awt.event.ActionEvent e) {
 					
-					//cambio la capa para el panel de presupuestos
-					cambiarCapa("panelPresupuesto");
+					cambiarCapa("panelVacio");
+					
+					dialogoSeleccionCliente=getDialogoSeleccionCliente();
+					
+					dialogoSeleccionCliente.actualizarCliente();
+					
+					dialogoSeleccionCliente.setVisible(true);
 				}
 			});
 		}
@@ -295,6 +291,18 @@ public class MainFrame extends JFrame {
 	public ListadoClientes getListadoClientes() {
 
 		return listadoClientes;
+	}
+	
+	private DialogoSeleccionCliente getDialogoSeleccionCliente(){
+		
+		if(dialogoSeleccionCliente==null){
+			
+			dialogoSeleccionCliente=new DialogoSeleccionCliente(this);
+			
+		}
+		
+		return dialogoSeleccionCliente;
+		
 	}
 
 }  //  @jve:decl-index=0:visual-constraint="10,10"

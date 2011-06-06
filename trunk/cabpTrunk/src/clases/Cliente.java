@@ -237,8 +237,8 @@ public class Cliente {
 	/**
 	 * @param telefonos the telefonos to set
 	 */
-	public void setTelefonos(ListadoTelefonos telefonos) {
-		this.telefonos = telefonos;
+	public void setTelefonos(Vector<Telefonos> tel) {
+		telefonos.setTelefonos(tel);
 	}
 
 
@@ -275,13 +275,25 @@ public class Cliente {
 	
 	public void addTelefono(String newTelefono){
 		
-		telefonos.setTelefono(new Telefonos(newTelefono));
+		telefonos.addTelefono(new Telefonos(newTelefono));
 		
 	}
 	
 	public void addEmail(String newEmail){
 		
 		email.setEmail(new Emails(newEmail));
+		
+	}
+	
+	public void delAllTelefonos(){
+		
+		telefonos.delAllTelefonos();
+		
+	}
+	
+	public void delAllEmails(){
+		
+		email.delAllEmails();
 		
 	}
 	
@@ -304,6 +316,12 @@ public class Cliente {
 		v.addElement(idCliente);
 		
 		return v;
+	}
+
+	public void setEmails(Vector<Emails> emails) {
+		
+		email.setEmails(emails);
+		
 	}
 	
 

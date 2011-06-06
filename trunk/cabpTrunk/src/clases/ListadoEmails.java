@@ -23,6 +23,7 @@ public class ListadoEmails {
 	private PreparedStatement psInsertarEmail;
 	private int idCliente;
 	private PreparedStatement psBorrarEmail;
+	private PreparedStatement psBorrarAllEmail;
 	
 	public ListadoEmails(int idCliente){
 		
@@ -32,6 +33,9 @@ public class ListadoEmails {
 			psInsertarEmail=dbConnect.prepareStatement("INSERT INTO email(idCliente, email) VALUES (?,?)");
 			
 			psBorrarEmail=dbConnect.prepareStatement("DELETE FROM email WHERE idCliente=? AND email=?");
+			
+			psBorrarAllEmail=dbConnect.prepareStatement("DELETE FROM email WHERE idCliente=?");
+			
 		} catch (SQLException e) {
 			JOptionPane.showMessageDialog(null, e.getMessage());
 		}
@@ -48,21 +52,21 @@ public class ListadoEmails {
 		
 		emails.add(newEmail);
 		
+	}
+	
+	public void addEmail(Emails newEmail) {
+
 		try {
 			psInsertarEmail.setInt(1, idCliente);
 			psInsertarEmail.setString(2, newEmail.getEmail());
 			
 			psInsertarEmail.executeUpdate();
+			
+			emails.add(newEmail);	
+			
 		} catch (SQLException e) {
 			JOptionPane.showMessageDialog(null, e.getMessage());
 		}
-		
-		
-	}
-	
-	public void addEmail(Emails newEmail) {
-		
-		emails.add(newEmail);		
 		
 	}
 	
@@ -94,6 +98,31 @@ public class ListadoEmails {
 	public Emails getEmail(int index){
 		
 		return emails.get(index);
+		
+	}
+
+	public void delAllEmails() {
+		
+		try {
+			psBorrarAllEmail.setInt(1, idCliente);
+			
+			psBorrarAllEmail.executeUpdate();
+			
+			emails.clear();
+			
+		} catch (SQLException e) {
+			JOptionPane.showMessageDialog(null, e.getMessage());
+		}
+		
+	}
+
+	public void setEmails(Vector<Emails> emails2) {
+		
+		for(int x=0; x<emails2.size(); x++){
+			
+			this.addEmail(emails2.get(x));
+			
+		}
 		
 	}
 

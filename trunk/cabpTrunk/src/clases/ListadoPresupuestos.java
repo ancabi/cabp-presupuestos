@@ -22,17 +22,16 @@ public class ListadoPresupuestos {
 	private Vector<Presupuestos> presupuestos=new Vector<Presupuestos>();
 	private Connection dbConnect=Conectar.getConnection();
 	private int idCliente;
-	private PreparedStatement psPresupuestos;
-	private PreparedStatement psLineaPresupuesto;
+	private PreparedStatement psPresupuestos=null;
+	private ListadoLineaPresup listadoLineaPresup=null;
 	
 	public ListadoPresupuestos(int idCliente){
 		
 		this.idCliente=idCliente;
+		listadoLineaPresup=new ListadoLineaPresup();
 		
 		try {
 			psPresupuestos=dbConnect.prepareStatement("SELECT * FROM presupuestos WHERE idCliente=?");
-			
-			psLineaPresupuesto=dbConnect.prepareStatement("SELECT * FROM lineaPresupuesto WHERE idPresupuesto=?");
 			
 		} catch (SQLException e) {
 			JOptionPane.showMessageDialog(null, e.getMessage());
@@ -41,8 +40,6 @@ public class ListadoPresupuestos {
 	}
 	
 	public void cargarPresupuestos(){
-		
-		ListadoLineaPresup listadoLineaPresup;
 		
 		try {
 			psPresupuestos.setInt(1, idCliente);
@@ -68,6 +65,8 @@ public class ListadoPresupuestos {
 				
 				presupuestos.add(new Presupuestos(idPresupuesto, ganancia, restaurante, pasaje, combustible, otros, hotel, kilometros, iva, 
 						porcentaje, total, transporte, texto));
+				
+				listadoLineaPresup.setIdPresupuesto(idPresupuesto);
 				
 			}
 			
