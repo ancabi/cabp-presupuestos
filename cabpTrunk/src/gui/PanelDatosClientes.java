@@ -52,7 +52,6 @@ public class PanelDatosClientes extends JPanel {
 	private JLabel lblEmpresa = null;
 	private JTextField tfCiudad = null;
 	private JTextField tfEmpresa = null;
-	private JLabel lblNotas = null;
 	private JTextArea taNotas = null;
 	private boolean agregar=true;
 	private Connection dbConnect;
@@ -90,6 +89,7 @@ public class PanelDatosClientes extends JPanel {
 	private JLabel lblTitulo = null;
 	private Vector<Telefonos> telefonoBorrar=new Vector<Telefonos>();  //  @jve:decl-index=0:
 	private Vector<Emails> emailsBorrar=new Vector<Emails>();
+	private JScrollPane scrollNotas = null;
 	/**
 	 * This is the default constructor
 	 */
@@ -104,8 +104,6 @@ public class PanelDatosClientes extends JPanel {
 	 * @return void
 	 */
 	private void initialize() {
-		lblNotas = new JLabel();
-		lblNotas.setText("Notas:");
 		lblEmpresa = new JLabel();
 		lblEmpresa.setText("Empresa:");
 		lblCiudad = new JLabel();
@@ -217,9 +215,8 @@ public class PanelDatosClientes extends JPanel {
 	 */
 	private JTextArea getTaNotas() {
 		if (taNotas == null) {
-			taNotas = new JTextArea();
+			taNotas = new JTextArea(8, 8);
 			taNotas.setMinimumSize(new Dimension(400, 300));
-			taNotas.setPreferredSize(new Dimension(250, 150));
 		}
 		return taNotas;
 	}
@@ -544,26 +541,14 @@ public class PanelDatosClientes extends JPanel {
 	 */
 	private JPanel getPanelNotas() {
 		if (panelNotas == null) {
-			GridBagConstraints gridBagConstraints12 = new GridBagConstraints();
-			gridBagConstraints12.anchor = GridBagConstraints.NORTHWEST;
-			gridBagConstraints12.insets = new Insets(2, 10, 2, 10);
-			gridBagConstraints12.gridheight = 1;
-			gridBagConstraints12.gridwidth = 3;
-			gridBagConstraints12.gridx = 0;
-			gridBagConstraints12.gridy = 1;
-			gridBagConstraints12.weightx = 1.0;
-			gridBagConstraints12.weighty = 1.0;
-			gridBagConstraints12.fill = GridBagConstraints.HORIZONTAL;
-			GridBagConstraints gridBagConstraints13 = new GridBagConstraints();
-			gridBagConstraints13.anchor = GridBagConstraints.WEST;
-			gridBagConstraints13.insets = new Insets(2, 10, 2, 2);
-			gridBagConstraints13.gridx = 0;
-			gridBagConstraints13.gridy = 0;
-			gridBagConstraints13.fill = GridBagConstraints.HORIZONTAL;
+			GridBagConstraints gridBagConstraints14 = new GridBagConstraints();
+			gridBagConstraints14.fill = GridBagConstraints.BOTH;
+			gridBagConstraints14.weighty = 1.0;
+			gridBagConstraints14.weightx = 1.0;
 			panelNotas = new JPanel();
 			panelNotas.setLayout(new GridBagLayout());
-			panelNotas.add(lblNotas, gridBagConstraints13);
-			panelNotas.add(getTaNotas(), gridBagConstraints12);
+			panelNotas.setBorder(BorderFactory.createTitledBorder(null, "Notas", TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, new Font("Dialog", Font.BOLD, 12), new Color(51, 51, 51)));
+			panelNotas.add(getScrollNotas(), gridBagConstraints14);
 		}
 		return panelNotas;
 	}
@@ -962,6 +947,19 @@ public class PanelDatosClientes extends JPanel {
 
 	public void setEmailsBorrar(Vector<Emails> emailsBorrar) {
 		this.emailsBorrar = emailsBorrar;
+	}
+
+	/**
+	 * This method initializes scrollNotas	
+	 * 	
+	 * @return javax.swing.JScrollPane	
+	 */
+	private JScrollPane getScrollNotas() {
+		if (scrollNotas == null) {
+			scrollNotas = new JScrollPane();
+			scrollNotas.setViewportView(getTaNotas());
+		}
+		return scrollNotas;
 	}
 	
 	

@@ -58,7 +58,7 @@ public class ListadoLineaPresup {
 				String nombreProd=rs.getString("nomProducto");
 				int cantidad=rs.getInt("cantidad");
 				
-				Productos producto=new Productos();
+				//Productos producto=new Productos();
 				
 				//lineaPresupuesto.add(new LineaPresupuesto(producto, cantidad));
 				

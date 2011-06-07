@@ -11,10 +11,10 @@ import clases.ListadoEmails;
 import clases.ListadoTelefonos;
 
 /**
- * @author Administrador
+ * @author ancabi
  *
  */
-public class ModeloGeneral extends AbstractTableModel {
+public class ModeloProductos extends AbstractTableModel {
 
 	private Vector data=new Vector();
 	private Vector head=new Vector();
@@ -42,43 +42,11 @@ public class ModeloGeneral extends AbstractTableModel {
 	 */
 	@Override
 	public Object getValueAt(int rowIndex, int columnIndex) {
+
+		Vector rowVector = (Vector)data.elementAt(rowIndex);
 		
-		if(columnIndex==5){
-			
-			Vector rowVector = (Vector)data.elementAt(rowIndex);
+		return rowVector.elementAt(columnIndex);
 
-			ListadoTelefonos temp=(ListadoTelefonos) rowVector.elementAt(columnIndex);
-
-			if(temp.getTelefonos().isEmpty()){
-				
-				return "";
-				
-			}else{
-				return temp.getTelefonos().get(0);
-			}
-			
-			
-		}if(columnIndex==6){
-			
-			Vector rowVector = (Vector)data.elementAt(rowIndex);
-
-			ListadoEmails temp=(ListadoEmails) rowVector.elementAt(columnIndex);
-
-			if(temp.getEmails().isEmpty()){
-				
-				return "";
-				
-			}else{
-				return temp.getEmails().get(0);
-			}
-				
-		}else{
-		
-			Vector rowVector = (Vector)data.elementAt(rowIndex);
-			
-	        return rowVector.elementAt(columnIndex);
-	        
-		}
 	}
 	
 	public void setHeader(Vector h){
@@ -106,17 +74,33 @@ public class ModeloGeneral extends AbstractTableModel {
 		
 	}
 	
-	public boolean isCellEditable(){
-		return false;
-	}
-	
-	public void deleteRow(int rowIndex){
-		data.removeElementAt(rowIndex);
-	}
+	public boolean isCellEditable (int row, int column){
+	       
+		if (column == 3){
+			return true;
+	    }
+	       	return false;
+	   }
 	
 	public Vector getRow(int rowIndex){
 
 		return (Vector) data.get(rowIndex);
+		
+	}
+	
+	public void addRow(Vector row){
+		
+		data.add(row);
+		
+		fireTableDataChanged();
+		
+	}
+	
+	public void setValueAt(Object aValue, int row, int column){
+		
+		Vector temp=(Vector) data.get(row);
+		
+		temp.setElementAt(aValue, column);
 		
 	}
 
