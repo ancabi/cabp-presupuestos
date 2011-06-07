@@ -41,6 +41,7 @@ public class DialogoSeleccionCliente extends JDialog {
 	private DefaultComboBoxModel modeloCB;
 	private int valorPulsado=0;
 	private JFrame mainFrame;
+	private int idCliente;
 
 	/**
 	 * @param owner
@@ -168,6 +169,13 @@ public class DialogoSeleccionCliente extends JDialog {
 					
 					valorPulsado=VALOR_ACEPTAR;
 					
+					String temp=(String) modeloCB.getSelectedItem();
+					
+					temp=temp.substring(0, 1);
+					
+					idCliente=Integer.parseInt(temp);
+					
+					
 				}
 			});
 		}
@@ -225,5 +233,21 @@ public class DialogoSeleccionCliente extends JDialog {
 		}
 		
 	}
+
+	/**
+	 * @return the valorPulsado
+	 */
+	public int getValorPulsado() {
+		return valorPulsado;
+	}
+
+	/**
+	 * @return the idCliente
+	 */
+	public int getIdCliente() {
+		return idCliente;
+	}
+	
+	
 
 }  //  @jve:decl-index=0:visual-constraint="473,84"

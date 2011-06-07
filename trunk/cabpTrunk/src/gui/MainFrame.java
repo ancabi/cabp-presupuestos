@@ -22,6 +22,7 @@ import javax.swing.ImageIcon;
 import clases.Cliente;
 import clases.Emails;
 import clases.ListadoClientes;
+import clases.ListadoProductos;
 import clases.Telefonos;
 import conexion.Conectar;
 import javax.swing.JTabbedPane;
@@ -53,6 +54,9 @@ public class MainFrame extends JFrame {
 	private JButton btnPresupuesto = null;
 	private ListadoClientes listadoClientes= null;  //  @jve:decl-index=0:
 	private DialogoSeleccionCliente dialogoSeleccionCliente;
+	private ListadoProductos listadoProductos = null;
+	private DialogoAddPresupuesto dialogoAddPresupuesto;
+
 	/**
 	 * This is the default constructor
 	 */
@@ -282,10 +286,45 @@ public class MainFrame extends JFrame {
 					dialogoSeleccionCliente.actualizarCliente();
 					
 					dialogoSeleccionCliente.setVisible(true);
+					
+					if(dialogoSeleccionCliente.getValorPulsado()== DialogoSeleccionCliente.VALOR_ACEPTAR){
+						
+						int idCliente=dialogoSeleccionCliente.getIdCliente();
+
+						//traigo el listado de productos del proveedor elegido
+						listadoProductos=getListatoProductos(1);
+						//cargo los productos en memoria
+						listadoProductos.cargarProductos();
+						
+						//llamo a la ventana para crear presupuesto
+						dialogoAddPresupuesto=getDialogoAddPresupuesto();
+
+						//le asigno el cliente para el cual va a ser el presupuesto
+						dialogoAddPresupuesto.setIdCliente(idCliente);
+						
+						dialogoAddPresupuesto.cargarProductos(listadoProductos);
+						
+						dialogoAddPresupuesto.setVisible(true);
+						
+					}
 				}
 			});
 		}
 		return btnPresupuesto;
+	}
+	
+	private ListadoProductos getListatoProductos(int idDistribuidor){
+		
+		if(listadoProductos==null){
+			
+			listadoProductos=new ListadoProductos();
+			
+		}
+		
+		listadoProductos.setIdDistribuidor(idDistribuidor);
+		
+		return listadoProductos;
+		
 	}
 
 	public ListadoClientes getListadoClientes() {
@@ -303,6 +342,17 @@ public class MainFrame extends JFrame {
 		
 		return dialogoSeleccionCliente;
 		
+	}
+	
+	private DialogoAddPresupuesto getDialogoAddPresupuesto(){
+		
+		if(dialogoAddPresupuesto==null){
+			
+			dialogoAddPresupuesto=new DialogoAddPresupuesto(this, this);
+			
+		}
+		
+		return dialogoAddPresupuesto;
 	}
 
 }  //  @jve:decl-index=0:visual-constraint="10,10"

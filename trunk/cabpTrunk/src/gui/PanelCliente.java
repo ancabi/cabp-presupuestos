@@ -17,7 +17,7 @@ import javax.swing.JTable;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 
-import modelo.ModeloGeneral;
+import modelo.ModeloClientes;
 import javax.swing.JTextField;
 
 import clases.Cliente;
@@ -48,7 +48,7 @@ public class PanelCliente extends JPanel {
 	private PreparedStatement psTelefono;
 	private PreparedStatement psEmail;
 	private PreparedStatement psBorrarCliente;
-	private ModeloGeneral modelo=new ModeloGeneral();
+	private ModeloClientes modelo=new ModeloClientes();
 	private JFrame mainFrame;
 	private Vector<Cliente> clientes=new Vector<Cliente>();
 	private JPanel panelTitulo = null;
