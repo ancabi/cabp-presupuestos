@@ -111,6 +111,11 @@ public class PanelPresupuesto extends JPanel {
 	private int transporte;
 	private JScrollPane scrollTexto = null;
 	private JTextArea taTexto = null;
+	private int kilometros=0;
+	private int nViajes=0;
+	private double precioGasolina=0.0;
+	private double totalSinIva;
+	
 	/**
 	 * This is the default constructor
 	 */
@@ -125,7 +130,7 @@ public class PanelPresupuesto extends JPanel {
 	 * @return void
 	 */
 	private void initialize() {
-		this.setSize(887, 532);
+		this.setSize(887, 606);
 		this.setLayout(new BorderLayout());
 		this.add(getPanelTitulo(), BorderLayout.NORTH);
 		this.add(getPanelDatos(), BorderLayout.CENTER);
@@ -261,7 +266,7 @@ public class PanelPresupuesto extends JPanel {
 			
 			Vector<String> columnas=new Vector<String>();
 			
-			columnas.add("idProducto");
+			columnas.add("ID Producto");
 			columnas.add("Nombre");
 			columnas.add("Precio");
 			columnas.add("Cantidad");
@@ -269,6 +274,9 @@ public class PanelPresupuesto extends JPanel {
 			modelo.setHeader(columnas);
 			
 			tablaProductos = new JTable(modelo);
+			tablaProductos.getColumn("ID Producto").setMaxWidth(70);
+			tablaProductos.getColumn("Precio").setMaxWidth(70);
+			tablaProductos.getColumn("Cantidad").setMaxWidth(70);
 			tablaProductos.addKeyListener(new java.awt.event.KeyAdapter() {
 				public void keyReleased(java.awt.event.KeyEvent e) {
 					 int key = e.getKeyCode();
@@ -489,6 +497,16 @@ public class PanelPresupuesto extends JPanel {
 					tfGanancia.setText("");
 				}
 			});
+			tfGanancia.addActionListener(new java.awt.event.ActionListener() {
+				public void actionPerformed(java.awt.event.ActionEvent e) {
+					if(tfGanancia.getText().equals("")){
+						tfGanancia.setText("0");
+					}else{
+						//actualizo los valores
+						actualizarValores();
+					}
+				}
+			});
 		}
 		return tfGanancia;
 	}
@@ -515,6 +533,16 @@ public class PanelPresupuesto extends JPanel {
 				}
 				public void focusGained(java.awt.event.FocusEvent e) {
 					tfTransporte.setText("");
+				}
+			});
+			tfTransporte.addActionListener(new java.awt.event.ActionListener() {
+				public void actionPerformed(java.awt.event.ActionEvent e) {
+					if(tfTransporte.getText().equals("")){
+						tfTransporte.setText("0");
+					}else{
+						//actualizo los valores
+						actualizarValores();
+					}
 				}
 			});
 		}
@@ -649,6 +677,16 @@ public class PanelPresupuesto extends JPanel {
 					}
 				}
 			});
+			tfHotel.addActionListener(new java.awt.event.ActionListener() {
+				public void actionPerformed(java.awt.event.ActionEvent e) {
+					if(tfHotel.getText().equals("")){
+						tfHotel.setText("0");
+					}else{
+						//actualizo los valores
+						actualizarValores();
+					}
+				}
+			});
 		}
 		return tfHotel;
 	}
@@ -679,6 +717,16 @@ public class PanelPresupuesto extends JPanel {
 					tfPasaje.setText("");
 				}
 			});
+			tfPasaje.addActionListener(new java.awt.event.ActionListener() {
+				public void actionPerformed(java.awt.event.ActionEvent e) {
+					if(tfPasaje.getText().equals("")){
+						tfPasaje.setText("0");
+					}else{
+						//actualizo los valores
+						actualizarValores();
+					}
+				}
+			});
 		}
 		return tfPasaje;
 	}
@@ -705,6 +753,16 @@ public class PanelPresupuesto extends JPanel {
 				}
 				public void focusGained(java.awt.event.FocusEvent e) {
 					tfOtros.setText("");
+				}
+			});
+			tfOtros.addActionListener(new java.awt.event.ActionListener() {
+				public void actionPerformed(java.awt.event.ActionEvent e) {
+					if(tfOtros.getText().equals("")){
+						tfOtros.setText("0");
+					}else{
+						//actualizo los valores
+						actualizarValores();
+					}
 				}
 			});
 		}
@@ -735,6 +793,16 @@ public class PanelPresupuesto extends JPanel {
 					tfRestaurante.setText("");
 				}
 			});
+			tfRestaurante.addActionListener(new java.awt.event.ActionListener() {
+				public void actionPerformed(java.awt.event.ActionEvent e) {
+					if(tfRestaurante.getText().equals("")){
+						tfRestaurante.setText("0");
+					}else{
+						//actualizo los valores
+						actualizarValores();
+					}
+				}
+			});
 		}
 		return tfRestaurante;
 	}
@@ -763,6 +831,16 @@ public class PanelPresupuesto extends JPanel {
 					tfCombustible.setText("");
 				}
 			});
+			tfCombustible.addActionListener(new java.awt.event.ActionListener() {
+				public void actionPerformed(java.awt.event.ActionEvent e) {
+					if(tfCombustible.getText().equals("")){
+						tfCombustible.setText("0");
+					}else{
+						//actualizo los valores
+						actualizarValores();
+					}
+				}
+			});
 		}
 		return tfCombustible;
 	}
@@ -778,8 +856,41 @@ public class PanelPresupuesto extends JPanel {
 			tfKm.setMinimumSize(new Dimension(75, 20));
 			tfKm.setText("0");
 			tfKm.setPreferredSize(new Dimension(75, 20));
+			tfKm.addActionListener(new java.awt.event.ActionListener() {
+				public void actionPerformed(java.awt.event.ActionEvent e) {
+					
+					if(tfKm.getText().equals("")){
+						tfKm.setText("0");
+					}else{
+						//actualizo los valores
+						actualizarGasolina();
+					}
+				}
+
+				
+			});
+			tfKm.addFocusListener(new java.awt.event.FocusAdapter() {
+				public void focusGained(java.awt.event.FocusEvent e) {
+					tfKm.setText("");
+				}
+			});
 		}
 		return tfKm;
+	}
+	
+	private void actualizarGasolina() {
+		
+		kilometros=Integer.parseInt(tfKm.getText());
+		
+		nViajes=Integer.parseInt(tfViajes.getText());
+		
+		precioGasolina=Double.parseDouble(tfPrecioGasolina.getText());
+		
+		double total=  (((double) kilometros*(double)nViajes)*0.07)*precioGasolina;
+		
+		lblTotalViaje.setText(total+" €");
+		
+		
 	}
 
 	/**
@@ -873,8 +984,18 @@ public class PanelPresupuesto extends JPanel {
 		if (tfViajes == null) {
 			tfViajes = new JTextField();
 			tfViajes.setPreferredSize(new Dimension(75, 20));
-			tfViajes.setText("0");
+			tfViajes.setText("2");
 			tfViajes.setMinimumSize(new Dimension(75, 20));
+			tfViajes.addActionListener(new java.awt.event.ActionListener() {
+				public void actionPerformed(java.awt.event.ActionEvent e) {
+					if(tfViajes.getText().equals("")){
+						tfViajes.setText("0");
+					}else{
+						//actualizo los valores
+						actualizarGasolina();
+					}
+				}
+			});
 		}
 		return tfViajes;
 	}
@@ -888,8 +1009,18 @@ public class PanelPresupuesto extends JPanel {
 		if (tfPrecioGasolina == null) {
 			tfPrecioGasolina = new JTextField();
 			tfPrecioGasolina.setMinimumSize(new Dimension(75, 20));
-			tfPrecioGasolina.setText("0");
+			tfPrecioGasolina.setText("1.0");
 			tfPrecioGasolina.setPreferredSize(new Dimension(75, 20));
+			tfPrecioGasolina.addActionListener(new java.awt.event.ActionListener() {
+				public void actionPerformed(java.awt.event.ActionEvent e) {
+					if(tfPrecioGasolina.getText().equals("")){
+						tfPrecioGasolina.setText("0");
+					}else{
+						//actualizo los valores
+						actualizarGasolina();
+					}
+				}
+			});
 		}
 		return tfPrecioGasolina;
 	}
@@ -1068,9 +1199,8 @@ public class PanelPresupuesto extends JPanel {
 	public void cargarProductos(ListadoProductos listado) {
 	
 		modeloCB=getModeloCB();
-		
+
 		modeloCB.removeAllElements();
-		
 		modeloCB.addElement("");
 		
 		for(int x=0; x < listado.getSize(); x++){
@@ -1084,7 +1214,6 @@ public class PanelPresupuesto extends JPanel {
 			double totalSinImp=0;
 			double iva=0;
 			isGanancia=cbGanancia.isSelected();
-			double totalSinIva=0;
 			double impuestoGanancia=0;
 			
 			//guardo los datos de los gastos
@@ -1183,7 +1312,7 @@ public class PanelPresupuesto extends JPanel {
 			jViewport.setView(jTextArea);
 			scrollTexto = new JScrollPane();
 			scrollTexto.setMinimumSize(new Dimension(22, 76));
-			scrollTexto.setPreferredSize(new Dimension(22, 80));
+			scrollTexto.setPreferredSize(new Dimension(22, 110));
 			scrollTexto.setBorder(BorderFactory.createTitledBorder(null, "Texto que va en el presupuesto", TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, new Font("Dialog", Font.BOLD, 12), new Color(51, 51, 51)));
 			scrollTexto.setViewport(jViewport);
 			scrollTexto.setViewportView(getTaTexto());
@@ -1202,6 +1331,100 @@ public class PanelPresupuesto extends JPanel {
 			taTexto.setMinimumSize(new Dimension(0, 76));
 		}
 		return taTexto;
+	}
+
+	public void limpiarCampos() {
+		
+		modelo.removeAllElements();
+		
+		tfGanancia.setText("0");
+		tfTransporte.setText("0");
+		
+		tfHotel.setText("0");
+		tfPasaje.setText("0");
+		tfOtros.setText("0");
+		tfRestaurante.setText("0");
+		tfCombustible.setText("0");
+		
+		cbGanancia.setEnabled(true);
+		
+		tfPorcentaje1.setText("50");
+		
+		tfKm.setText("0");
+		tfViajes.setText("2");
+		tfPrecioGasolina.setText("1.0");
+		
+		taTexto.setText("");
+		
+		actualizarValores();
+		
+		actualizarGasolina();
+		
+	}
+
+	public double getTotalSinIva() {
+		return totalSinIva;
+	}
+
+	public double getTotalIva() {
+		return totalIva;
+	}
+
+	public int getPorcentaje1() {
+		return porcentaje1;
+	}
+
+	public int getGanancia() {
+		return ganancia;
+	}
+
+	public int getHotel() {
+		return hotel;
+	}
+
+	public int getPasaje() {
+		return pasaje;
+	}
+
+	public int getOtros() {
+		return otros;
+	}
+
+	public int getRestaurante() {
+		return restaurante;
+	}
+
+	public int getCombustible() {
+		return combustible;
+	}
+
+	public boolean isGanancia() {
+		return isGanancia;
+	}
+
+	public int getTransporte() {
+		return transporte;
+	}
+
+	public int getKilometros() {
+		return kilometros;
+	}
+
+	public int getnViajes() {
+		return nViajes;
+	}
+
+	public double getPrecioGasolina() {
+		return precioGasolina;
+	}
+	
+	public String getTexto(){
+		return taTexto.getText();
+	}
+	public Vector<Vector> getLineas(){
+		
+		return modelo.getData();
+		
 	}
 
 }  //  @jve:decl-index=0:visual-constraint="10,10"

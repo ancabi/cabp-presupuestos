@@ -63,8 +63,8 @@ public class ListadoPresupuestos {
 				String texto=rs.getString("texto");
 				
 				
-				presupuestos.add(new Presupuestos(idPresupuesto, ganancia, restaurante, pasaje, combustible, otros, hotel, kilometros, iva, 
-						porcentaje, total, transporte, texto));
+				//presupuestos.add(new Presupuestos(idPresupuesto, ganancia, restaurante, pasaje, combustible, otros, hotel, kilometros, iva, 
+				//		porcentaje, total, transporte, texto));
 				
 				listadoLineaPresup.setIdPresupuesto(idPresupuesto);
 				

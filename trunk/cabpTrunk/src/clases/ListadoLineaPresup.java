@@ -23,6 +23,7 @@ public class ListadoLineaPresup {
 	private Connection dbConnect=Conectar.getConnection();
 	private int idPresupuesto;
 	private PreparedStatement psLineaPresup;
+	private PreparedStatement psAddLineaPresup;
 	
 	/**
 	 * @param idPresupuesto
@@ -38,7 +39,10 @@ public class ListadoLineaPresup {
 	public ListadoLineaPresup() {
 
 		try {
-			psLineaPresup=dbConnect.prepareStatement("SELECT * FROM lineaPresup WHERE idPresupuesto=?");
+			psLineaPresup=dbConnect.prepareStatement("SELECT * FROM lineaPresupuesto WHERE idPresupuesto=?");
+			
+			psAddLineaPresup=dbConnect.prepareStatement("INSERT INTO lineaPresupuesto(idPresupuesto, idProducto, cantidad, nomProducto, precio) VALUES" +
+					"(?,?,?,?,?)");
 		} catch (SQLException e) {
 			JOptionPane.showMessageDialog(null, e.getMessage());
 		}
@@ -75,6 +79,27 @@ public class ListadoLineaPresup {
 	 */
 	public void setIdPresupuesto(int idPresupuesto) {
 		this.idPresupuesto = idPresupuesto;
+	}
+
+	public void addLinea(LineaPresupuesto linea) {
+		
+		
+		
+		try {
+			psAddLineaPresup.setInt(1, linea.getIdPresupuesto());
+			psAddLineaPresup.setInt(2, linea.getIdProducto());
+			psAddLineaPresup.setInt(3, linea.getCantidad());
+			psAddLineaPresup.setString(4, linea.getNombre());
+			psAddLineaPresup.setDouble(5, linea.getPrecio());
+
+			psAddLineaPresup.executeUpdate();
+			
+			lineaPresupuesto.add(linea);
+			
+		} catch (SQLException e) {
+			JOptionPane.showMessageDialog(null, e.getMessage());
+		}
+		
 	}
 	
 	

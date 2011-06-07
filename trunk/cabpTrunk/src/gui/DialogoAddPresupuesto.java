@@ -5,6 +5,9 @@ package gui;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+
 import java.awt.Frame;
 import java.awt.BorderLayout;
 import javax.swing.JDialog;
@@ -12,10 +15,13 @@ import java.awt.Dimension;
 import java.awt.GridBagLayout;
 import javax.swing.JButton;
 
+import clases.LineaPresupuesto;
 import clases.ListadoProductos;
+import clases.Presupuestos;
 
 import java.awt.GridBagConstraints;
 import java.awt.FlowLayout;
+import java.util.Vector;
 
 /**
  * @author ancabi
@@ -24,6 +30,8 @@ import java.awt.FlowLayout;
 public class DialogoAddPresupuesto extends JDialog {
 
 	private static final long serialVersionUID = 1L;
+	private static final int VALOR_ACEPTAR=1;
+	private static final int VALOR_CANCELAR=0;
 	private JPanel jContentPane = null;
 	private JPanel panelBotones = null;
 	private JPanel panelPresupuesto = null;
@@ -32,6 +40,7 @@ public class DialogoAddPresupuesto extends JDialog {
 	private int idCliente;
 	private int idDistribuidor=1;
 	private JFrame mainFrame;
+	private int valorPulsado=0;
 
 	/**
 	 * @param owner
@@ -49,12 +58,19 @@ public class DialogoAddPresupuesto extends JDialog {
 	 * @return void
 	 */
 	private void initialize() {
-		this.setSize(846, 663);
+		this.setSize(846, 743);
 		this.setResizable(false);
 		this.setTitle("Agregar presupuesto");
 		this.setMinimumSize(new Dimension(775, 441));
 		this.setContentPane(getJContentPane());
 		this.setModal(true);
+		this.addWindowListener(new java.awt.event.WindowAdapter() {
+			public void windowClosing(java.awt.event.WindowEvent e) {
+				
+				((PanelPresupuesto) panelPresupuesto).limpiarCampos();
+				
+			}
+		});
 		this.setLocationRelativeTo(getOwner());
 	}
 
@@ -109,6 +125,56 @@ public class DialogoAddPresupuesto extends JDialog {
 		if (btnAceptar == null) {
 			btnAceptar = new JButton();
 			btnAceptar.setText("Aceptar");
+			btnAceptar.addActionListener(new java.awt.event.ActionListener() {
+				public void actionPerformed(java.awt.event.ActionEvent e) {
+					
+					
+					valorPulsado=VALOR_ACEPTAR;
+					
+					setVisible(false);
+					
+					int idProducto;
+					int cantidad;
+					String nomProducto;
+					double precio;
+					double totalIva= ((PanelPresupuesto) panelPresupuesto).getTotalIva();
+					int porcentaje=((PanelPresupuesto) panelPresupuesto).getPorcentaje1();
+					int ganancia=((PanelPresupuesto) panelPresupuesto).getGanancia();
+					int hotel=((PanelPresupuesto) panelPresupuesto).getHotel();
+					int pasaje=((PanelPresupuesto) panelPresupuesto).getPasaje();
+					int otros=((PanelPresupuesto) panelPresupuesto).getOtros();
+					int restaurante=((PanelPresupuesto) panelPresupuesto).getRestaurante();
+					int combustible=((PanelPresupuesto) panelPresupuesto).getCombustible();
+					boolean isGanancia=((PanelPresupuesto) panelPresupuesto).isGanancia();
+					int transporte=((PanelPresupuesto) panelPresupuesto).getTransporte();
+					int kilometros=((PanelPresupuesto) panelPresupuesto).getKilometros();
+					int nViajes=((PanelPresupuesto) panelPresupuesto).getnViajes();
+					double precioGasolina=((PanelPresupuesto) panelPresupuesto).getPrecioGasolina();
+					double totalSinIva=((PanelPresupuesto) panelPresupuesto).getTotalSinIva();
+					String texto=((PanelPresupuesto) panelPresupuesto).getTexto();
+					
+					Vector<Vector> lineas=((PanelPresupuesto) panelPresupuesto).getLineas();
+					
+					Presupuestos p= new Presupuestos(ganancia, restaurante, pasaje, combustible, otros, hotel, kilometros, nViajes, precioGasolina, isGanancia, porcentaje, totalIva, totalSinIva, transporte, texto, nViajes);
+					
+					p.addBD();
+					
+					for(int x=0; x<lineas.size(); x++){
+						
+						Vector temp=lineas.get(x);
+
+						idProducto=(Integer) temp.get(0);
+						nomProducto=(String) temp.get(1);
+						precio=(Double) temp.get(2);
+						cantidad=Integer.parseInt(temp.get(3).toString());
+						
+						
+						p.addLineaPresupuesto(idProducto, cantidad, nomProducto, precio);
+						
+					}
+					
+				}
+			});
 		}
 		return btnAceptar;
 	}
@@ -122,6 +188,17 @@ public class DialogoAddPresupuesto extends JDialog {
 		if (btnCancelar == null) {
 			btnCancelar = new JButton();
 			btnCancelar.setText("Cancelar");
+			btnCancelar.addActionListener(new java.awt.event.ActionListener() {
+				public void actionPerformed(java.awt.event.ActionEvent e) {
+					
+					valorPulsado=VALOR_CANCELAR;
+					
+					setVisible(false);
+					
+					((PanelPresupuesto) panelPresupuesto).limpiarCampos();
+					
+				}
+			});
 		}
 		return btnCancelar;
 	}
@@ -161,5 +238,11 @@ public class DialogoAddPresupuesto extends JDialog {
 		((PanelPresupuesto) panelPresupuesto).cargarProductos(listado);
 		
 	}
+
+	public int getValorPulsado() {
+		return valorPulsado;
+	}
+	
+	
 
 }  //  @jve:decl-index=0:visual-constraint="12,-18"
