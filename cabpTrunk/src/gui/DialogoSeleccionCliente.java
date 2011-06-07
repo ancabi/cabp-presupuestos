@@ -165,15 +165,18 @@ public class DialogoSeleccionCliente extends JDialog {
 			btnAceptar.addActionListener(new java.awt.event.ActionListener() {
 				public void actionPerformed(java.awt.event.ActionEvent e) {
 					
-					setVisible(false);
 					
-					valorPulsado=VALOR_ACEPTAR;
-					
-					String temp=(String) modeloCB.getSelectedItem();
-					
-					temp=temp.substring(0, 1);
-					
-					idCliente=Integer.parseInt(temp);
+					if(cbCliente.getSelectedIndex()>0){
+						setVisible(false);
+						
+						valorPulsado=VALOR_ACEPTAR;
+						
+						String temp=(String) modeloCB.getSelectedItem();
+						
+						temp=temp.substring(0, 1);
+						
+						idCliente=Integer.parseInt(temp);
+					}
 					
 					
 				}
@@ -203,6 +206,8 @@ public class DialogoSeleccionCliente extends JDialog {
 	}
 	
 	public void actualizarCliente(){
+		
+		modeloCB.removeAllElements();
 		//traigo los clientes
 		ListadoClientes listado=((MainFrame) mainFrame).getListadoClientes();
 		Cliente c;
@@ -231,6 +236,8 @@ public class DialogoSeleccionCliente extends JDialog {
 			modeloCB.addElement(idCliente+" "+nombre+" "+apellidos);
 			
 		}
+		//pongo otra vez el seleccionado en el item vacio
+		cbCliente.setSelectedIndex(0);
 		
 	}
 

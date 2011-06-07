@@ -36,6 +36,8 @@ public class ListadoProductos {
 	
 	public void cargarProductos(){
 		
+		productos.removeAllElements();
+		
 		try {
 			psProductos.setInt(1, idDistribuidor);
 		

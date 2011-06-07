@@ -103,5 +103,17 @@ public class ModeloProductos extends AbstractTableModel {
 		temp.setElementAt(aValue, column);
 		
 	}
+	
+	public void removeAllElements(){
+		
+		data.removeAllElements();
+		
+		fireTableDataChanged();
+		
+	}
+	
+	public Vector<Vector> getData(){
+		return data;
+	}
 
 }
