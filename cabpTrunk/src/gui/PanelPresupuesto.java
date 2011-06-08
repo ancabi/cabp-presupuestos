@@ -22,6 +22,7 @@ import javax.swing.BorderFactory;
 import javax.swing.border.TitledBorder;
 import java.awt.Color;
 import java.awt.event.KeyEvent;
+import java.text.DecimalFormat;
 import java.util.Vector;
 
 import javax.swing.JCheckBox;
@@ -30,9 +31,13 @@ import clases.ListadoProductos;
 import clases.Productos;
 
 import modelo.ModeloProductos;
+
+import javax.swing.JOptionPane;
 import javax.swing.JTextArea;
 import javax.swing.JScrollBar;
 import javax.swing.JViewport;
+import javax.swing.JButton;
+import javax.swing.ImageIcon;
 
 /**
  * @author ancabi
@@ -115,6 +120,9 @@ public class PanelPresupuesto extends JPanel {
 	private int nViajes=0;
 	private double precioGasolina=0.0;
 	private double totalSinIva;
+	private DecimalFormat formateador = new DecimalFormat ("#####.##");  //  @jve:decl-index=0:
+	private JPanel panelHerramientas = null;
+	private JButton btnBorrar = null;
 	
 	/**
 	 * This is the default constructor
@@ -144,11 +152,10 @@ public class PanelPresupuesto extends JPanel {
 	 */
 	private JPanel getPanelTitulo() {
 		if (panelTitulo == null) {
-			FlowLayout flowLayout = new FlowLayout();
-			flowLayout.setAlignment(java.awt.FlowLayout.LEFT);
 			panelTitulo = new JPanel();
-			panelTitulo.setLayout(flowLayout);
-			panelTitulo.add(getLblTitulo(), null);
+			panelTitulo.setLayout(new BorderLayout());
+			panelTitulo.add(getLblTitulo(), BorderLayout.WEST);
+			panelTitulo.add(getPanelHerramientas(), BorderLayout.EAST);
 		}
 		return panelTitulo;
 	}
@@ -210,31 +217,48 @@ public class PanelPresupuesto extends JPanel {
 			cbProductos = new JComboBox(modeloCB);
 			cbProductos.addActionListener(new java.awt.event.ActionListener() {
 				public void actionPerformed(java.awt.event.ActionEvent e) {
-					//si no es 0, entra, ya que 0 esta vacio
-					if(cbProductos.getSelectedIndex()>0){
-						//cargo el producto que esta en el modelo del comboBox
-						Productos p=(Productos) cbProductos.getSelectedItem();
-						//contstruyo un vector que le paso al modelo de la tabla
-						Vector<Object> row=new Vector<Object>();
-						
-						row.add(p.getIdProducto());
-						row.add(p.getNombre());
-						row.add(p.getPrecio());
-						row.add(1);
-						//lo agrego a la tabla
-						modelo.addRow(row);
-						
-						//quito el objeto que esta en el modelo para que no se puedan repetir
-						modeloCB.removeElement(p);
-						
-						//vuelvo el indice a 0
-						cbProductos.setSelectedIndex(0);
-						
-						//actualizo los valores
-						actualizarValores();
-					}
 					
+					try {
+						//si no es 0, entra, ya que 0 esta vacio
+						if(cbProductos.getSelectedIndex()>0){
+							//cargo el producto que esta en el modelo del comboBox
+							Productos p=(Productos) cbProductos.getSelectedItem();
+							//contstruyo un vector que le paso al modelo de la tabla
+							Vector<Object> row=new Vector<Object>();
+							//compruebo que no hayan productos iguales
+							for(int x=0; x < modelo.getRowCount(); x++){
+								//traigo la fila
+								Vector temp=modelo.getRow(x);
+								//compruebo los id de producto
+								if((Integer) temp.get(0)==p.getIdProducto()){
+									
+									cbProductos.setSelectedIndex(0);
+									
+									throw new Exception("No puede haber 2 productos iguales");
+									
+								}
+								
+							}
+							row.add(p.getIdProducto());
+							row.add(p.getNombre());
+							row.add(p.getPrecio());
+							row.add(1);
+							//lo agrego a la tabla
+							modelo.addRow(row);
+							
+							//vuelvo el indice a 0
+							cbProductos.setSelectedIndex(0);
+							
+							//actualizo los valores
+							actualizarValores();
+						}
+						
+					} catch (Exception e1) {
+						JOptionPane.showMessageDialog(null, e1.getMessage());
+					}
+						
 				}
+				
 			});
 		}
 		return cbProductos;
@@ -285,6 +309,11 @@ public class PanelPresupuesto extends JPanel {
 				        	actualizarValores();
 				        	
 				        }
+				}
+			});
+			tablaProductos.addMouseListener(new java.awt.event.MouseAdapter() {
+				public void mouseClicked(java.awt.event.MouseEvent e) {
+					btnBorrar.setEnabled(true);
 				}
 			});
 		}
@@ -886,9 +915,9 @@ public class PanelPresupuesto extends JPanel {
 		
 		precioGasolina=Double.parseDouble(tfPrecioGasolina.getText());
 		
-		double total=  (((double) kilometros*(double)nViajes)*0.07)*precioGasolina;
+		double total= (((double) kilometros*(double)nViajes)*0.07)*precioGasolina;
 		
-		lblTotalViaje.setText(total+" €");
+		lblTotalViaje.setText(formateador.format(total)+" €");
 		
 		
 	}
@@ -1230,12 +1259,13 @@ public class PanelPresupuesto extends JPanel {
 			if(isGanancia){
 				//calculo el impuesto a la ganancia
 				impuestoGanancia=ganancia*IMPUESTOgANANCIA;
+				
 			}else{
 				impuestoGanancia=0;
 			}
 			
 			//lo muestro en el label
-			lblImpGan.setText(impuestoGanancia+" €");
+			lblImpGan.setText(formateador.format(impuestoGanancia)+" €");
 			//guardo el transporte
 			transporte=Integer.parseInt(tfTransporte.getText());
 			
@@ -1253,27 +1283,27 @@ public class PanelPresupuesto extends JPanel {
 				
 			}
 			
-			lblPrecioNeto.setText(totalNeto+" €");
+			lblPrecioNeto.setText(formateador.format(totalNeto)+" €");
 			
 			//guardo el total sin impuestos
 			totalSinImp=totalNeto+totalGastos+ganancia+transporte;
 			
 			//asigno el total sin impuestos
-			lblTotalSinImp.setText(totalSinImp+" €");
+			lblTotalSinImp.setText(formateador.format(totalSinImp)+" €");
 			
 			//calculo el iva
 			iva=totalSinImp*IVA;
 			
 			//lo muestro en el label
-			lblIva.setText(iva+" €");
+			lblIva.setText(formateador.format(iva)+" €");
 			//calculo el total sin iva
 			totalSinIva=totalSinImp+impuestoGanancia;
 			//lo muestro en el label
-			lblTotalSinIva.setText(totalSinIva+" €");
+			lblTotalSinIva.setText(formateador.format(totalSinIva)+" €");
 			//calculo el total con iva
 			totalIva=(totalSinIva*IVA)+totalSinIva;
 			//lo muestro en el label
-			lblTotalConIva.setText(totalIva+" €");
+			lblTotalConIva.setText(formateador.format(totalIva)+" €");
 			
 			actualizarPorcentajes();
 			
@@ -1291,10 +1321,10 @@ public class PanelPresupuesto extends JPanel {
 		
 		tfPorcentaje2.setText(""+porcentaje2);
 		
-		lblPorcentaje1.setText((porcentaje1/100.0)*totalIva+" €");
-		lblPorcentaje2.setText((porcentaje2/100.0)*totalIva+" €");
+		lblPorcentaje1.setText(formateador.format((porcentaje1/100.0)*totalIva)+" €");
+		lblPorcentaje2.setText(formateador.format((porcentaje2/100.0)*totalIva)+" €");
 		
-		totalPorcentaje.setText(totalIva+" €");
+		totalPorcentaje.setText(formateador.format(totalIva)+" €");
 		
 		
 	}
@@ -1425,6 +1455,52 @@ public class PanelPresupuesto extends JPanel {
 		
 		return modelo.getData();
 		
+	}
+
+	/**
+	 * This method initializes panelHerramientas	
+	 * 	
+	 * @return javax.swing.JPanel	
+	 */
+	private JPanel getPanelHerramientas() {
+		if (panelHerramientas == null) {
+			panelHerramientas = new JPanel();
+			panelHerramientas.setLayout(new FlowLayout());
+			panelHerramientas.add(getBtnBorrar(), null);
+		}
+		return panelHerramientas;
+	}
+
+	/**
+	 * This method initializes btnBorrar	
+	 * 	
+	 * @return javax.swing.JButton	
+	 */
+	private JButton getBtnBorrar() {
+		if (btnBorrar == null) {
+			btnBorrar = new JButton();
+			btnBorrar.setIcon(new ImageIcon(getClass().getResource("/img/delete.png")));
+			btnBorrar.setEnabled(false);
+			btnBorrar.addActionListener(new java.awt.event.ActionListener() {
+				public void actionPerformed(java.awt.event.ActionEvent e) {
+					
+					if(tablaProductos.getSelectedRow()>=0){
+						//lo quito del modelo y actualizo la tabla
+						modelo.removeElementAt(tablaProductos.getSelectedRow());
+						//actualizo los valores ya que quite un producto
+						actualizarValores();
+					}else{
+						try {
+							throw new Exception("Debe seleccionar una fila para borrar");
+						} catch (Exception e1) {
+							JOptionPane.showMessageDialog(null, e1.getMessage());
+						}
+					}
+					
+				}
+			});
+		}
+		return btnBorrar;
 	}
 
 }  //  @jve:decl-index=0:visual-constraint="10,10"

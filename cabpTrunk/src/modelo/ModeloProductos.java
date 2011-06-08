@@ -115,5 +115,12 @@ public class ModeloProductos extends AbstractTableModel {
 	public Vector<Vector> getData(){
 		return data;
 	}
+	
+	public void removeElementAt(int index){
+		
+		data.removeElementAt(index);
+		
+		fireTableDataChanged();
+	}
 
 }

@@ -15,6 +15,7 @@ import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComboBox;
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 
 import clases.Cliente;
 import clases.Distribuidor;
@@ -171,15 +172,24 @@ public class DialogoSeleccionDistribuidor extends JDialog {
 			btnAceptar.addActionListener(new java.awt.event.ActionListener() {
 				public void actionPerformed(java.awt.event.ActionEvent e) {
 					
-					valorPulsado=VALOR_ACEPTAR;
+					if(cbProveedor.getSelectedIndex()>0){
 					
-					setVisible(false);
-					
-					String temp=(String) cbProveedor.getSelectedItem();
-					
-					temp=temp.substring(0, 1);
-					
-					idDistribuidor=Integer.parseInt(temp);
+						valorPulsado=VALOR_ACEPTAR;
+						
+						setVisible(false);
+						
+						String temp=(String) cbProveedor.getSelectedItem();
+						
+						temp=temp.substring(0, 1);
+						
+						idDistribuidor=Integer.parseInt(temp);
+					}else{
+						try {
+							throw new Exception("Debe seleccionar un proveedor");
+						} catch (Exception e1) {
+							JOptionPane.showMessageDialog(getOwner(), e1.getMessage());
+						}
+					}
 					
 				}
 			});
