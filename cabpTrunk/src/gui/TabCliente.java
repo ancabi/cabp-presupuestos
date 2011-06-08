@@ -58,8 +58,7 @@ public class TabCliente extends JTabbedPane {
 	 */
 	private JPanel getPanelClientePres() {
 		if (panelClientePres == null) {
-			panelClientePres = new JPanel();
-			panelClientePres.setLayout(new GridBagLayout());
+			panelClientePres = new PanelClientePres();
 		}
 		return panelClientePres;
 	}
@@ -70,6 +69,8 @@ public class TabCliente extends JTabbedPane {
 		
 		//pongo agregar a false
 		((PanelDatosClientes) panelDatos).setAgregar();
+		
+		((PanelClientePres) panelClientePres).setIdCliente(c.getIdCliente());
 		
 	}
 	
