@@ -39,6 +39,7 @@ public class DialogoAddPresupuesto extends JDialog {
 	private JButton btnCancelar = null;
 	private int idCliente;
 	private int valorPulsado=0;
+	private int idDistribuidor;
 	
 
 	/**
@@ -152,7 +153,8 @@ public class DialogoAddPresupuesto extends JDialog {
 					
 					Vector<Vector> lineas=((PanelPresupuesto) panelPresupuesto).getLineas();
 					
-					Presupuestos p= new Presupuestos(ganancia, restaurante, pasaje, combustible, otros, hotel, kilometros, nViajes, precioGasolina, isGanancia, porcentaje, totalIva, totalSinIva, transporte, texto, nViajes);
+					Presupuestos p= new Presupuestos(ganancia, restaurante, pasaje, combustible, otros, hotel, kilometros, nViajes, 
+							precioGasolina, isGanancia, porcentaje, totalIva, totalSinIva, transporte, texto, idCliente, idDistribuidor);
 					
 					p.addBD();
 					
@@ -166,7 +168,7 @@ public class DialogoAddPresupuesto extends JDialog {
 						cantidad=Integer.parseInt(temp.get(3).toString());
 						
 						
-						p.addLineaPresupuesto(idProducto, cantidad, nomProducto, precio);
+						p.addLineaPresupuesto(idProducto, nomProducto, precio, cantidad);
 						
 					}
 					
@@ -224,6 +226,13 @@ public class DialogoAddPresupuesto extends JDialog {
 
 	public int getValorPulsado() {
 		return valorPulsado;
+	}
+
+	/**
+	 * @param idDistribuidor the idDistribuidor to set
+	 */
+	public void setIdDistribuidor(int idDistribuidor) {
+		this.idDistribuidor = idDistribuidor;
 	}
 	
 	

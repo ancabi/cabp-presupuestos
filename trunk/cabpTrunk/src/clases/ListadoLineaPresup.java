@@ -52,19 +52,22 @@ public class ListadoLineaPresup {
 	
 	public void cargarLineaPresup(){
 		
+		ResultSet rs;
+		
 		try {
+			//le paso el id del presupuesto
 			psLineaPresup.setInt(1, idPresupuesto);
 			
-			ResultSet rs=psLineaPresup.executeQuery();
+			rs=psLineaPresup.executeQuery();
 			
 			while(rs.next()){
 				
-				String nombreProd=rs.getString("nomProducto");
+				int idProducto=rs.getInt("idProducto");
+				String nomProducto=rs.getString("nomProducto");
+				double precio=rs.getDouble("precio");
 				int cantidad=rs.getInt("cantidad");
-				
-				//Productos producto=new Productos();
-				
-				//lineaPresupuesto.add(new LineaPresupuesto(producto, cantidad));
+				//le paso los datos para que cree la linea
+				lineaPresupuesto.add(new LineaPresupuesto(idPresupuesto, idProducto,nomProducto, precio, cantidad));
 				
 			}
 			
@@ -100,6 +103,10 @@ public class ListadoLineaPresup {
 			JOptionPane.showMessageDialog(null, e.getMessage());
 		}
 		
+	}
+
+	public String getNombre() {
+		return lineaPresupuesto.get(1).getNombre();
 	}
 	
 	

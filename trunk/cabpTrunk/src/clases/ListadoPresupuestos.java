@@ -23,7 +23,6 @@ public class ListadoPresupuestos {
 	private Connection dbConnect=Conectar.getConnection();
 	private int idCliente;
 	private PreparedStatement psPresupuestos=null;
-	private ListadoLineaPresup listadoLineaPresup=null;
 	private PreparedStatement psLineasPresupuesto;
 	
 	public ListadoPresupuestos(int idCliente){
@@ -37,12 +36,8 @@ public class ListadoPresupuestos {
 	
 	public ListadoPresupuestos() {
 		
-		listadoLineaPresup=new ListadoLineaPresup();
-		
 		try {
 			psPresupuestos=dbConnect.prepareStatement("SELECT * FROM presupuestos WHERE idCliente=?");
-			
-			psLineasPresupuesto=dbConnect.prepareStatement("SELECT * FROM lineaPresupuesto WHERE idPresupuesto=?");
 			
 		} catch (SQLException e) {
 			JOptionPane.showMessageDialog(null, e.getMessage());
@@ -50,14 +45,17 @@ public class ListadoPresupuestos {
 	}
 
 	public void cargarPresupuestos(){
+		//vacio el vector
+		presupuestos.removeAllElements();
 		
 		try {
+			//le paso el cliente que tiene que traerme los presupuestos
 			psPresupuestos.setInt(1, idCliente);
-			
+			//ejecuto la consulta
 			ResultSet rs=psPresupuestos.executeQuery();
 			
 			while(rs.next()){
-				
+				//guardo los datos
 				int idPresupuesto=rs.getInt("idPresupuesto");
 				int ganancia=rs.getInt("ganancia");
 				int restaurante=rs.getInt("restaurante");
@@ -74,10 +72,15 @@ public class ListadoPresupuestos {
 				int totViajes=rs.getInt("totViajes");
 				double precioGasolina=rs.getDouble("precioGasolina");
 				double totalSinIva=rs.getDouble("totalSinIva");
+				int idDistribuidor=rs.getInt("idDistribuidor");
 				
-				
+				//creo el presupuesto y lo guardo en el vector
 				presupuestos.add(new Presupuestos(idPresupuesto, ganancia, restaurante, pasaje, combustible, otros, hotel, kilometros, totViajes, precioGasolina, 
-						isGanancia, porcentaje, totalConIva, totalSinIva, transporte, texto, idCliente));
+						isGanancia, porcentaje, totalConIva, totalSinIva, transporte, texto, idCliente, idDistribuidor));
+				//traigo el ultimo indice introducido
+				int index=presupuestos.size()-1;
+				//cargo las lineas
+				presupuestos.get(index).cargarLineas();
 				
 			}
 			
@@ -89,6 +92,30 @@ public class ListadoPresupuestos {
 
 	public void setIdCliente(int idCliente) {
 		this.idCliente = idCliente;
+	}
+	
+	public void cargarLineas(int index){
+		
+		
+		presupuestos.get(index).cargarLineas();
+		
+		
+	}
+	
+	public Presupuestos getPresupuestoProveedor(int index, int idDistribuidor){
+		
+		if(idDistribuidor==presupuestos.get(index).getIdDistribuidor()){
+			
+			return presupuestos.get(index);
+			
+		}
+		
+		return null;
+		
+	}
+	
+	public int getSize(){
+		return presupuestos.size();
 	}
 	
 	

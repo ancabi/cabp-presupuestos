@@ -3,13 +3,17 @@
  */
 package gui;
 
-import java.awt.GridBagLayout;
+
 import javax.swing.JPanel;
-import java.awt.Dimension;
+
 import java.awt.BorderLayout;
 import javax.swing.JTree;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.TreePath;
 
 import clases.ListadoPresupuestos;
+import clases.Presupuestos;
 
 /**
  * @author ancabi
@@ -21,7 +25,8 @@ public class PanelClientePres extends JPanel {
 	private JTree treePresupuestos = null;
 	private JPanel panelPresupuesto = null;
 	private ListadoPresupuestos presupuestos=new ListadoPresupuestos();
-
+	private DefaultMutableTreeNode bison, acorn, root;  //  @jve:decl-index=0:
+	private DefaultTreeModel modelo;
 	/**
 	 * This is the default constructor
 	 */
@@ -49,7 +54,33 @@ public class PanelClientePres extends JPanel {
 	 */
 	private JTree getTreePresupuestos() {
 		if (treePresupuestos == null) {
-			treePresupuestos = new JTree();
+			
+			root=new DefaultMutableTreeNode("Presupuestos");
+			
+			
+			treePresupuestos = new JTree(root);
+			treePresupuestos
+					.addTreeSelectionListener(new javax.swing.event.TreeSelectionListener() {
+						public void valueChanged(javax.swing.event.TreeSelectionEvent e) {
+							TreePath path = e.getPath();
+							Object [] nodos = path.getPath();
+							
+							DefaultMutableTreeNode ultimoNodo =(DefaultMutableTreeNode)nodos[nodos.length-1];
+							
+							// Por ejemplo, para ver si se ha seleccionado el "hijo1"...
+							if(!ultimoNodo.getUserObject().equals("Presupuestos") && !ultimoNodo.getUserObject().equals("bison")){
+								
+								String temp=(String) ultimoNodo.getUserObject();
+								
+								temp=temp.substring(temp.indexOf('º')+2);
+								System.out.println(temp);
+								//int idPresupuesto=ultimoNodo.getUserObject()
+								
+								//presupuestos.getPresupuesto();
+								
+							}
+						}
+					});
 		}
 		return treePresupuestos;
 	}
@@ -69,6 +100,69 @@ public class PanelClientePres extends JPanel {
 	public void setIdCliente(int idCliente){
 		
 		presupuestos.setIdCliente(idCliente);
+		//cargo los presupuestos del cliente que acabo de traer
+		presupuestos.cargarPresupuestos();
+		
+		cargarTree();
+		
+	}
+	
+	public void cargarPresupuestos(){
+		//cargo los presupuestos del cliente que acabo de traer
+		presupuestos.cargarPresupuestos();
+		
+		cargarTree();
+	}
+	
+	private void cargarTree(){
+		
+		root=new DefaultMutableTreeNode("Presupuestos");
+		modelo=new DefaultTreeModel(root);
+		treePresupuestos.setModel(modelo);
+		
+		bison=makeNode("bison", root);
+		acorn=makeNode("acorn", root);
+		
+		for(int x=0; x<presupuestos.getSize(); x++){
+			
+			Presupuestos temp=presupuestos.getPresupuestoProveedor(x, 1);
+			
+			if(temp!=null){
+				
+				String titulo="Presupuesto Nº "+temp.getIdPresupuesto();
+				
+				makeNode(titulo, bison);
+			}
+			
+			temp=presupuestos.getPresupuestoProveedor(x, 2);
+			
+			if(temp!=null){
+				
+				String titulo="Presupuesto Nº "+temp.getIdPresupuesto();
+				
+				makeNode(titulo, acorn);
+			}
+		}
+		
+		if(bison.getChildCount()==0){
+			makeNode("No hay presupuestos", bison);
+		}
+		
+		if(acorn.getChildCount()==0){
+			makeNode("No hay presupuestos", acorn);
+		}
+		
+	}
+	
+	private DefaultMutableTreeNode makeNode(String title, DefaultMutableTreeNode parent){
+		
+		DefaultMutableTreeNode node;
+		
+		node=new DefaultMutableTreeNode(title);
+		
+		parent.add(node);
+		
+		return node;
 		
 	}
 

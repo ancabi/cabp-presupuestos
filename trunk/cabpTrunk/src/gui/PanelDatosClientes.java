@@ -235,6 +235,7 @@ public class PanelDatosClientes extends JPanel {
 		
 		agregar=true;
 		lblTitulo.setText("Agregar cliente");
+		btnAddPresup.setEnabled(false);
 		
 		
 	}
@@ -242,6 +243,7 @@ public class PanelDatosClientes extends JPanel {
 	public void setAgregar(){
 		agregar=false;
 		lblTitulo.setText("Modificar cliente");
+		btnAddPresup.setEnabled(true);
 	}
 	
 	public void setCliente(Cliente c){
@@ -979,11 +981,14 @@ public class PanelDatosClientes extends JPanel {
 		if (btnAddPresup == null) {
 			btnAddPresup = new JButton();
 			btnAddPresup.setText("Agregar presupuesto");
+			btnAddPresup.setEnabled(false);
 			btnAddPresup.addActionListener(new java.awt.event.ActionListener() {
 				public void actionPerformed(java.awt.event.ActionEvent e) {
 
 					((MainFrame) mainFrame).nuevoPresupuesto(idCliente);
 					
+					//necesito llegar al tab cliente para poder actualizar el presupuesto recien creado
+					((PanelCliente) ((MainFrame) mainFrame).getPanelCliente()).getDialogoModCliente().getTabbedCliente().cargarPresupuestos();
 				}
 			});
 		}
