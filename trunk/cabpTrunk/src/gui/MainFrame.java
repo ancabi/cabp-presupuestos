@@ -80,7 +80,7 @@ public class MainFrame extends JFrame {
 		
 		this.setSize(925, 629);
 		this.setForeground(Color.black);
-		this.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/img/cabp1.jpg")));
+		this.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/img/cabpTrans.png")));
 		this.setJMenuBar(getJJMenuBar());
 			
 		try {
