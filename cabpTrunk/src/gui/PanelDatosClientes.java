@@ -54,14 +54,6 @@ public class PanelDatosClientes extends JPanel {
 	private JTextField tfEmpresa = null;
 	private JTextArea taNotas = null;
 	private boolean agregar=true;
-	private Connection dbConnect;
-	private PreparedStatement psInsertar;
-	private PreparedStatement psInsertarTel;
-	private PreparedStatement psInsertarEmail;
-	private PreparedStatement psBorrarTel;
-	private PreparedStatement psBorrarEmail;
-	private ResultSet rs;
-	private PreparedStatement psActualizar;
 	private int idCliente;
 	private JTextField tfTelefono = null;
 	private JList jlTelefonos = null;
@@ -90,6 +82,9 @@ public class PanelDatosClientes extends JPanel {
 	private Vector<Telefonos> telefonoBorrar=new Vector<Telefonos>();  //  @jve:decl-index=0:
 	private Vector<Emails> emailsBorrar=new Vector<Emails>();
 	private JScrollPane scrollNotas = null;
+	private JPanel panelBotonesFacturas = null;
+	private JButton btnAddPresup = null;
+	private JFrame mainFrame;
 	/**
 	 * This is the default constructor
 	 */
@@ -814,14 +809,13 @@ public class PanelDatosClientes extends JPanel {
 	 */
 	private JPanel getPanelTitulo() {
 		if (panelTitulo == null) {
-			FlowLayout flowLayout2 = new FlowLayout();
-			flowLayout2.setAlignment(java.awt.FlowLayout.LEFT);
 			lblTitulo = new JLabel();
 			lblTitulo.setText("Agregar cliente");
 			lblTitulo.setFont(new Font("Times New Roman", Font.BOLD, 18));
 			panelTitulo = new JPanel();
-			panelTitulo.setLayout(flowLayout2);
-			panelTitulo.add(lblTitulo, null);
+			panelTitulo.setLayout(new BorderLayout());
+			panelTitulo.add(lblTitulo, BorderLayout.WEST);
+			panelTitulo.add(getPanelBotonesFacturas(), BorderLayout.EAST);
 		}
 		return panelTitulo;
 	}
@@ -960,6 +954,46 @@ public class PanelDatosClientes extends JPanel {
 			scrollNotas.setViewportView(getTaNotas());
 		}
 		return scrollNotas;
+	}
+
+	/**
+	 * This method initializes panelBotonesFacturas	
+	 * 	
+	 * @return javax.swing.JPanel	
+	 */
+	private JPanel getPanelBotonesFacturas() {
+		if (panelBotonesFacturas == null) {
+			panelBotonesFacturas = new JPanel();
+			panelBotonesFacturas.setLayout(new FlowLayout());
+			panelBotonesFacturas.add(getBtnAddPresup(), null);
+		}
+		return panelBotonesFacturas;
+	}
+
+	/**
+	 * This method initializes btnAddPresup	
+	 * 	
+	 * @return javax.swing.JButton	
+	 */
+	private JButton getBtnAddPresup() {
+		if (btnAddPresup == null) {
+			btnAddPresup = new JButton();
+			btnAddPresup.setText("Agregar presupuesto");
+			btnAddPresup.addActionListener(new java.awt.event.ActionListener() {
+				public void actionPerformed(java.awt.event.ActionEvent e) {
+
+					((MainFrame) mainFrame).nuevoPresupuesto(idCliente);
+					
+				}
+			});
+		}
+		return btnAddPresup;
+	}
+
+	public void setMainFrame(JFrame mainFrame) {
+		
+		this.mainFrame=mainFrame;
+		
 	}
 	
 	

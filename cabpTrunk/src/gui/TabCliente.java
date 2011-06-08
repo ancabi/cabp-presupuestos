@@ -1,5 +1,6 @@
 package gui;
 
+import javax.swing.JFrame;
 import javax.swing.JTabbedPane;
 import javax.swing.JPanel;
 import clases.Cliente;
@@ -20,6 +21,7 @@ public class TabCliente extends JTabbedPane {
 	public TabCliente() {
 		super();
 		initialize();
+		
 	}
 
 	/**
@@ -103,5 +105,11 @@ public class TabCliente extends JTabbedPane {
 			panelPdf = new JPanel();
 		}
 		return panelPdf;
+	}
+
+	public void setMainFrame(JFrame mainFrame) {
+
+		((PanelDatosClientes) panelDatos).setMainFrame(mainFrame);
+		
 	}
 }  //  @jve:decl-index=0:visual-constraint="10,10"

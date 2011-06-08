@@ -8,6 +8,8 @@ import java.awt.Frame;
 import java.awt.BorderLayout;
 import javax.swing.JDialog;
 import javax.swing.JButton;
+import javax.swing.JFrame;
+
 import java.awt.FlowLayout;
 
 import javax.swing.JTabbedPane;
@@ -29,6 +31,7 @@ public class DialogoModCliente extends JDialog {
 	private JButton btnCancelar = null;
 	private int valorPulsado=0;
 	private JTabbedPane tabCliente = null;
+	private JFrame mainFrame;
 
 	/**
 	 * @param owner
@@ -36,6 +39,7 @@ public class DialogoModCliente extends JDialog {
 	public DialogoModCliente(Frame owner) {
 		super(owner);
 		initialize();
+		
 	}
 
 	/**
@@ -167,6 +171,12 @@ public class DialogoModCliente extends JDialog {
 	public TabCliente getTabbedCliente(){
 		
 		return (TabCliente) tabCliente;
+		
+	}
+
+	public void setMainFrame(JFrame mainFrame) {
+
+		((TabCliente) tabCliente).setMainFrame(mainFrame);
 		
 	}
 	

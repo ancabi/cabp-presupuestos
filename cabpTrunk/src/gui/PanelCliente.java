@@ -41,16 +41,8 @@ public class PanelCliente extends JPanel {
 	private JButton btnAgregar = null;
 	private JButton jButton = null;
 	private JButton jButton1 = null;
-	private Connection dbConnect;
-	private ResultSet rs;  //  @jve:decl-index=0:
-	private ResultSet rsSec;
-	private PreparedStatement psCliente;
-	private PreparedStatement psTelefono;
-	private PreparedStatement psEmail;
-	private PreparedStatement psBorrarCliente;
 	private ModeloClientes modelo=new ModeloClientes();
 	private JFrame mainFrame;
-	private Vector<Cliente> clientes=new Vector<Cliente>();
 	private JPanel panelTitulo = null;
 	private JLabel lblTitulo = null;
 	private DialogoAddCliente dialogoAddCliente;
@@ -63,7 +55,7 @@ public class PanelCliente extends JPanel {
 	public PanelCliente( JFrame mainFrame) {
 		super();
 		initialize();
-		//recibo la conexion con la base de datos
+		
 		this.mainFrame=mainFrame;
 	}
 
@@ -120,19 +112,20 @@ public class PanelCliente extends JPanel {
 			jTable.getColumn("ID Cliente").setMaxWidth(70);
 			jTable.getColumn("DNI").setMaxWidth(75);
 			jTable.getColumn("Telefono").setMaxWidth(75);
-			
-						jTable.addMouseListener(new java.awt.event.MouseAdapter() { 
+					jTable.addMouseListener(new java.awt.event.MouseAdapter() { 
 							public void mouseClicked(java.awt.event.MouseEvent evt) {    
 								if (evt.getClickCount() >= 2){// si es doble click
-									
+									//tengo el index de la fila seleccionada
 									int x = jTable.rowAtPoint(evt.getPoint());
-									
+									//traigo el cliente
 									Cliente c=((MainFrame) mainFrame).getListadoClientes().getCliente(x);
-									
+									//construyo el dialogo de modificacion de clinete
 									dialogoModCliente=getDialogoModCliente();
-									
+									//le asigno el cliente
 									dialogoModCliente.setCliente(c);
-									
+									//le paso mainFrame
+									dialogoModCliente.setMainFrame(mainFrame);
+									//lo muestro
 									dialogoModCliente.setVisible(true);
 									
 									if(dialogoModCliente.getValorPulsado()==dialogoModCliente.VALOR_ACEPTAR){
