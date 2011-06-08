@@ -15,6 +15,7 @@ import java.awt.FlowLayout;
 import javax.swing.JTabbedPane;
 
 import clases.Cliente;
+import java.awt.Dimension;
 
 /**
  * @author ancabi
@@ -48,7 +49,7 @@ public class DialogoModCliente extends JDialog {
 	 * @return void
 	 */
 	private void initialize() {
-		this.setSize(781, 558);
+		this.setSize(979, 707);
 		this.setTitle("Modificar cliente");
 		this.setContentPane(getJContentPane());
 		this.setModal(true);
@@ -58,6 +59,8 @@ public class DialogoModCliente extends JDialog {
 				setVisible(false);
 				
 				((TabCliente) tabCliente).getPanelDatosClientes().limpiarCampos();
+				//vuelvo al primer tab para el siguiente cliente
+				tabCliente.setSelectedIndex(0);
 				
 				valorPulsado=VALOR_CANCELAR;
 			}
@@ -158,6 +161,7 @@ public class DialogoModCliente extends JDialog {
 	private JTabbedPane getTabCliente() {
 		if (tabCliente == null) {
 			tabCliente = new TabCliente();
+			tabCliente.setSelectedIndex(0);
 		}
 		return tabCliente;
 	}
@@ -179,6 +183,5 @@ public class DialogoModCliente extends JDialog {
 		((TabCliente) tabCliente).setMainFrame(mainFrame);
 		
 	}
-	
 
 }  //  @jve:decl-index=0:visual-constraint="10,10"

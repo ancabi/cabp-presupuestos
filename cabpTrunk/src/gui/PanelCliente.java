@@ -212,7 +212,7 @@ public class PanelCliente extends JPanel {
 		
 	}
 	
-	private DialogoModCliente getDialogoModCliente(){
+	DialogoModCliente getDialogoModCliente(){
 		
 		if(dialogoModCliente == null){
 			

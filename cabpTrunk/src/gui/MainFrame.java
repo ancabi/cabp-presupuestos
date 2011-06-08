@@ -253,7 +253,7 @@ public class MainFrame extends JFrame {
 	 * 	
 	 * @return javax.swing.JPanel	
 	 */
-	private JPanel getPanelCliente() {
+	JPanel getPanelCliente() {
 		if (panelCliente == null) {
 			panelCliente = new PanelCliente(this);
 			panelCliente.setName("panelCliente");
@@ -395,6 +395,8 @@ public class MainFrame extends JFrame {
 				
 			//llamo a la ventana para crear presupuesto
 			dialogoAddPresupuesto=getDialogoAddPresupuesto();
+			
+			dialogoAddPresupuesto.setIdDistribuidor(idDistribuidor);
 
 			//le asigno el cliente para el cual va a ser el presupuesto
 			dialogoAddPresupuesto.setIdCliente(idCliente);
@@ -405,6 +407,8 @@ public class MainFrame extends JFrame {
 		}
 			
 	}
+
+	
 
 
 }  //  @jve:decl-index=0:visual-constraint="10,10"

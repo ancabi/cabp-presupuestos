@@ -36,6 +36,7 @@ public class Presupuestos {
 	private String texto;
 	private ListadoLineaPresup listadoLineaPresup=null;
 	private int idCliente;
+	private int idDistribuidor;
 	/**
 	 * @param idPresupuesto
 	 * @param ganancia
@@ -55,17 +56,19 @@ public class Presupuestos {
 	 * @param texto
 	 * @param listadoLineaPresup
 	 * @param idCliente
+	 * @param idDistribuidor
 	 */
 	public Presupuestos(int idPresupuesto, int ganancia, int restaurante,
 			int pasaje, int combustible, int otros, int hotel, int kilometros,
 			int nViajes, double precioGasolina, boolean isGanancia,
 			int porcentaje, double totalConIva, double totalSinIva,
-			int transporte, String texto, int idCliente) {
+			int transporte, String texto, int idCliente, int idDistribuidor) {
 		
 		this(ganancia, restaurante, pasaje, combustible, otros, hotel, kilometros, nViajes, precioGasolina, isGanancia,
-				porcentaje, totalConIva, totalSinIva, transporte, texto, idCliente);
+				porcentaje, totalConIva, totalSinIva, transporte, texto, idCliente, idDistribuidor);
 		
 		this.idPresupuesto = idPresupuesto;
+		listadoLineaPresup.setIdPresupuesto(idPresupuesto);
 		
 	}
 	
@@ -87,12 +90,13 @@ public class Presupuestos {
 	 * @param texto
 	 * @param listadoLineaPresup
 	 * @param idCliente
+	 * @param idDistribuidor
 	 */
 	public Presupuestos(int ganancia, int restaurante,
 			int pasaje, int combustible, int otros, int hotel, int kilometros,
 			int nViajes, double precioGasolina, boolean isGanancia,
 			int porcentaje, double totalConIva, double totalSinIva,
-			int transporte, String texto, int idCliente) {
+			int transporte, String texto, int idCliente, int idDistribuidor) {
 		
 		this.ganancia = ganancia;
 		this.restaurante = restaurante;
@@ -109,8 +113,10 @@ public class Presupuestos {
 		this.totalSinIva = totalSinIva;
 		this.transporte = transporte;
 		this.texto = texto;
-		this.listadoLineaPresup = new ListadoLineaPresup();
 		this.idCliente = idCliente;
+		this.idDistribuidor=idDistribuidor;
+		
+		listadoLineaPresup = new ListadoLineaPresup();
 	}
 	
 	public void addBD(){
@@ -120,7 +126,7 @@ public class Presupuestos {
 		try {
 			PreparedStatement ps=dbConnect.prepareStatement("INSERT INTO presupuestos(ganancia, restaurante, pasaje, combustible, otros, " +
 					"hotel, kilometros, isGanancia, porcentaje, totalConIva, transporte, texto, idCliente, totViajes, precioGasolina, " +
-					"totalSinIva) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
+					"totalSinIva, idDistribuidor) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
 			
 			ps.setInt(1, ganancia);
 			ps.setInt(2, restaurante);
@@ -138,6 +144,7 @@ public class Presupuestos {
 			ps.setInt(14, nViajes);
 			ps.setDouble(15, precioGasolina);
 			ps.setDouble(16, totalSinIva);
+			ps.setInt(17, idDistribuidor);
 			
 			ps.executeUpdate();
 			
@@ -157,14 +164,28 @@ public class Presupuestos {
 		
 	}
 
-	public void addLineaPresupuesto(int idProducto, int cantidad,
-			String nomProducto, double precio) {
+	public void addLineaPresupuesto(int idProducto, String nomProducto, double precio, int cantidad) {
 		
 		listadoLineaPresup.addLinea(new LineaPresupuesto(idPresupuesto, idProducto, nomProducto, precio, cantidad));
 		
 	}
+
+	public int getIdDistribuidor() {
+		return idDistribuidor;
+	}
+
+	/**
+	 * @return the idPresupuesto
+	 */
+	public int getIdPresupuesto() {
+		return idPresupuesto;
+	}
 	
-	
+	public void cargarLineas(){
+		
+		listadoLineaPresup.cargarLineaPresup();
+		
+	}
 	
 	
 	

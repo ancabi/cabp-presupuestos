@@ -74,6 +74,10 @@ public class TabCliente extends JTabbedPane {
 		
 	}
 	
+	public void cargarPresupuestos(){
+		((PanelClientePres) panelClientePres).cargarPresupuestos();
+	}
+	
 	public void guardarCliente(){
 		
 		((PanelDatosClientes) panelDatos).guardarCliente();
