@@ -10,9 +10,16 @@ import javax.swing.JDialog;
 import java.awt.GridBagLayout;
 import javax.swing.JLabel;
 import java.awt.GridBagConstraints;
+
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComboBox;
 import javax.swing.JButton;
 import javax.swing.JFrame;
+
+import clases.Cliente;
+import clases.Distribuidor;
+import clases.ListadoClientes;
+import clases.ListadoDistribuidores;
 
 import java.awt.FlowLayout;
 import java.awt.Insets;
@@ -22,7 +29,7 @@ import java.awt.Dimension;
  * @author ancabi
  *
  */
-public class DialogoSeleccionProveedor extends JDialog {
+public class DialogoSeleccionDistribuidor extends JDialog {
 
 	private static final long serialVersionUID = 1L;
 	public static final int VALOR_ACEPTAR=1;
@@ -36,13 +43,16 @@ public class DialogoSeleccionProveedor extends JDialog {
 	private JButton btnCancelar = null;
 	private JFrame mainFrame=null;
 	private int valorPulsado=0;
+	private DefaultComboBoxModel modeloCB;
+	private int idDistribuidor;
 	/**
 	 * @param owner
 	 */
-	public DialogoSeleccionProveedor(Frame owner, JFrame mainFrame) {
+	public DialogoSeleccionDistribuidor(Frame owner) {
 		super(owner);
 		initialize();
-		this.mainFrame=mainFrame;
+		
+		mainFrame=(JFrame) owner;
 	}
 
 	/**
@@ -55,6 +65,11 @@ public class DialogoSeleccionProveedor extends JDialog {
 		this.setTitle("Seleccione un proveedor");
 		this.setContentPane(getJContentPane());
 		this.setModal(true);
+		this.addWindowListener(new java.awt.event.WindowAdapter() {
+			public void windowClosing(java.awt.event.WindowEvent e) {
+				valorPulsado=VALOR_CANCELAR;
+			}
+		});
 		this.setLocationRelativeTo(getOwner());
 	}
 
@@ -124,9 +139,24 @@ public class DialogoSeleccionProveedor extends JDialog {
 	 */
 	private JComboBox getCbProveedor() {
 		if (cbProveedor == null) {
-			cbProveedor = new JComboBox();
+			
+			modeloCB=getModeloCombo();
+			
+			cbProveedor = new JComboBox(modeloCB);
 		}
 		return cbProveedor;
+	}
+	
+	private DefaultComboBoxModel getModeloCombo() {
+
+		if(modeloCB==null){
+			
+			modeloCB= new DefaultComboBoxModel();
+			
+		}
+		
+		return modeloCB;
+		
 	}
 
 	/**
@@ -145,6 +175,12 @@ public class DialogoSeleccionProveedor extends JDialog {
 					
 					setVisible(false);
 					
+					String temp=(String) cbProveedor.getSelectedItem();
+					
+					temp=temp.substring(0, 1);
+					
+					idDistribuidor=Integer.parseInt(temp);
+					
 				}
 			});
 		}
@@ -160,8 +196,62 @@ public class DialogoSeleccionProveedor extends JDialog {
 		if (btnCancelar == null) {
 			btnCancelar = new JButton();
 			btnCancelar.setText("Cancelar");
+			btnCancelar.addActionListener(new java.awt.event.ActionListener() {
+				public void actionPerformed(java.awt.event.ActionEvent e) {
+					
+					valorPulsado=VALOR_CANCELAR;
+					
+					setVisible(false);
+					
+				}
+			});
 		}
 		return btnCancelar;
+	}
+	
+	public void cargarDistribuidores(){
+		
+		modeloCB.removeAllElements();
+		//traigo los clientes
+		
+		ListadoDistribuidores listado=((MainFrame) mainFrame).getListadoDistribuidores();
+		Distribuidor d;
+		String nombre;
+		//el primer lugar del combo box va a estar vacio
+		if(modeloCB!=null){
+			modeloCB.addElement("");
+		}else{
+			
+			modeloCB=getModeloCombo();
+			modeloCB.addElement("");
+			
+		}
+		
+		//cargo los clientes
+		for(int x=0; x<listado.getSize(); x++){
+			
+			d=listado.getDistribuidor(x);
+			
+			
+			nombre=d.getNombre();
+			idDistribuidor=d.getIdDistribuidor();
+			
+			modeloCB.addElement(idDistribuidor+" "+nombre);
+			
+		}
+		//pongo otra vez el seleccionado en el item vacio
+		cbProveedor.setSelectedIndex(0);
+		
+	}
+
+	public int getValorPulsado() {
+		
+		return valorPulsado;
+	}
+
+	public int getIdDistribuidor() {
+		
+		return idDistribuidor;
 	}
 
 }  //  @jve:decl-index=0:visual-constraint="435,96"

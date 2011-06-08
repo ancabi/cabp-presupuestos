@@ -22,6 +22,7 @@ import javax.swing.ImageIcon;
 import clases.Cliente;
 import clases.Emails;
 import clases.ListadoClientes;
+import clases.ListadoDistribuidores;
 import clases.ListadoProductos;
 import clases.Telefonos;
 import conexion.Conectar;
@@ -36,6 +37,9 @@ import java.awt.Color;
 import javax.swing.BorderFactory;
 import javax.swing.border.SoftBevelBorder;
 import javax.swing.border.TitledBorder;
+
+import org.w3c.dom.ls.LSInput;
+
 import java.awt.Font;
 
 public class MainFrame extends JFrame {
@@ -56,6 +60,8 @@ public class MainFrame extends JFrame {
 	private DialogoSeleccionCliente dialogoSeleccionCliente;
 	private ListadoProductos listadoProductos = null;
 	private DialogoAddPresupuesto dialogoAddPresupuesto;
+	private ListadoDistribuidores listadoDistribuidores;  //  @jve:decl-index=0:
+	private DialogoSeleccionDistribuidor dialogoSeleccionDistribuidor;
 
 	/**
 	 * This is the default constructor
@@ -93,6 +99,10 @@ public class MainFrame extends JFrame {
 			listadoClientes=new ListadoClientes();
 				
 			listadoClientes.cargarClientes();
+			
+			listadoDistribuidores=new ListadoDistribuidores();
+			
+			listadoDistribuidores.cargarDistribuidores();
 			
 		}
 
@@ -279,34 +289,7 @@ public class MainFrame extends JFrame {
 			btnPresupuesto.addActionListener(new java.awt.event.ActionListener() {
 				public void actionPerformed(java.awt.event.ActionEvent e) {
 					
-					cambiarCapa("panelVacio");
-					
-					dialogoSeleccionCliente=getDialogoSeleccionCliente();
-					
-					dialogoSeleccionCliente.actualizarCliente();
-					
-					dialogoSeleccionCliente.setVisible(true);
-					
-					if(dialogoSeleccionCliente.getValorPulsado()== DialogoSeleccionCliente.VALOR_ACEPTAR){
-						
-						int idCliente=dialogoSeleccionCliente.getIdCliente();
-
-						//traigo el listado de productos del proveedor elegido
-						listadoProductos=getListatoProductos(1);
-						//cargo los productos en memoria
-						listadoProductos.cargarProductos();
-						
-						//llamo a la ventana para crear presupuesto
-						dialogoAddPresupuesto=getDialogoAddPresupuesto();
-
-						//le asigno el cliente para el cual va a ser el presupuesto
-						dialogoAddPresupuesto.setIdCliente(idCliente);
-						
-						dialogoAddPresupuesto.cargarProductos(listadoProductos);
-						
-						dialogoAddPresupuesto.setVisible(true);
-						
-					}
+					nuevoPresupuesto();
 				}
 			});
 		}
@@ -344,15 +327,84 @@ public class MainFrame extends JFrame {
 		
 	}
 	
+	private DialogoSeleccionDistribuidor getDialogoSeleccionDistribuidor(){
+		
+		if(dialogoSeleccionDistribuidor==null){
+			
+			dialogoSeleccionDistribuidor=new DialogoSeleccionDistribuidor(this);
+			
+		}
+		
+		return dialogoSeleccionDistribuidor;
+		
+	}
+	
 	private DialogoAddPresupuesto getDialogoAddPresupuesto(){
 		
 		if(dialogoAddPresupuesto==null){
 			
-			dialogoAddPresupuesto=new DialogoAddPresupuesto(this, this);
+			dialogoAddPresupuesto=new DialogoAddPresupuesto(this);
 			
 		}
 		
 		return dialogoAddPresupuesto;
 	}
+
+	public ListadoDistribuidores getListadoDistribuidores() {
+
+		return listadoDistribuidores;
+	}
+	
+	public void nuevoPresupuesto(){
+		
+		cambiarCapa("panelVacio");
+		
+		dialogoSeleccionCliente=getDialogoSeleccionCliente();
+		
+		dialogoSeleccionCliente.actualizarCliente();
+		
+		dialogoSeleccionCliente.setVisible(true);
+		
+		if(dialogoSeleccionCliente.getValorPulsado()== DialogoSeleccionCliente.VALOR_ACEPTAR){
+			
+			int idCliente=dialogoSeleccionCliente.getIdCliente();
+		
+			nuevoPresupuesto(idCliente);
+			
+			
+		}
+		
+	}
+	
+	public void nuevoPresupuesto(int idCliente){
+
+		dialogoSeleccionDistribuidor=getDialogoSeleccionDistribuidor();
+			
+		dialogoSeleccionDistribuidor.cargarDistribuidores();
+			
+		dialogoSeleccionDistribuidor.setVisible(true);
+			
+		if(dialogoSeleccionDistribuidor.getValorPulsado()==DialogoSeleccionDistribuidor.VALOR_ACEPTAR){
+
+			int idDistribuidor=dialogoSeleccionDistribuidor.getIdDistribuidor();
+				
+			//traigo el listado de productos del proveedor elegido
+			listadoProductos=getListatoProductos(idDistribuidor);
+			//cargo los productos en memoria
+			listadoProductos.cargarProductos();
+				
+			//llamo a la ventana para crear presupuesto
+			dialogoAddPresupuesto=getDialogoAddPresupuesto();
+
+			//le asigno el cliente para el cual va a ser el presupuesto
+			dialogoAddPresupuesto.setIdCliente(idCliente);
+				
+			dialogoAddPresupuesto.cargarProductos(listadoProductos);
+				
+			dialogoAddPresupuesto.setVisible(true);
+		}
+			
+	}
+
 
 }  //  @jve:decl-index=0:visual-constraint="10,10"

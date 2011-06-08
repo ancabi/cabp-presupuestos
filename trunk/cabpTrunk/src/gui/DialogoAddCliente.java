@@ -8,6 +8,8 @@ import java.awt.Frame;
 import java.awt.BorderLayout;
 import javax.swing.JDialog;
 import javax.swing.JButton;
+import javax.swing.JFrame;
+
 import java.awt.FlowLayout;
 import java.util.Vector;
 
@@ -26,6 +28,7 @@ public class DialogoAddCliente extends JDialog {
 	private JButton btnAceptar = null;
 	private JButton btnCancelar = null;
 	private int valorPulsado=0;
+	private JFrame mainFrame;
 
 	/**
 	 * @param owner

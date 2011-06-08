@@ -38,18 +38,14 @@ public class DialogoAddPresupuesto extends JDialog {
 	private JButton btnAceptar = null;
 	private JButton btnCancelar = null;
 	private int idCliente;
-	private int idDistribuidor=1;
-	private JFrame mainFrame;
 	private int valorPulsado=0;
 
 	/**
 	 * @param owner
 	 */
-	public DialogoAddPresupuesto(Frame owner, JFrame mainFrame) {
+	public DialogoAddPresupuesto(Frame owner) {
 		super(owner);
 		initialize();
-		
-		this.mainFrame=mainFrame;
 	}
 
 	/**
@@ -217,20 +213,6 @@ public class DialogoAddPresupuesto extends JDialog {
 	 */
 	public void setIdCliente(int idCliente) {
 		this.idCliente = idCliente;
-	}
-
-	/**
-	 * @return the idDistribuidor
-	 */
-	public int getIdDistribuidor() {
-		return idDistribuidor;
-	}
-
-	/**
-	 * @param idDistribuidor the idDistribuidor to set
-	 */
-	public void setIdDistribuidor(int idDistribuidor) {
-		this.idDistribuidor = idDistribuidor;
 	}
 
 	public void cargarProductos(ListadoProductos listado){
