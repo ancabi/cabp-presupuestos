@@ -5,6 +5,7 @@ package gui;
 
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import java.awt.Frame;
 import java.awt.BorderLayout;
@@ -176,6 +177,12 @@ public class DialogoSeleccionCliente extends JDialog {
 						temp=temp.substring(0, 1);
 						
 						idCliente=Integer.parseInt(temp);
+					}else{
+						try {
+							throw new Exception("Debe seleccionar un cliente");
+						} catch (Exception e1) {
+							JOptionPane.showMessageDialog(getOwner(), e1.getMessage());
+						}
 					}
 					
 					

@@ -39,6 +39,7 @@ public class DialogoAddPresupuesto extends JDialog {
 	private JButton btnCancelar = null;
 	private int idCliente;
 	private int valorPulsado=0;
+	
 
 	/**
 	 * @param owner
