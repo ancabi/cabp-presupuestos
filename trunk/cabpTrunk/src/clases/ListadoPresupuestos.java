@@ -117,6 +117,20 @@ public class ListadoPresupuestos {
 	public int getSize(){
 		return presupuestos.size();
 	}
+
+	public Presupuestos getPresupuesto(int idPresupuesto) {
+		
+		for(int x=0; x < presupuestos.size(); x++){
+			
+			if(presupuestos.get(x).getIdPresupuesto()==idPresupuesto){
+				return presupuestos.get(x);
+			}
+			
+		}
+		
+		return null;
+		
+	}
 	
 	
 

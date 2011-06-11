@@ -24,7 +24,7 @@ public class PanelClientePres extends JPanel {
 	private static final long serialVersionUID = 1L;
 	private JTree treePresupuestos = null;
 	private JPanel panelPresupuesto = null;
-	private ListadoPresupuestos presupuestos=new ListadoPresupuestos();
+	private ListadoPresupuestos presupuestos=new ListadoPresupuestos();  //  @jve:decl-index=0:
 	private DefaultMutableTreeNode bison, acorn, root;  //  @jve:decl-index=0:
 	private DefaultTreeModel modelo;
 	/**
@@ -68,15 +68,17 @@ public class PanelClientePres extends JPanel {
 							DefaultMutableTreeNode ultimoNodo =(DefaultMutableTreeNode)nodos[nodos.length-1];
 							
 							// Por ejemplo, para ver si se ha seleccionado el "hijo1"...
-							if(!ultimoNodo.getUserObject().equals("Presupuestos") && !ultimoNodo.getUserObject().equals("bison")){
+							if(!ultimoNodo.getUserObject().equals("Presupuestos") && !ultimoNodo.getUserObject().equals("bison")
+									&& !ultimoNodo.getUserObject().equals("acorn") && !ultimoNodo.getUserObject().equals("No hay presupuestos")){
 								
 								String temp=(String) ultimoNodo.getUserObject();
 								
 								temp=temp.substring(temp.indexOf('º')+2);
 								System.out.println(temp);
-								//int idPresupuesto=ultimoNodo.getUserObject()
 								
-								//presupuestos.getPresupuesto();
+								Presupuestos p=presupuestos.getPresupuesto(Integer.parseInt(temp));
+								
+								((PanelPresupuesto) panelPresupuesto).setPresupuesto(p);
 								
 							}
 						}
