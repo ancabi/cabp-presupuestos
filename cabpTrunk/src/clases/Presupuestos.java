@@ -181,6 +181,134 @@ public class Presupuestos {
 		return idPresupuesto;
 	}
 	
+	
+	
+	/**
+	 * @return the dbConnect
+	 */
+	public Connection getDbConnect() {
+		return dbConnect;
+	}
+
+	/**
+	 * @return the ganancia
+	 */
+	public int getGanancia() {
+		return ganancia;
+	}
+
+	/**
+	 * @return the restaurante
+	 */
+	public int getRestaurante() {
+		return restaurante;
+	}
+
+	/**
+	 * @return the pasaje
+	 */
+	public int getPasaje() {
+		return pasaje;
+	}
+
+	/**
+	 * @return the combustible
+	 */
+	public int getCombustible() {
+		return combustible;
+	}
+
+	/**
+	 * @return the otros
+	 */
+	public int getOtros() {
+		return otros;
+	}
+
+	/**
+	 * @return the hotel
+	 */
+	public int getHotel() {
+		return hotel;
+	}
+
+	/**
+	 * @return the kilometros
+	 */
+	public int getKilometros() {
+		return kilometros;
+	}
+
+	/**
+	 * @return the nViajes
+	 */
+	public int getnViajes() {
+		return nViajes;
+	}
+
+	/**
+	 * @return the precioGasolina
+	 */
+	public double getPrecioGasolina() {
+		return precioGasolina;
+	}
+
+	/**
+	 * @return the isGanancia
+	 */
+	public boolean isGanancia() {
+		return isGanancia;
+	}
+
+	/**
+	 * @return the porcentaje
+	 */
+	public int getPorcentaje() {
+		return porcentaje;
+	}
+
+	/**
+	 * @return the totalConIva
+	 */
+	public double getTotalConIva() {
+		return totalConIva;
+	}
+
+	/**
+	 * @return the totalSinIva
+	 */
+	public double getTotalSinIva() {
+		return totalSinIva;
+	}
+
+	/**
+	 * @return the transporte
+	 */
+	public int getTransporte() {
+		return transporte;
+	}
+
+	/**
+	 * @return the texto
+	 */
+	public String getTexto() {
+		return texto;
+	}
+
+	/**
+	 * @return the listadoLineaPresup
+	 */
+	public ListadoLineaPresup getListadoLineaPresup() {
+		return listadoLineaPresup;
+	}
+
+	/**
+	 * @return the idCliente
+	 */
+	public int getIdCliente() {
+		return idCliente;
+	}
+
 	public void cargarLineas(){
 		
 		listadoLineaPresup.cargarLineaPresup();

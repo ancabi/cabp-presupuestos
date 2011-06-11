@@ -28,6 +28,7 @@ import java.util.Vector;
 import javax.swing.JCheckBox;
 
 import clases.ListadoProductos;
+import clases.Presupuestos;
 import clases.Productos;
 
 import modelo.ModeloProductos;
@@ -515,15 +516,21 @@ public class PanelPresupuesto extends JPanel {
 			tfGanancia.setPreferredSize(new Dimension(100, 20));
 			tfGanancia.addFocusListener(new java.awt.event.FocusAdapter() {   
 				public void focusLost(java.awt.event.FocusEvent e) {    
-					if(tfGanancia.getText().equals("")){
-						tfGanancia.setText("0");
-					}else{
-						//actualizo los valores
-						actualizarValores();
+					if(tfGanancia.isEditable()){
+					
+						if(tfGanancia.getText().equals("")){
+							tfGanancia.setText("0");
+						}else{
+							//actualizo los valores
+							actualizarValores();
+						}
 					}
 				}
 				public void focusGained(java.awt.event.FocusEvent e) {
-					tfGanancia.setText("");
+					
+					if(tfGanancia.isEditable()){
+						tfGanancia.setText("");
+					}
 				}
 			});
 			tfGanancia.addActionListener(new java.awt.event.ActionListener() {
@@ -1501,6 +1508,52 @@ public class PanelPresupuesto extends JPanel {
 			});
 		}
 		return btnBorrar;
+	}
+
+	public void setPresupuesto(Presupuestos p) {
+		
+		editableCampos(false);
+		
+		tfGanancia.setText(""+p.getGanancia());
+		tfTransporte.setText(""+p.getTransporte());
+		tfHotel.setText(""+p.getHotel());
+		tfPasaje.setText(""+p.getPasaje());
+		tfOtros.setText(""+p.getOtros());
+		tfRestaurante.setText(""+p.getRestaurante());
+		tfCombustible.setText(""+p.getCombustible());
+		tfKm.setText(""+p.getKilometros());
+		tfViajes.setText(""+p.getnViajes());
+		tfPrecioGasolina.setText(""+p.getPrecioGasolina());
+		tfPorcentaje1.setText(""+p.getPorcentaje());
+		taTexto.setText(p.getTexto());
+		
+		actualizarValores();
+		actualizarGasolina();
+		
+		
+	}
+
+	private void editableCampos(boolean b) {
+		
+		
+		tfGanancia.setEditable(b);
+		tfTransporte.setEditable(b);
+		tfHotel.setEditable(b);
+		tfPasaje.setEditable(b);
+		tfOtros.setEditable(b);
+		tfRestaurante.setEditable(b);
+		tfCombustible.setEditable(b);
+		tfKm.setEditable(b);
+		tfViajes.setEditable(b);
+		tfPrecioGasolina.setEditable(b);
+		tfPorcentaje1.setEditable(b);
+		taTexto.setEditable(b);
+		tablaProductos.setEnabled(false);
+		
+		//estos son distintos
+		cbGanancia.setEnabled(b);
+		cbProductos.setEnabled(b);
+		
 	}
 
 }  //  @jve:decl-index=0:visual-constraint="10,10"
