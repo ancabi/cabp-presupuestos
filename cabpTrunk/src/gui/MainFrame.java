@@ -67,6 +67,7 @@ public class MainFrame extends JFrame {
 	private JButton btnProductos = null;
 	private JButton btnDistribuidor = null;
 	private JPanel panelProductos = null;
+	private JPanel panelDistribuidor = null;
 
 	/**
 	 * This is the default constructor
@@ -243,6 +244,7 @@ public class MainFrame extends JFrame {
 			panelCard.add(getPanelVacio(), getPanelVacio().getName());
 			panelCard.add(getPanelCliente(), getPanelCliente().getName());
 			panelCard.add(getPanelProductos(), getPanelProductos().getName());
+			panelCard.add(getPanelDistribuidor(), getPanelDistribuidor().getName());
 		}
 		return panelCard;
 	}
@@ -558,6 +560,14 @@ public class MainFrame extends JFrame {
 			btnDistribuidor = new JButton();
 			btnDistribuidor.setIcon(new ImageIcon(getClass().getResource("/img/distribuidor.png")));
 			btnDistribuidor.setBorder(BorderFactory.createEmptyBorder(0, 5, 0, 5));
+			btnDistribuidor.addActionListener(new java.awt.event.ActionListener() {
+				public void actionPerformed(java.awt.event.ActionEvent e) {
+					
+					((PanelDistribuidor) panelDistribuidor).cargarDistribuidores();
+					
+					cambiarCapa("panelDistribuidor");
+				}
+			});
 		}
 		return btnDistribuidor;
 	}
@@ -578,6 +588,24 @@ public class MainFrame extends JFrame {
 	public ListadoProductos getListadoProductos() {
 		
 		return listadoProductos;
+	}
+
+	/**
+	 * This method initializes panelDistribuidor	
+	 * 	
+	 * @return javax.swing.JPanel	
+	 */
+	private JPanel getPanelDistribuidor() {
+		if (panelDistribuidor == null) {
+			panelDistribuidor = new PanelDistribuidor(this);
+			panelDistribuidor.setName("panelDistribuidor");
+		}
+		return panelDistribuidor;
+	}
+
+	public ListadoDistribuidores getDistribuidores() {
+		
+		return listadoDistribuidores;
 	}
 	
 	
