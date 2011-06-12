@@ -1496,7 +1496,7 @@ public class PanelPresupuesto extends JPanel {
 		tfRestaurante.setText("0");
 		tfCombustible.setText("0");
 		
-		cbGanancia.setEnabled(true);
+		cbGanancia.setSelected(true);
 		
 		tfPorcentaje1.setText("50");
 		

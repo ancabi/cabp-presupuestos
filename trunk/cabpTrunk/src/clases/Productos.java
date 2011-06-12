@@ -22,7 +22,14 @@ public class Productos {
 	 */
 	public Productos(int idProducto, String nombre, double precio,
 			int idDistribuidor) {
+		
+		this(nombre, precio, idDistribuidor);
+		
 		this.idProducto = idProducto;
+		
+	}
+
+	public Productos(String nombre, double precio, int idDistribuidor) {
 		this.nombre = nombre;
 		this.precio = precio;
 		this.idDistribuidor = idDistribuidor;
@@ -85,6 +92,11 @@ public class Productos {
 	@Override
 	public String toString() {
 		return idProducto+" "+nombre+" "+precio+" €";
+	}
+
+	public void setIdProducto(int idProducto) {
+		this.idProducto=idProducto;
+		
 	}
 	
 	
