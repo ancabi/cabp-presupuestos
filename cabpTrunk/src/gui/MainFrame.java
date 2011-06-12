@@ -58,10 +58,14 @@ public class MainFrame extends JFrame {
 	private JButton btnPresupuesto = null;
 	private ListadoClientes listadoClientes= null;  //  @jve:decl-index=0:
 	private DialogoSeleccionCliente dialogoSeleccionCliente;
-	private ListadoProductos listadoProductos = null;
+	private ListadoProductos listadoProductos = null;  //  @jve:decl-index=0:
 	private DialogoAddPresupuesto dialogoAddPresupuesto;
+	private DialogoAddFactura dialogoAddFactura;
 	private ListadoDistribuidores listadoDistribuidores;  //  @jve:decl-index=0:
 	private DialogoSeleccionDistribuidor dialogoSeleccionDistribuidor;
+	private JButton btnFactura = null;
+	private JButton btnProductos = null;
+	private JButton btnDistribuidor = null;
 
 	/**
 	 * This is the default constructor
@@ -191,6 +195,9 @@ public class MainFrame extends JFrame {
 			jJToolBarBar = new JToolBar();
 			jJToolBarBar.add(getJButton());
 			jJToolBarBar.add(getBtnPresupuesto());
+			jJToolBarBar.add(getBtnFactura());
+			jJToolBarBar.add(getBtnProductos());
+			jJToolBarBar.add(getBtnDistribuidor());
 		}
 		return jJToolBarBar;
 	}
@@ -203,9 +210,13 @@ public class MainFrame extends JFrame {
 	private JButton getJButton() {
 		if (jButton == null) {
 			jButton = new JButton();
-			jButton.setIcon(new ImageIcon(getClass().getResource("/img/user.png")));
+			jButton.setIcon(new ImageIcon(getClass().getResource("/img/user2.png")));
 			jButton.setMargin(new Insets(20, 34, 2, 34));
-			jButton.setBorder(BorderFactory.createTitledBorder(null, "", TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, new Font("Dialog", Font.BOLD, 12), new Color(51, 51, 51)));
+			jButton.setBorderPainted(false);
+			jButton.setFocusPainted(true);
+			jButton.setRolloverEnabled(true);
+			jButton.setToolTipText("Gestion de usuario");
+			jButton.setBorder(BorderFactory.createEmptyBorder(0, 5, 0, 5));
 			jButton.addActionListener(new java.awt.event.ActionListener() {
 				public void actionPerformed(java.awt.event.ActionEvent e) {
 					
@@ -283,9 +294,10 @@ public class MainFrame extends JFrame {
 	private JButton getBtnPresupuesto() {
 		if (btnPresupuesto == null) {
 			btnPresupuesto = new JButton();
-			btnPresupuesto.setIcon(new ImageIcon(getClass().getResource("/img/presupuesto.png")));
+			btnPresupuesto.setIcon(new ImageIcon(getClass().getResource("/img/presupuesto2.png")));
 			btnPresupuesto.setMargin(new Insets(20, 34, 2, 34));
-			btnPresupuesto.setBorder(BorderFactory.createTitledBorder(null, "", TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, new Font("Dialog", Font.BOLD, 12), new Color(51, 51, 51)));
+			btnPresupuesto.setToolTipText("Añadir presupuesto");
+			btnPresupuesto.setBorder(BorderFactory.createEmptyBorder(0, 5, 0, 5));
 			btnPresupuesto.addActionListener(new java.awt.event.ActionListener() {
 				public void actionPerformed(java.awt.event.ActionEvent e) {
 					
@@ -402,10 +414,124 @@ public class MainFrame extends JFrame {
 			dialogoAddPresupuesto.setIdCliente(idCliente);
 				
 			dialogoAddPresupuesto.cargarProductos(listadoProductos);
+			
 				
 			dialogoAddPresupuesto.setVisible(true);
 		}
 			
+	}
+
+	public void nuevaFactura(){
+		
+		cambiarCapa("panelVacio");
+		
+		dialogoSeleccionCliente=getDialogoSeleccionCliente();
+		
+		dialogoSeleccionCliente.actualizarCliente();
+		
+		dialogoSeleccionCliente.setVisible(true);
+		
+		if(dialogoSeleccionCliente.getValorPulsado()== DialogoSeleccionCliente.VALOR_ACEPTAR){
+			
+			int idCliente=dialogoSeleccionCliente.getIdCliente();
+		
+			nuevaFactura(idCliente);
+			
+			
+		}
+		
+	}
+	
+	public void nuevaFactura(int idCliente){
+
+		dialogoSeleccionDistribuidor=getDialogoSeleccionDistribuidor();
+			
+		dialogoSeleccionDistribuidor.cargarDistribuidores();
+			
+		dialogoSeleccionDistribuidor.setVisible(true);
+			
+		if(dialogoSeleccionDistribuidor.getValorPulsado()==DialogoSeleccionDistribuidor.VALOR_ACEPTAR){
+
+			int idDistribuidor=dialogoSeleccionDistribuidor.getIdDistribuidor();
+				
+			//traigo el listado de productos del proveedor elegido
+			listadoProductos=getListatoProductos(idDistribuidor);
+			//cargo los productos en memoria
+			listadoProductos.cargarProductos();
+				
+			//llamo a la ventana para crear presupuesto
+			dialogoAddFactura=getDialogoAddFactura();
+			
+			dialogoAddFactura.setIdDistribuidor(idDistribuidor);
+
+			//le asigno el cliente para el cual va a ser el presupuesto
+			dialogoAddFactura.setIdCliente(idCliente);
+				
+			dialogoAddFactura.cargarProductos(listadoProductos);
+			
+				
+			dialogoAddFactura.setVisible(true);
+		}
+			
+	}
+	private DialogoAddFactura getDialogoAddFactura() {
+		
+		if(dialogoAddFactura==null){
+			
+			dialogoAddFactura=new DialogoAddFactura(this);
+			
+		}
+		
+		return dialogoAddFactura;
+	}
+
+	/**
+	 * This method initializes btnFactura	
+	 * 	
+	 * @return javax.swing.JButton	
+	 */
+	private JButton getBtnFactura() {
+		if (btnFactura == null) {
+			btnFactura = new JButton();
+			btnFactura.setBorder(BorderFactory.createEmptyBorder(0, 5, 0, 5));
+			btnFactura.setToolTipText("Añadir factura");
+			btnFactura.setIcon(new ImageIcon(getClass().getResource("/img/factura.png")));
+			btnFactura.addActionListener(new java.awt.event.ActionListener() {   
+				public void actionPerformed(java.awt.event.ActionEvent e) {    
+					nuevaFactura();
+				}
+			
+			});
+		}
+		return btnFactura;
+	}
+
+	/**
+	 * This method initializes btnProductos	
+	 * 	
+	 * @return javax.swing.JButton	
+	 */
+	private JButton getBtnProductos() {
+		if (btnProductos == null) {
+			btnProductos = new JButton();
+			btnProductos.setBorder(BorderFactory.createEmptyBorder(0, 5, 0, 5));
+			btnProductos.setIcon(new ImageIcon(getClass().getResource("/img/producto.png")));
+		}
+		return btnProductos;
+	}
+
+	/**
+	 * This method initializes btnDistribuidor	
+	 * 	
+	 * @return javax.swing.JButton	
+	 */
+	private JButton getBtnDistribuidor() {
+		if (btnDistribuidor == null) {
+			btnDistribuidor = new JButton();
+			btnDistribuidor.setIcon(new ImageIcon(getClass().getResource("/img/distribuidor.png")));
+			btnDistribuidor.setBorder(BorderFactory.createEmptyBorder(0, 5, 0, 5));
+		}
+		return btnDistribuidor;
 	}
 
 	

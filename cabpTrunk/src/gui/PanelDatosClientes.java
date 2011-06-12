@@ -85,6 +85,7 @@ public class PanelDatosClientes extends JPanel {
 	private JPanel panelBotonesFacturas = null;
 	private JButton btnAddPresup = null;
 	private JFrame mainFrame;
+	private JButton btnAddFactura = null;
 	/**
 	 * This is the default constructor
 	 */
@@ -244,6 +245,7 @@ public class PanelDatosClientes extends JPanel {
 		agregar=false;
 		lblTitulo.setText("Modificar cliente");
 		btnAddPresup.setEnabled(true);
+		btnAddFactura.setEnabled(true);
 	}
 	
 	public void setCliente(Cliente c){
@@ -968,6 +970,7 @@ public class PanelDatosClientes extends JPanel {
 			panelBotonesFacturas = new JPanel();
 			panelBotonesFacturas.setLayout(new FlowLayout());
 			panelBotonesFacturas.add(getBtnAddPresup(), null);
+			panelBotonesFacturas.add(getBtnAddFactura(), null);
 		}
 		return panelBotonesFacturas;
 	}
@@ -980,7 +983,8 @@ public class PanelDatosClientes extends JPanel {
 	private JButton getBtnAddPresup() {
 		if (btnAddPresup == null) {
 			btnAddPresup = new JButton();
-			btnAddPresup.setText("Agregar presupuesto");
+			btnAddPresup.setText("");
+			btnAddPresup.setIcon(new ImageIcon(getClass().getResource("/img/presupuesto2.png")));
 			btnAddPresup.setEnabled(false);
 			btnAddPresup.addActionListener(new java.awt.event.ActionListener() {
 				public void actionPerformed(java.awt.event.ActionEvent e) {
@@ -989,6 +993,7 @@ public class PanelDatosClientes extends JPanel {
 					
 					//necesito llegar al tab cliente para poder actualizar el presupuesto recien creado
 					((PanelCliente) ((MainFrame) mainFrame).getPanelCliente()).getDialogoModCliente().getTabbedCliente().cargarPresupuestos();
+	
 				}
 			});
 		}
@@ -999,6 +1004,29 @@ public class PanelDatosClientes extends JPanel {
 		
 		this.mainFrame=mainFrame;
 		
+	}
+
+	/**
+	 * This method initializes btnAddFactura	
+	 * 	
+	 * @return javax.swing.JButton	
+	 */
+	private JButton getBtnAddFactura() {
+		if (btnAddFactura == null) {
+			btnAddFactura = new JButton();
+			btnAddFactura.setIcon(new ImageIcon(getClass().getResource("/img/factura.png")));
+			btnAddFactura.setEnabled(false);
+			btnAddFactura.addActionListener(new java.awt.event.ActionListener() {
+				public void actionPerformed(java.awt.event.ActionEvent e) {
+					
+					((MainFrame) mainFrame).nuevaFactura(idCliente);
+					
+					//necesito llegar al tab cliente para poder actualizar el presupuesto recien creado
+					((PanelCliente) ((MainFrame) mainFrame).getPanelCliente()).getDialogoModCliente().getTabbedCliente().cargarFacturas();
+				}
+			});
+		}
+		return btnAddFactura;
 	}
 	
 	

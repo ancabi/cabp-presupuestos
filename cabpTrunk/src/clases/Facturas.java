@@ -16,11 +16,11 @@ import conexion.Conectar;
  * @author ancabi
  *
  */
-public class Presupuestos {
+public class Facturas {
+
+private Connection dbConnect=Conectar.getConnection();
 	
-	private Connection dbConnect=Conectar.getConnection();
-	
-	private int idPresupuesto;
+	private int idFactura;
 	private int ganancia;
 	private int restaurante;
 	private int pasaje;
@@ -36,7 +36,7 @@ public class Presupuestos {
 	private double totalSinIva;
 	private int transporte;
 	private String texto;
-	private ListadoLineaPresup listadoLineaPresup=null;
+	private ListadoLineaFactura listadoLineaFactura=null;
 	private int idCliente;
 	private int idDistribuidor;
 	/**
@@ -60,7 +60,7 @@ public class Presupuestos {
 	 * @param idCliente
 	 * @param idDistribuidor
 	 */
-	public Presupuestos(int idPresupuesto, int ganancia, int restaurante,
+	public Facturas(int idFactura, int ganancia, int restaurante,
 			int pasaje, int combustible, int otros, int hotel, int kilometros,
 			int nViajes, double precioGasolina, boolean isGanancia,
 			int porcentaje, double totalConIva, double totalSinIva,
@@ -69,8 +69,8 @@ public class Presupuestos {
 		this(ganancia, restaurante, pasaje, combustible, otros, hotel, kilometros, nViajes, precioGasolina, isGanancia,
 				porcentaje, totalConIva, totalSinIva, transporte, texto, idCliente, idDistribuidor);
 		
-		this.idPresupuesto = idPresupuesto;
-		listadoLineaPresup.setIdPresupuesto(idPresupuesto);
+		this.idFactura = idFactura;
+		listadoLineaFactura.setIdFactura(idFactura);
 		
 	}
 	
@@ -94,7 +94,7 @@ public class Presupuestos {
 	 * @param idCliente
 	 * @param idDistribuidor
 	 */
-	public Presupuestos(int ganancia, int restaurante,
+	public Facturas(int ganancia, int restaurante,
 			int pasaje, int combustible, int otros, int hotel, int kilometros,
 			int nViajes, double precioGasolina, boolean isGanancia,
 			int porcentaje, double totalConIva, double totalSinIva,
@@ -118,7 +118,7 @@ public class Presupuestos {
 		this.idCliente = idCliente;
 		this.idDistribuidor=idDistribuidor;
 		
-		listadoLineaPresup = new ListadoLineaPresup();
+		listadoLineaFactura = new ListadoLineaFactura();
 	}
 	
 	public void addBD(){
@@ -126,7 +126,7 @@ public class Presupuestos {
 		ResultSet rs;
 		
 		try {
-			PreparedStatement ps=dbConnect.prepareStatement("INSERT INTO presupuestos(ganancia, restaurante, pasaje, combustible, otros, " +
+			PreparedStatement ps=dbConnect.prepareStatement("INSERT INTO facturas(ganancia, restaurante, pasaje, combustible, otros, " +
 					"hotel, kilometros, isGanancia, porcentaje, totalConIva, transporte, texto, idCliente, totViajes, precioGasolina, " +
 					"totalSinIva, idDistribuidor) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
 			
@@ -155,9 +155,9 @@ public class Presupuestos {
 			//paso 1 ya que siempre deolvera solo 1
 			rs.next();
 			//guardo el id
-			idPresupuesto=rs.getInt(1);
+			idFactura=rs.getInt(1);
 			//guardo el idPresupuesto en el listado de lineas
-			listadoLineaPresup.setIdPresupuesto(idPresupuesto);
+			listadoLineaFactura.setIdFactura(idFactura);
 			
 		} catch (SQLException e) {
 			JOptionPane.showMessageDialog(null, e.getMessage());
@@ -165,9 +165,9 @@ public class Presupuestos {
 		
 	}
 
-	public void addLineaPresupuesto(int idProducto, String nomProducto, double precio, int cantidad) {
+	public void addLineaFactura(int idProducto, String nomProducto, double precio, int cantidad) {
 		
-		listadoLineaPresup.addLinea(new LineaPresupuesto(idPresupuesto, idProducto, nomProducto, precio, cantidad));
+		listadoLineaFactura.addLinea(new LineaFactura(idFactura, idProducto, nomProducto, precio, cantidad));
 		
 	}
 
@@ -178,8 +178,8 @@ public class Presupuestos {
 	/**
 	 * @return the idPresupuesto
 	 */
-	public int getIdPresupuesto() {
-		return idPresupuesto;
+	public int getIdFactura() {
+		return idFactura;
 	}
 	
 	
@@ -299,8 +299,8 @@ public class Presupuestos {
 	/**
 	 * @return the listadoLineaPresup
 	 */
-	public ListadoLineaPresup getListadoLineaPresup() {
-		return listadoLineaPresup;
+	public ListadoLineaFactura getListadoLineaFactura() {
+		return listadoLineaFactura;
 	}
 
 	/**
@@ -312,159 +312,10 @@ public class Presupuestos {
 
 	public void cargarLineas(){
 		
-		listadoLineaPresup.cargarLineaPresup();
+		listadoLineaFactura.cargarLineaFactura();
 		
 	}
 
-	/**
-	 * @param dbConnect the dbConnect to set
-	 */
-	public void setDbConnect(Connection dbConnect) {
-		this.dbConnect = dbConnect;
-	}
-
-	/**
-	 * @param idPresupuesto the idPresupuesto to set
-	 */
-	public void setIdPresupuesto(int idPresupuesto) {
-		this.idPresupuesto = idPresupuesto;
-	}
-
-	/**
-	 * @param ganancia the ganancia to set
-	 */
-	public void setGanancia(int ganancia) {
-		this.ganancia = ganancia;
-	}
-
-	/**
-	 * @param restaurante the restaurante to set
-	 */
-	public void setRestaurante(int restaurante) {
-		this.restaurante = restaurante;
-	}
-
-	/**
-	 * @param pasaje the pasaje to set
-	 */
-	public void setPasaje(int pasaje) {
-		this.pasaje = pasaje;
-	}
-
-	/**
-	 * @param combustible the combustible to set
-	 */
-	public void setCombustible(int combustible) {
-		this.combustible = combustible;
-	}
-
-	/**
-	 * @param otros the otros to set
-	 */
-	public void setOtros(int otros) {
-		this.otros = otros;
-	}
-
-	/**
-	 * @param hotel the hotel to set
-	 */
-	public void setHotel(int hotel) {
-		this.hotel = hotel;
-	}
-
-	/**
-	 * @param kilometros the kilometros to set
-	 */
-	public void setKilometros(int kilometros) {
-		this.kilometros = kilometros;
-	}
-
-	/**
-	 * @param nViajes the nViajes to set
-	 */
-	public void setnViajes(int nViajes) {
-		this.nViajes = nViajes;
-	}
-
-	/**
-	 * @param precioGasolina the precioGasolina to set
-	 */
-	public void setPrecioGasolina(double precioGasolina) {
-		this.precioGasolina = precioGasolina;
-	}
-
-	/**
-	 * @param isGanancia the isGanancia to set
-	 */
-	public void setGanancia(boolean isGanancia) {
-		this.isGanancia = isGanancia;
-	}
-
-	/**
-	 * @param porcentaje the porcentaje to set
-	 */
-	public void setPorcentaje(int porcentaje) {
-		this.porcentaje = porcentaje;
-	}
-
-	/**
-	 * @param totalConIva the totalConIva to set
-	 */
-	public void setTotalConIva(double totalConIva) {
-		this.totalConIva = totalConIva;
-	}
-
-	/**
-	 * @param totalSinIva the totalSinIva to set
-	 */
-	public void setTotalSinIva(double totalSinIva) {
-		this.totalSinIva = totalSinIva;
-	}
-
-	/**
-	 * @param transporte the transporte to set
-	 */
-	public void setTransporte(int transporte) {
-		this.transporte = transporte;
-	}
-
-	/**
-	 * @param texto the texto to set
-	 */
-	public void setTexto(String texto) {
-		this.texto = texto;
-	}
-
-	/**
-	 * @param listadoLineaPresup the listadoLineaPresup to set
-	 */
-	public void setListadoLineaPresup(ListadoLineaPresup listadoLineaPresup) {
-		this.listadoLineaPresup = listadoLineaPresup;
-	}
-
-	/**
-	 * @param idCliente the idCliente to set
-	 */
-	public void setIdCliente(int idCliente) {
-		this.idCliente = idCliente;
-	}
-
-	/**
-	 * @param idDistribuidor the idDistribuidor to set
-	 */
-	public void setIdDistribuidor(int idDistribuidor) {
-		this.idDistribuidor = idDistribuidor;
-	}
-
-	public void removeAllLineas() {
-		
-		listadoLineaPresup.removeAllElements();
-		
-	}
-
-	
-	
-	
 	
 	
 }

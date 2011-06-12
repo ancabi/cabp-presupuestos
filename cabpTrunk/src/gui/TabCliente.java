@@ -14,6 +14,7 @@ public class TabCliente extends JTabbedPane {
 	private JPanel panelClientePres = null;
 	private JPanel panelImg = null;
 	private JPanel panelPdf = null;
+	private PanelClienteFactura panelClienteFactura;
 
 	/**
 	 * This is the default constructor
@@ -36,6 +37,7 @@ public class TabCliente extends JTabbedPane {
 		this.addTab("Imagenes", null, getPanelImg(), null);
 		this.addTab("PDF", null, getPanelPdf(), null);
 		this.addTab("Presupuestos", null, getPanelClientePres(), null);
+		this.addTab("Facturas", null, getPanelClienteFactura(), null);
 	}
 
 	/**
@@ -58,9 +60,21 @@ public class TabCliente extends JTabbedPane {
 	 */
 	private JPanel getPanelClientePres() {
 		if (panelClientePres == null) {
-			panelClientePres = new PanelClientePres();
+			panelClientePres = new PanelClientePres(this);
 		}
 		return panelClientePres;
+	}
+	
+	/**
+	 * This method initializes panelClienteFactura
+	 * 	
+	 * @return javax.swing.JPanel	
+	 */
+	public JPanel getPanelClienteFactura() {
+		if (panelClienteFactura == null) {
+			panelClienteFactura = new PanelClienteFactura();
+		}
+		return panelClienteFactura;
 	}
 	
 	public void setCliente(Cliente c){
@@ -72,10 +86,14 @@ public class TabCliente extends JTabbedPane {
 		
 		((PanelClientePres) panelClientePres).setIdCliente(c.getIdCliente());
 		
+		((PanelClienteFactura) panelClienteFactura).setIdCliente(c.getIdCliente());
+		
 	}
 	
 	public void cargarPresupuestos(){
 		((PanelClientePres) panelClientePres).cargarPresupuestos();
+		//limpio los campos del panel presupuestos
+		limpiarCampos();
 	}
 	
 	public void guardarCliente(){
@@ -115,6 +133,21 @@ public class TabCliente extends JTabbedPane {
 	public void setMainFrame(JFrame mainFrame) {
 
 		((PanelDatosClientes) panelDatos).setMainFrame(mainFrame);
+		
+	}
+
+	public void limpiarCampos() {
+		((PanelClientePres) panelClientePres).limpiarCampos();
+		
+		((PanelClienteFactura) panelClienteFactura).limpiarCampos();
+		
+	}
+
+	public void cargarFacturas() {
+		
+		((PanelClienteFactura) panelClienteFactura).cargarFacturas();
+		//limpio los campos del panel presupuestos
+		limpiarCampos();
 		
 	}
 }  //  @jve:decl-index=0:visual-constraint="10,10"

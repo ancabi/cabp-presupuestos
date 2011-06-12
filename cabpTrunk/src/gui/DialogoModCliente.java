@@ -59,8 +59,11 @@ public class DialogoModCliente extends JDialog {
 				setVisible(false);
 				
 				((TabCliente) tabCliente).getPanelDatosClientes().limpiarCampos();
+				
 				//vuelvo al primer tab para el siguiente cliente
 				tabCliente.setSelectedIndex(0);
+				//limpio los campos del panel de presupuestos
+				((TabCliente) tabCliente).limpiarCampos();
 				
 				valorPulsado=VALOR_CANCELAR;
 			}
@@ -116,6 +119,11 @@ public class DialogoModCliente extends JDialog {
 					
 					valorPulsado=VALOR_ACEPTAR;
 					
+					//vuelvo al primer tab para el siguiente cliente
+					tabCliente.setSelectedIndex(0);
+					//limpio los campos del panel de presupuestos
+					((TabCliente) tabCliente).limpiarCampos();
+					
 				}
 			});
 		}
@@ -138,7 +146,13 @@ public class DialogoModCliente extends JDialog {
 					
 					((TabCliente) tabCliente).getPanelDatosClientes().limpiarCampos();
 					
+					//vuelvo al primer tab para el siguiente cliente
+					tabCliente.setSelectedIndex(0);
+					//limpio los campos del panel de presupuestos
+					((TabCliente) tabCliente).limpiarCampos();
+					
 					valorPulsado=VALOR_CANCELAR;
+
 				}
 			});
 		}
