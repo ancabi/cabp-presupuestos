@@ -1,34 +1,23 @@
-/**
- * 
- */
 package gui;
 
-
+import javax.swing.JButton;
 import javax.swing.JPanel;
 
+import java.awt.FlowLayout;
 import java.awt.Frame;
 import java.awt.BorderLayout;
 import javax.swing.JDialog;
-import java.awt.Dimension;
-import javax.swing.JButton;
-
 
 import clases.ListadoProductos;
-import clases.Presupuestos;
+import clases.Facturas;
 
-
-import java.awt.FlowLayout;
+import java.awt.Dimension;
 import java.util.Vector;
 
-/**
- * @author ancabi
- *
- */
-public class DialogoAddPresupuesto extends JDialog {
-
+public class DialogoAddFactura extends JDialog {
 	private static final long serialVersionUID = 1L;
-	public static final int VALOR_ACEPTAR=1;
-	public static final int VALOR_CANCELAR=0;
+	private static final int VALOR_ACEPTAR=1;
+	private static final int VALOR_CANCELAR=0;
 	private JPanel jContentPane = null;
 	private JPanel panelBotones = null;
 	private JPanel panelPresupuesto = null;
@@ -42,7 +31,7 @@ public class DialogoAddPresupuesto extends JDialog {
 	/**
 	 * @param owner
 	 */
-	public DialogoAddPresupuesto(Frame owner) {
+	public DialogoAddFactura(Frame owner) {
 		super(owner);
 		initialize();
 	}
@@ -55,7 +44,7 @@ public class DialogoAddPresupuesto extends JDialog {
 	private void initialize() {
 		this.setSize(846, 743);
 		this.setResizable(false);
-		this.setTitle("Agregar presupuesto");
+		this.setTitle("Agregar Factura");
 		this.setMinimumSize(new Dimension(775, 441));
 		this.setContentPane(getJContentPane());
 		this.setModal(true);
@@ -63,8 +52,6 @@ public class DialogoAddPresupuesto extends JDialog {
 			public void windowClosing(java.awt.event.WindowEvent e) {
 				
 				((PanelPresupuesto) panelPresupuesto).limpiarCampos();
-				
-				valorPulsado=VALOR_CANCELAR;
 				
 			}
 		});
@@ -152,10 +139,10 @@ public class DialogoAddPresupuesto extends JDialog {
 					
 					Vector<Vector> lineas=((PanelPresupuesto) panelPresupuesto).getLineas();
 					
-					Presupuestos p= new Presupuestos(ganancia, restaurante, pasaje, combustible, otros, hotel, kilometros, nViajes, 
+					Facturas f= new Facturas(ganancia, restaurante, pasaje, combustible, otros, hotel, kilometros, nViajes, 
 							precioGasolina, isGanancia, porcentaje, totalIva, totalSinIva, transporte, texto, idCliente, idDistribuidor);
 					
-					p.addBD();
+					f.addBD();
 					
 					for(int x=0; x<lineas.size(); x++){
 						
@@ -167,7 +154,7 @@ public class DialogoAddPresupuesto extends JDialog {
 						cantidad=Integer.parseInt(temp.get(3).toString());
 						
 						
-						p.addLineaPresupuesto(idProducto, nomProducto, precio, cantidad);
+						f.addLineaFactura(idProducto, nomProducto, precio, cantidad);
 						
 					}
 					
@@ -233,8 +220,7 @@ public class DialogoAddPresupuesto extends JDialog {
 	public void setIdDistribuidor(int idDistribuidor) {
 		this.idDistribuidor = idDistribuidor;
 	}
-	
-	
+
 	
 
-}  //  @jve:decl-index=0:visual-constraint="12,-18"
+}  //  @jve:decl-index=0:visual-constraint="10,10"

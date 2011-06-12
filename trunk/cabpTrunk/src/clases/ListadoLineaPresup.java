@@ -24,6 +24,7 @@ public class ListadoLineaPresup {
 	private int idPresupuesto;
 	private PreparedStatement psLineaPresup;
 	private PreparedStatement psAddLineaPresup;
+	private PreparedStatement psBorrarLineas;
 	
 	/**
 	 * @param idPresupuesto
@@ -43,6 +44,8 @@ public class ListadoLineaPresup {
 			
 			psAddLineaPresup=dbConnect.prepareStatement("INSERT INTO lineaPresupuesto(idPresupuesto, idProducto, cantidad, nomProducto, precio) VALUES" +
 					"(?,?,?,?,?)");
+			
+			psBorrarLineas=dbConnect.prepareStatement("DELETE FROM lineaPresupuesto WHERE idPresupuesto=?");
 		} catch (SQLException e) {
 			JOptionPane.showMessageDialog(null, e.getMessage());
 		}
@@ -107,6 +110,35 @@ public class ListadoLineaPresup {
 
 	public String getNombre() {
 		return lineaPresupuesto.get(1).getNombre();
+	}
+
+	public int getSize() {
+		
+		return lineaPresupuesto.size();
+	}
+
+	public LineaPresupuesto get(int index) {
+		
+		return lineaPresupuesto.get(index);
+		
+	}
+
+	public void removeAllElements() {
+		
+		try {
+			psBorrarLineas.setInt(1, idPresupuesto);
+			
+			psBorrarLineas.executeUpdate();
+			
+			lineaPresupuesto.removeAllElements();
+		} catch (SQLException e) {
+			JOptionPane.showMessageDialog(null, e.getMessage());
+		}
+		
+		
+		
+		
+		
 	}
 	
 	

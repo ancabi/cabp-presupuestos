@@ -128,6 +128,7 @@ public class PanelCliente extends JPanel {
 									//lo muestro
 									dialogoModCliente.setVisible(true);
 									
+									
 									if(dialogoModCliente.getValorPulsado()==dialogoModCliente.VALOR_ACEPTAR){
 										//traigo el vector de los telefonos a borrar
 										Vector<Telefonos> telefonosBorrar=dialogoModCliente.getTabbedCliente().getPanelDatosClientes().getTelefonoBorrar();

@@ -1,30 +1,21 @@
-/**
- * 
- */
 package gui;
 
-
+import javax.swing.JButton;
 import javax.swing.JPanel;
 
+import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.Frame;
 import java.awt.BorderLayout;
+import java.util.Vector;
+
 import javax.swing.JDialog;
-import java.awt.Dimension;
-import javax.swing.JButton;
 
-
+import clases.ListadoLineaPresup;
 import clases.ListadoProductos;
 import clases.Presupuestos;
 
-
-import java.awt.FlowLayout;
-import java.util.Vector;
-
-/**
- * @author ancabi
- *
- */
-public class DialogoAddPresupuesto extends JDialog {
+public class DialogoModPresupuesto extends JDialog {
 
 	private static final long serialVersionUID = 1L;
 	public static final int VALOR_ACEPTAR=1;
@@ -37,13 +28,15 @@ public class DialogoAddPresupuesto extends JDialog {
 	private int idCliente;
 	private int valorPulsado=0;
 	private int idDistribuidor;
+	private Presupuestos presupuestoActual;  //  @jve:decl-index=0:
+	private ListadoProductos listadoProductos;  //  @jve:decl-index=0:
 	
 
 	/**
-	 * @param owner
+	 * @param panelClientePres
 	 */
-	public DialogoAddPresupuesto(Frame owner) {
-		super(owner);
+	public DialogoModPresupuesto(Frame panelClientePres) {
+		super(panelClientePres);
 		initialize();
 	}
 
@@ -55,7 +48,7 @@ public class DialogoAddPresupuesto extends JDialog {
 	private void initialize() {
 		this.setSize(846, 743);
 		this.setResizable(false);
-		this.setTitle("Agregar presupuesto");
+		this.setTitle("Modificar presupuesto");
 		this.setMinimumSize(new Dimension(775, 441));
 		this.setContentPane(getJContentPane());
 		this.setModal(true);
@@ -134,7 +127,7 @@ public class DialogoAddPresupuesto extends JDialog {
 					int cantidad;
 					String nomProducto;
 					double precio;
-					double totalIva= ((PanelPresupuesto) panelPresupuesto).getTotalIva();
+					double totalConIva= ((PanelPresupuesto) panelPresupuesto).getTotalIva();
 					int porcentaje=((PanelPresupuesto) panelPresupuesto).getPorcentaje1();
 					int ganancia=((PanelPresupuesto) panelPresupuesto).getGanancia();
 					int hotel=((PanelPresupuesto) panelPresupuesto).getHotel();
@@ -150,12 +143,26 @@ public class DialogoAddPresupuesto extends JDialog {
 					double totalSinIva=((PanelPresupuesto) panelPresupuesto).getTotalSinIva();
 					String texto=((PanelPresupuesto) panelPresupuesto).getTexto();
 					
+					
 					Vector<Vector> lineas=((PanelPresupuesto) panelPresupuesto).getLineas();
 					
-					Presupuestos p= new Presupuestos(ganancia, restaurante, pasaje, combustible, otros, hotel, kilometros, nViajes, 
-							precioGasolina, isGanancia, porcentaje, totalIva, totalSinIva, transporte, texto, idCliente, idDistribuidor);
+					presupuestoActual.setGanancia(ganancia);
+					presupuestoActual.setTransporte(transporte);
+					presupuestoActual.setHotel(hotel);
+					presupuestoActual.setPasaje(pasaje);
+					presupuestoActual.setOtros(otros);
+					presupuestoActual.setRestaurante(restaurante);
+					presupuestoActual.setCombustible(combustible);
+					presupuestoActual.setGanancia(isGanancia);
+					presupuestoActual.setKilometros(kilometros);
+					presupuestoActual.setnViajes(nViajes);
+					presupuestoActual.setPrecioGasolina(precioGasolina);
+					presupuestoActual.setTotalConIva(totalConIva);
+					presupuestoActual.setTotalSinIva(totalSinIva);
+					presupuestoActual.setTexto(texto);
+					presupuestoActual.setPorcentaje(porcentaje);
 					
-					p.addBD();
+					presupuestoActual.removeAllLineas();
 					
 					for(int x=0; x<lineas.size(); x++){
 						
@@ -167,7 +174,7 @@ public class DialogoAddPresupuesto extends JDialog {
 						cantidad=Integer.parseInt(temp.get(3).toString());
 						
 						
-						p.addLineaPresupuesto(idProducto, nomProducto, precio, cantidad);
+						presupuestoActual.addLineaPresupuesto(idProducto, nomProducto, precio, cantidad);
 						
 					}
 					
@@ -217,9 +224,14 @@ public class DialogoAddPresupuesto extends JDialog {
 		this.idCliente = idCliente;
 	}
 
-	public void cargarProductos(ListadoProductos listado){
+	public void cargarProductos(){
 		
-		((PanelPresupuesto) panelPresupuesto).cargarProductos(listado);
+		//traigo el listado de productos del proveedor elegido
+		listadoProductos=getListadoProductos(presupuestoActual.getIdDistribuidor());
+		//cargo los productos en memoria
+		listadoProductos.cargarProductos();
+		
+		((PanelPresupuesto) panelPresupuesto).cargarProductos(listadoProductos);
 		
 	}
 
@@ -234,7 +246,24 @@ public class DialogoAddPresupuesto extends JDialog {
 		this.idDistribuidor = idDistribuidor;
 	}
 	
+	public void setPresupuesto(Presupuestos p){
+		((PanelPresupuesto) panelPresupuesto).setPresupuesto(p);
+		
+		presupuestoActual=p;
+	}
 	
-	
+	private ListadoProductos getListadoProductos(int idDistribuidor){
+		
+		if(listadoProductos==null){
+			
+			listadoProductos=new ListadoProductos();
+			
+		}
+		
+		listadoProductos.setIdDistribuidor(idDistribuidor);
+		
+		return listadoProductos;
+		
+	}
 
-}  //  @jve:decl-index=0:visual-constraint="12,-18"
+}
