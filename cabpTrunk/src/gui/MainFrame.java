@@ -66,6 +66,7 @@ public class MainFrame extends JFrame {
 	private JButton btnFactura = null;
 	private JButton btnProductos = null;
 	private JButton btnDistribuidor = null;
+	private JPanel panelProductos = null;
 
 	/**
 	 * This is the default constructor
@@ -241,6 +242,7 @@ public class MainFrame extends JFrame {
 			panelCard.setLayout(new CardLayout());
 			panelCard.add(getPanelVacio(), getPanelVacio().getName());
 			panelCard.add(getPanelCliente(), getPanelCliente().getName());
+			panelCard.add(getPanelProductos(), getPanelProductos().getName());
 		}
 		return panelCard;
 	}
@@ -516,6 +518,32 @@ public class MainFrame extends JFrame {
 			btnProductos = new JButton();
 			btnProductos.setBorder(BorderFactory.createEmptyBorder(0, 5, 0, 5));
 			btnProductos.setIcon(new ImageIcon(getClass().getResource("/img/producto.png")));
+			btnProductos.addActionListener(new java.awt.event.ActionListener() {
+				public void actionPerformed(java.awt.event.ActionEvent e) {
+					
+				
+					dialogoSeleccionDistribuidor=getDialogoSeleccionDistribuidor();
+					
+					dialogoSeleccionDistribuidor.cargarDistribuidores();
+						
+					dialogoSeleccionDistribuidor.setVisible(true);
+						
+					if(dialogoSeleccionDistribuidor.getValorPulsado()==DialogoSeleccionDistribuidor.VALOR_ACEPTAR){
+
+						int idDistribuidor=dialogoSeleccionDistribuidor.getIdDistribuidor();
+							
+						//traigo el listado de productos del proveedor elegido
+						listadoProductos=getListatoProductos(idDistribuidor);
+						//cargo los productos en memoria
+						listadoProductos.cargarProductos();
+						
+						((PanelProductos) panelProductos).cargarProductos();
+						
+						cambiarCapa("panelProductos");
+						
+					}
+				}
+			});
 		}
 		return btnProductos;
 	}
@@ -533,6 +561,26 @@ public class MainFrame extends JFrame {
 		}
 		return btnDistribuidor;
 	}
+
+	/**
+	 * This method initializes panelProductos	
+	 * 	
+	 * @return javax.swing.JPanel	
+	 */
+	private JPanel getPanelProductos() {
+		if (panelProductos == null) {
+			panelProductos = new PanelProductos(this);
+			panelProductos.setName("panelProductos");
+		}
+		return panelProductos;
+	}
+
+	public ListadoProductos getListadoProductos() {
+		
+		return listadoProductos;
+	}
+	
+	
 
 	
 
