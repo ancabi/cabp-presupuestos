@@ -22,6 +22,8 @@ public class ListadoDistribuidores {
 	private Vector<Distribuidor> distribuidores=new Vector<Distribuidor>();
 	private Connection dbConnect=Conectar.getConnection();
 	private PreparedStatement psDistribuidores;
+	private PreparedStatement psInsertarDistribuidores;
+	private PreparedStatement psBorrarDistribuidor;
 	/**
 	 * Constructor vacio
 	 */
@@ -29,6 +31,12 @@ public class ListadoDistribuidores {
 		
 		try {
 			psDistribuidores=dbConnect.prepareStatement("SELECT * FROM distribuidores");
+			
+			psInsertarDistribuidores=dbConnect.prepareStatement("INSERT INTO distribuidores (nombre, direccion, email, telefono, ciudad, provincia," +
+					"pais, numeroCta, iban, swif) VALUES(?,?,?,?,?,?,?,?,?,?)");
+			
+			psBorrarDistribuidor=dbConnect.prepareStatement("DELETE FROM distribuidores WHERE idDistribuidor=?");
+			
 		} catch (SQLException e) {
 			JOptionPane.showMessageDialog(null, e.getMessage());
 		}
@@ -72,6 +80,69 @@ public class ListadoDistribuidores {
 	public Distribuidor getDistribuidor(int x) {
 		
 		return distribuidores.get(x);
+	}
+
+	public void addDistribuidor(Distribuidor d) {
+		
+		String nombre=d.getNombre();
+		String direccion=d.getDireccion();
+		String telefono=d.getTelefono();
+		String email=d.getEmail();
+		String ciudad=d.getCiudad();
+		String provincia=d.getProvincia();
+		String pais=d.getPais();
+		String numeroCta=d.getNumeroCta();
+		String iban=d.getIban();
+		String swif=d.getSwif();
+		
+		try {
+		
+			psInsertarDistribuidores.setString(1, nombre);
+			psInsertarDistribuidores.setString(2, direccion);
+			psInsertarDistribuidores.setString(3, email);
+			psInsertarDistribuidores.setString(4, telefono);
+			psInsertarDistribuidores.setString(5, ciudad);
+			psInsertarDistribuidores.setString(6, provincia);
+			psInsertarDistribuidores.setString(7, pais);
+			psInsertarDistribuidores.setString(8, numeroCta);
+			psInsertarDistribuidores.setString(9, iban);
+			psInsertarDistribuidores.setString(10, swif);
+		
+		
+			psInsertarDistribuidores.executeUpdate();
+			
+			ResultSet rs=psInsertarDistribuidores.getGeneratedKeys();
+			
+			rs.next();
+			
+			d.setIdDistribuidor(rs.getInt(1));
+			
+			distribuidores.add(d);
+			
+		} catch (SQLException e) {
+			JOptionPane.showMessageDialog(null, e.getMessage());
+		}
+		
+	}
+
+	public void removeElementAt(int index) {
+		
+		Distribuidor d=distribuidores.get(index);
+		
+		int id=d.getIdDistribuidor();
+		
+		try {
+			
+			psBorrarDistribuidor.setInt(1, id);
+		
+			psBorrarDistribuidor.executeUpdate();
+			
+			distribuidores.removeElement(d);
+			
+		} catch (SQLException e) {
+			JOptionPane.showMessageDialog(null, e.getMessage());
+		}
+		
 	}
 	
 	

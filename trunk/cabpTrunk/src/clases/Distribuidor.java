@@ -37,7 +37,30 @@ public class Distribuidor {
 	public Distribuidor(int idDistribuidor, String nombre, String direccion,
 			String email, String telefono, String ciudad, String provincia,
 			String pais, String numeroCta, String iban, String swif) {
+		
+		this(nombre, direccion, email, telefono, ciudad, provincia, pais, numeroCta, iban, swif);
+		
 		this.idDistribuidor = idDistribuidor;
+		
+	}
+
+	
+
+	/**
+	 * @param nombre
+	 * @param direccion
+	 * @param email
+	 * @param telefono
+	 * @param ciudad
+	 * @param provincia
+	 * @param pais
+	 * @param numeroCta
+	 * @param iban
+	 * @param swif
+	 */
+	public Distribuidor(String nombre, String direccion, String email,
+			String telefono, String ciudad, String provincia, String pais,
+			String numeroCta, String iban, String swif) {
 		this.nombre = nombre;
 		this.direccion = direccion;
 		this.email = email;
@@ -49,6 +72,8 @@ public class Distribuidor {
 		this.iban = iban;
 		this.swif = swif;
 	}
+
+
 
 	/**
 	 * @return the idDistribuidor
