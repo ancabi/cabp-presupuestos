@@ -24,6 +24,7 @@ public class ListadoDistribuidores {
 	private PreparedStatement psDistribuidores;
 	private PreparedStatement psInsertarDistribuidores;
 	private PreparedStatement psBorrarDistribuidor;
+	private PreparedStatement psActualizarDistribuidor;
 	/**
 	 * Constructor vacio
 	 */
@@ -36,6 +37,9 @@ public class ListadoDistribuidores {
 					"pais, numeroCta, iban, swif) VALUES(?,?,?,?,?,?,?,?,?,?)");
 			
 			psBorrarDistribuidor=dbConnect.prepareStatement("DELETE FROM distribuidores WHERE idDistribuidor=?");
+			
+			psActualizarDistribuidor=dbConnect.prepareStatement("UPDATE distribuidores SET nombre=?, ciudad=?, email=?, telefono=?, ciudad=?, provincia=?," +
+					"pais=?, numeroCta=?, iban=?, swif=? WHERE idDistribuidor=?");
 			
 		} catch (SQLException e) {
 			JOptionPane.showMessageDialog(null, e.getMessage());
@@ -139,6 +143,40 @@ public class ListadoDistribuidores {
 			
 			distribuidores.removeElement(d);
 			
+		} catch (SQLException e) {
+			JOptionPane.showMessageDialog(null, e.getMessage());
+		}
+		
+	}
+
+	public void actualizarDistribuidor(Distribuidor d) {
+		
+		String nombre=d.getNombre();
+		String direccion=d.getDireccion();
+		String telefono=d.getTelefono();
+		String email=d.getEmail();
+		String ciudad=d.getCiudad();
+		String provincia=d.getProvincia();
+		String pais=d.getPais();
+		String numeroCta=d.getNumeroCta();
+		String iban=d.getIban();
+		String swif=d.getSwif();
+		
+		try {
+		
+			psActualizarDistribuidor.setString(1, nombre);
+			psActualizarDistribuidor.setString(2, direccion);
+			psActualizarDistribuidor.setString(3, email);
+			psActualizarDistribuidor.setString(4, telefono);
+			psActualizarDistribuidor.setString(5, ciudad);
+			psActualizarDistribuidor.setString(6, provincia);
+			psActualizarDistribuidor.setString(7, pais);
+			psActualizarDistribuidor.setString(8, numeroCta);
+			psActualizarDistribuidor.setString(9, iban);
+			psActualizarDistribuidor.setString(10, swif);
+			psActualizarDistribuidor.setInt(11, d.getIdDistribuidor());
+		
+			psActualizarDistribuidor.executeUpdate();
 		} catch (SQLException e) {
 			JOptionPane.showMessageDialog(null, e.getMessage());
 		}

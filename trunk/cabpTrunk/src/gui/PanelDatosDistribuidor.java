@@ -438,6 +438,51 @@ public class PanelDatosDistribuidor extends JPanel {
 		tfNumeroCuenta.setText("");
 		tfIban.setText("");
 		tfSwif.setText("");
+		
+		lblTitulo.setText("Agregar distribuidor");
+	}
+
+	public void setDistribuidor(Distribuidor d) {
+		
+		tfNombre.setText(d.getNombre());
+		tfDireccion.setText(d.getDireccion());
+		tfTelefono.setText(d.getTelefono());
+		tfEmail.setText(d.getEmail());
+		tfCiudad.setText(d.getCiudad());
+		tfProvincia.setText(d.getProvincia());
+		tfPais.setText(d.getPais());
+		tfNumeroCuenta.setText(d.getNumeroCta());
+		tfIban.setText(d.getIban());
+		tfSwif.setText(d.getSwif());
+		
+		lblTitulo.setText("Modificar distribuidor");
+		
+	}
+
+	public void guardarDistribuidor(Distribuidor d) {
+		
+		String nombre=tfNombre.getText();
+		String direccion=tfDireccion.getText();
+		String telefono=tfTelefono.getText();
+		String email=tfEmail.getText();
+		String ciudad=tfCiudad.getText();
+		String provincia=tfProvincia.getText();
+		String pais=tfPais.getText();
+		String numeroCta=tfNumeroCuenta.getText();
+		String iban=tfIban.getText();
+		String swif=tfSwif.getText();
+		
+		d.setNombre(nombre);
+		d.setDireccion(direccion);
+		d.setEmail(email);
+		d.setTelefono(telefono);
+		d.setCiudad(ciudad);
+		d.setProvincia(provincia);
+		d.setPais(pais);
+		d.setNumeroCta(numeroCta);
+		d.setIban(iban);
+		d.setSwif(swif);
+		
 	}
 
 }  //  @jve:decl-index=0:visual-constraint="10,10"
