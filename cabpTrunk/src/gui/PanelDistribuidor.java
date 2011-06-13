@@ -18,6 +18,7 @@ import javax.swing.JOptionPane;
 
 import clases.Distribuidor;
 import clases.ListadoDistribuidores;
+import clases.Productos;
 
 import modelo.ModeloDistribuidor;
 
@@ -41,6 +42,7 @@ public class PanelDistribuidor extends JPanel {
 	private JFrame mainFrame;
 	private ModeloDistribuidor modelo=null;
 	private DialogoAddDistribuidor dialogoAddDistribuidor;
+	private DialogoModDistribuidor dialogoModDistribuidor;
 
 	/**
 	 * This is the default constructor
@@ -101,6 +103,33 @@ public class PanelDistribuidor extends JPanel {
 			modelo.setHeader(header);
 			
 			tablaDistribuidor = new JTable(modelo);
+			tablaDistribuidor.addMouseListener(new java.awt.event.MouseAdapter() {
+				public void mouseClicked(java.awt.event.MouseEvent e) {
+					if (e.getClickCount() >= 2){
+						
+						int index=tablaDistribuidor.getSelectedRow();
+						//traigo el producto
+						Distribuidor d=((MainFrame) mainFrame).getListadoDistribuidores().getDistribuidor(index);
+						
+						dialogoModDistribuidor=getDialogoModDistribuidor();
+						
+						dialogoModDistribuidor.setDistribuidor(d);
+						
+						dialogoModDistribuidor.setVisible(true);
+						
+						if(dialogoModDistribuidor.getValorPulsado()==DialogoModProducto.VALOR_ACEPTAR){
+							
+							dialogoModDistribuidor.guardarDistribuidor(d);
+							
+							((MainFrame) mainFrame).getListadoDistribuidores().actualizarDistribuidor(d);
+
+							cargarDistribuidores();
+							
+						}
+						
+					}
+				}
+			});
 		}
 		
 		tablaDistribuidor.setAutoCreateRowSorter(true);
@@ -166,6 +195,18 @@ public class PanelDistribuidor extends JPanel {
 		}
 		
 		return dialogoAddDistribuidor;
+		
+	}
+	
+	private DialogoModDistribuidor getDialogoModDistribuidor(){
+		
+		if(dialogoModDistribuidor==null){
+			
+			dialogoModDistribuidor=new DialogoModDistribuidor(mainFrame);
+			
+		}
+		
+		return dialogoModDistribuidor;
 		
 	}
 
