@@ -108,6 +108,9 @@ public class PanelDistribuidor extends JPanel {
 					if (e.getClickCount() >= 2){
 						
 						int index=tablaDistribuidor.getSelectedRow();
+						
+						index=tablaDistribuidor.convertRowIndexToModel(index);
+						
 						//traigo el producto
 						Distribuidor d=((MainFrame) mainFrame).getListadoDistribuidores().getDistribuidor(index);
 						
@@ -223,6 +226,8 @@ public class PanelDistribuidor extends JPanel {
 				public void actionPerformed(java.awt.event.ActionEvent e) {
 					
 					int index=tablaDistribuidor.getSelectedRow();
+					
+					index=tablaDistribuidor.convertRowIndexToModel(index);
 					
 					if(index>=0){
 						

@@ -116,7 +116,10 @@ public class PanelCliente extends JPanel {
 							public void mouseClicked(java.awt.event.MouseEvent evt) {    
 								if (evt.getClickCount() >= 2){// si es doble click
 									//tengo el index de la fila seleccionada
-									int x = jTable.rowAtPoint(evt.getPoint());
+									int x = jTable.getSelectedRow();
+									
+									x=jTable.convertRowIndexToModel(x);
+									
 									//traigo el cliente
 									Cliente c=((MainFrame) mainFrame).getListadoClientes().getCliente(x);
 									//construyo el dialogo de modificacion de clinete
@@ -299,6 +302,8 @@ public class PanelCliente extends JPanel {
 				public void actionPerformed(java.awt.event.ActionEvent e) {
 					
 					int seleccionado=jTable.getSelectedRow();
+					
+					seleccionado=jTable.convertRowIndexToModel(seleccionado);
 					
 					if(seleccionado>=0){
 						
