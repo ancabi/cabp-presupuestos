@@ -88,6 +88,8 @@ public class TabCliente extends JTabbedPane {
 		
 		((PanelClienteFactura) panelClienteFactura).setIdCliente(c.getIdCliente());
 		
+		((PanelImagenes) panelImg).setCliente(c);
+		
 	}
 	
 	public void cargarPresupuestos(){
@@ -111,9 +113,9 @@ public class TabCliente extends JTabbedPane {
 	 * 	
 	 * @return javax.swing.JPanel	
 	 */
-	private JPanel getPanelImg() {
+	public JPanel getPanelImg() {
 		if (panelImg == null) {
-			panelImg = new JPanel();
+			panelImg = new PanelImagenes();
 		}
 		return panelImg;
 	}

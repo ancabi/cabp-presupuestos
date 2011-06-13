@@ -60,6 +60,8 @@ public class DialogoModCliente extends JDialog {
 				
 				((TabCliente) tabCliente).getPanelDatosClientes().limpiarCampos();
 				
+				((PanelImagenes) ((TabCliente) tabCliente).getPanelImg()).limpiarPrevisualizacion();
+				
 				//vuelvo al primer tab para el siguiente cliente
 				tabCliente.setSelectedIndex(0);
 				//limpio los campos del panel de presupuestos
