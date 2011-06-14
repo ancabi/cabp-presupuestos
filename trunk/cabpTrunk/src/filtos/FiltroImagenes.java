@@ -15,7 +15,8 @@ public class FiltroImagenes extends FileFilter {
 		
 		String nombre=arg0.getName();
 			
-		if(nombre.matches(".*\\.jpg") || nombre.matches(".*\\.png") || nombre.matches(".*\\.gif") || nombre.matches(".*\\.bmp")){
+		if(nombre.matches(".*\\.jpg") || nombre.matches(".*\\.JPG") || nombre.matches(".*\\.png") || nombre.matches(".*\\.PNG") || 
+				nombre.matches(".*\\.gif") || nombre.matches(".*\\.GIF") || nombre.matches(".*\\.bmp") || nombre.matches(".*\\.BMP")){
 			
 			return true;
 			

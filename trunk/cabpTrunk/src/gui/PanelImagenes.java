@@ -133,7 +133,7 @@ public class PanelImagenes extends JPanel {
 					
 					File[] imagenes=getFiles();
 					
-					File carpeta=new File(clienteActual.getIdCliente()+" "+clienteActual.getNombre()+" "+clienteActual.getApellidos());
+					File carpeta=new File(clienteActual.getIdCliente()+clienteActual.getNombre()+clienteActual.getApellidos());
 					//si la carpeta del usuario no existe
 					if(!carpeta.exists()){
 						//la creo
@@ -154,7 +154,7 @@ public class PanelImagenes extends JPanel {
 								InputStream in = new FileInputStream(imagenes[x].getAbsoluteFile());
 								OutputStream out = new FileOutputStream(new File(carpeta.toString()+"/"+imagenes[x].getName()));
 
-								byte[] buf = new byte[1024];
+								byte[] buf = new byte[5120];
 						        int len;
 						        while ((len = in.read(buf)) > 0) {
 						            out.write(buf, 0, len);
@@ -223,9 +223,11 @@ public class PanelImagenes extends JPanel {
 						//traigo el objeto Imagen
 						Imagen i=listado.getImagen(index);
 						//Consigo el objeto file
-						File f=new File(clienteActual.getIdCliente()+" "+clienteActual.getNombre()+" "+clienteActual.getApellidos()+"/"+i.getName());
+						File f=new File(clienteActual.getIdCliente()+clienteActual.getNombre()+clienteActual.getApellidos()+"/"+i.getName());
 						//lo borro
 						f.delete();
+						
+						lblPrev.setIcon(null);
 						
 						cargarImagenes();
 						
@@ -317,20 +319,26 @@ public class PanelImagenes extends JPanel {
 						Imagen i=listado.getImagen(index);
 							
 						//Consigo el objeto file
-						File f=new File(clienteActual.getIdCliente()+" "+clienteActual.getNombre()+" "+clienteActual.getApellidos()+"/"+i.getName());
-							
-						/*
-						Runtime obj = Runtime.getRuntime();
-						try {
-							obj.exec("start \""+f.toString()+"\"");
-						} catch (IOException e1) {
-							JOptionPane.showMessageDialog(null, e1.getMessage());
-						}  */
+						File f=new File(clienteActual.getIdCliente()+clienteActual.getNombre()+clienteActual.getApellidos()+"/"+i.getName());
+
 						
-						try {
-							Desktop.getDesktop().edit(f);
-						} catch (IOException e1) {
-							JOptionPane.showMessageDialog(null, e1.getMessage());
+						
+						
+						if(System.getProperty("os.name").equals("Linux") && !Desktop.isDesktopSupported()){
+							
+							Runtime obj = Runtime.getRuntime();
+							try {
+								obj.exec("gimp "+f.toString());
+							} catch (IOException e1) {
+								JOptionPane.showMessageDialog(null, e1.getMessage());
+							}  
+							
+						}else{
+							try {
+								Desktop.getDesktop().edit(f);
+							} catch (IOException e1) {
+								JOptionPane.showMessageDialog(null, e1.getMessage());
+							}
 						}
 						
 						
@@ -345,14 +353,28 @@ public class PanelImagenes extends JPanel {
 						Imagen i=listado.getImagen(index);
 							
 						//Consigo el objeto file
-						File f=new File(clienteActual.getIdCliente()+" "+clienteActual.getNombre()+" "+clienteActual.getApellidos()+"/"+i.getName());
+						File f=new File(clienteActual.getIdCliente()+clienteActual.getNombre()+clienteActual.getApellidos()+"/"+i.getName());
 							
 						ImageIcon imagen=new ImageIcon(f.getAbsolutePath());
 						try{
-						imagen=new ImageIcon(imagen.getImage().getScaledInstance((int) (imagen.getIconWidth()*0.5), 
-								(int) (imagen.getIconHeight()*0.5), Image.SCALE_FAST));
+							int panelW=panelPrev.getWidth();
+							int panelH=panelPrev.getHeight();
+							int imagenW=imagen.getIconWidth();
+							int imagenH=imagen.getIconHeight();
 							
-						lblPrev.setIcon(imagen);
+							while(imagenW>panelW){
+								imagenW=(int) (imagenW*0.5);
+							}
+							
+							while(imagenH>panelH){
+								imagenH=(int) (imagenH*0.5);
+							}
+								//redimenciono la imagen
+							imagen=new ImageIcon(imagen.getImage().getScaledInstance(imagenW, 
+									imagenH, Image.SCALE_FAST));
+								
+							lblPrev.setIcon(imagen);
+							
 						}catch(java.lang.IllegalArgumentException e1){
 								
 							lblPrev.setIcon(null);
@@ -382,7 +404,6 @@ public class PanelImagenes extends JPanel {
 			gridBagConstraints.gridx = 0;
 			gridBagConstraints.gridy = 0;
 			lblPrev.setText("");
-			lblPrev.setIcon(new ImageIcon(getClass().getResource("/img/add.png")));
 			panelPrev = new JPanel();
 			panelPrev.setLayout(new GridBagLayout());
 			panelPrev.add(lblPrev, gridBagConstraints);
