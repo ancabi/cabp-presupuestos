@@ -35,7 +35,6 @@ public class TabCliente extends JTabbedPane {
 
 		this.addTab("Datos", null, getPanelDatos(), null);
 		this.addTab("Imagenes", null, getPanelImg(), null);
-		this.addTab("PDF", null, getPanelPdf(), null);
 		this.addTab("Presupuestos", null, getPanelClientePres(), null);
 		this.addTab("Facturas", null, getPanelClienteFactura(), null);
 	}
@@ -120,17 +119,7 @@ public class TabCliente extends JTabbedPane {
 		return panelImg;
 	}
 
-	/**
-	 * This method initializes panelPdf	
-	 * 	
-	 * @return javax.swing.JPanel	
-	 */
-	private JPanel getPanelPdf() {
-		if (panelPdf == null) {
-			panelPdf = new JPanel();
-		}
-		return panelPdf;
-	}
+
 
 	public void setMainFrame(JFrame mainFrame) {
 
