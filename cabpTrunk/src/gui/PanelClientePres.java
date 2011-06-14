@@ -20,8 +20,7 @@ import javax.swing.JButton;
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 
-import java.awt.GridBagLayout;
-import java.awt.GridBagConstraints;
+
 import java.awt.FlowLayout;
 
 /**
@@ -87,7 +86,7 @@ public class PanelClientePres extends JPanel {
 							
 							String temp=(String) ultimoNodo.getUserObject();
 							
-							temp=temp.substring(temp.indexOf('º')+2);
+							temp=temp.substring(temp.indexOf('Âº')+2);
 							
 							try{
 							//convierto lo que antes hice un substring a int, si lanza la excepcion, la capturo pero no hago nada con ella
@@ -123,7 +122,7 @@ public class PanelClientePres extends JPanel {
 							dialogoModPresupuesto.cargarProductos();
 							//lo pongo visible
 							dialogoModPresupuesto.setVisible(true);
-							//si aceptó
+							//si acepto
 							if(dialogoModPresupuesto.getValorPulsado()==DialogoModPresupuesto.VALOR_ACEPTAR){
 								
 								//lo actualizo en memoria y en bd
@@ -195,7 +194,7 @@ public class PanelClientePres extends JPanel {
 			
 			if(temp!=null){
 				
-				String titulo="Presupuesto Nº "+temp.getIdPresupuesto();
+				String titulo="Presupuesto NÂº "+temp.getIdPresupuesto();
 				
 				makeNode(titulo, bison);
 			}
@@ -204,7 +203,7 @@ public class PanelClientePres extends JPanel {
 			
 			if(temp!=null){
 				
-				String titulo="Presupuesto Nº "+temp.getIdPresupuesto();
+				String titulo="Presupuesto NÂº "+temp.getIdPresupuesto();
 				
 				makeNode(titulo, acorn);
 			}

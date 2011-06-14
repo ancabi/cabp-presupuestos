@@ -233,6 +233,12 @@ public class DialogoAddPresupuesto extends JDialog {
 	public void setIdDistribuidor(int idDistribuidor) {
 		this.idDistribuidor = idDistribuidor;
 	}
+
+	public void setIsPresupuesto(boolean b) {
+		
+		((PanelPresupuesto) panelPresupuesto).setIsPresupuesto(b);
+		
+	}
 	
 	
 	

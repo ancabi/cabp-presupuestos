@@ -4,7 +4,6 @@
 package gui;
 
 import java.awt.BorderLayout;
-import java.awt.GridBagLayout;
 import javax.swing.JPanel;
 import javax.swing.JTree;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -70,7 +69,7 @@ public class PanelClienteFactura extends JPanel {
 							
 							String temp=(String) ultimoNodo.getUserObject();
 							
-							temp=temp.substring(temp.indexOf('บ')+2);
+							temp=temp.substring(temp.indexOf('ยบ')+2);
 							
 							try{
 							//convierto lo que antes hice un substring a int, si lanza la excepcion, la capturo pero no hago nada con ella
@@ -142,7 +141,7 @@ public class PanelClienteFactura extends JPanel {
 			
 			if(temp!=null){
 				
-				String titulo="Factura Nบ "+temp.getIdFactura();
+				String titulo="Factura Nยบ "+temp.getIdFactura();
 				
 				makeNode(titulo, bison);
 			}
@@ -151,7 +150,7 @@ public class PanelClienteFactura extends JPanel {
 			
 			if(temp!=null){
 				
-				String titulo="Factura Nบ "+temp.getIdFactura();
+				String titulo="Factura Nยบ "+temp.getIdFactura();
 				
 				makeNode(titulo, acorn);
 			}

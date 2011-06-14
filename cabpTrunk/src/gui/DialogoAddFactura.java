@@ -221,6 +221,12 @@ public class DialogoAddFactura extends JDialog {
 		this.idDistribuidor = idDistribuidor;
 	}
 
+	public void setIsPresupuesto(boolean b) {
+		
+		((PanelPresupuesto) panelPresupuesto).setIsPresupuesto(b);
+		
+	}
+
 	
 
 }  //  @jve:decl-index=0:visual-constraint="10,10"
