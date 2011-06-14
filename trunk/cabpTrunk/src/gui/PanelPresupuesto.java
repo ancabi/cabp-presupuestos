@@ -38,7 +38,7 @@ import modelo.ModeloProductos;
 
 import javax.swing.JOptionPane;
 import javax.swing.JTextArea;
-import javax.swing.JScrollBar;
+
 import javax.swing.JViewport;
 import javax.swing.JButton;
 import javax.swing.ImageIcon;
@@ -348,7 +348,7 @@ public class PanelPresupuesto extends JPanel {
 			gridBagConstraints131.insets = new Insets(2, 10, 2, 2);
 			gridBagConstraints131.gridy = 13;
 			lblTotalConIva = new JLabel();
-			lblTotalConIva.setText("0 €");
+			lblTotalConIva.setText("0 â‚¬");
 			lblTotalConIva.setForeground(Color.red);
 			GridBagConstraints gridBagConstraints121 = new GridBagConstraints();
 			gridBagConstraints121.gridx = 0;
@@ -364,7 +364,7 @@ public class PanelPresupuesto extends JPanel {
 			gridBagConstraints112.insets = new Insets(2, 10, 2, 2);
 			gridBagConstraints112.gridy = 12;
 			lblTotalSinIva = new JLabel();
-			lblTotalSinIva.setText("0 €");
+			lblTotalSinIva.setText("0 â‚¬");
 			lblTotalSinIva.setForeground(Color.red);
 			GridBagConstraints gridBagConstraints101 = new GridBagConstraints();
 			gridBagConstraints101.gridx = 0;
@@ -380,7 +380,7 @@ public class PanelPresupuesto extends JPanel {
 			gridBagConstraints91.insets = new Insets(2, 10, 2, 2);
 			gridBagConstraints91.gridy = 11;
 			lblImpGan = new JLabel();
-			lblImpGan.setText("0 €");
+			lblImpGan.setText("0 â‚¬");
 			GridBagConstraints gridBagConstraints81 = new GridBagConstraints();
 			gridBagConstraints81.gridx = 0;
 			gridBagConstraints81.anchor = GridBagConstraints.WEST;
@@ -394,7 +394,7 @@ public class PanelPresupuesto extends JPanel {
 			gridBagConstraints71.insets = new Insets(2, 10, 2, 2);
 			gridBagConstraints71.gridy = 9;
 			lblIva = new JLabel();
-			lblIva.setText("0 €");
+			lblIva.setText("0 â‚¬");
 			GridBagConstraints gridBagConstraints61 = new GridBagConstraints();
 			gridBagConstraints61.gridx = 0;
 			gridBagConstraints61.anchor = GridBagConstraints.WEST;
@@ -408,7 +408,7 @@ public class PanelPresupuesto extends JPanel {
 			gridBagConstraints32.insets = new Insets(2, 10, 2, 2);
 			gridBagConstraints32.gridy = 8;
 			lblTotalSinImp = new JLabel();
-			lblTotalSinImp.setText("0 €");
+			lblTotalSinImp.setText("0 â‚¬");
 			GridBagConstraints gridBagConstraints26 = new GridBagConstraints();
 			gridBagConstraints26.gridx = 0;
 			gridBagConstraints26.anchor = GridBagConstraints.WEST;
@@ -427,7 +427,7 @@ public class PanelPresupuesto extends JPanel {
 			gridBagConstraints31.insets = new Insets(2, 10, 2, 2);
 			gridBagConstraints31.gridy = 5;
 			lblTotalGastos = new JLabel();
-			lblTotalGastos.setText("0 €");
+			lblTotalGastos.setText("0 â‚¬");
 			GridBagConstraints gridBagConstraints23 = new GridBagConstraints();
 			gridBagConstraints23.gridx = 0;
 			gridBagConstraints23.anchor = GridBagConstraints.WEST;
@@ -473,7 +473,7 @@ public class PanelPresupuesto extends JPanel {
 			gridBagConstraints1.anchor = GridBagConstraints.WEST;
 			gridBagConstraints1.gridy = 0;
 			lblPrecioNeto = new JLabel();
-			lblPrecioNeto.setText("0 €");
+			lblPrecioNeto.setText("0 â‚¬");
 			GridBagConstraints gridBagConstraints = new GridBagConstraints();
 			gridBagConstraints.gridx = 0;
 			gridBagConstraints.insets = new Insets(2, 10, 2, 2);
@@ -997,7 +997,7 @@ public class PanelPresupuesto extends JPanel {
 		
 		double total= (((double) kilometros*(double)nViajes)*0.07)*precioGasolina;
 		
-		lblTotalViaje.setText(formateador.format(total)+" €");
+		lblTotalViaje.setText(formateador.format(total)+" â‚¬");
 		
 		
 	}
@@ -1015,7 +1015,7 @@ public class PanelPresupuesto extends JPanel {
 			gridBagConstraints25.insets = new Insets(2, 10, 2, 2);
 			gridBagConstraints25.gridy = 1;
 			lblTotalViaje = new JLabel();
-			lblTotalViaje.setText("0 €");
+			lblTotalViaje.setText("0 â‚¬");
 			lblTotalViaje.setForeground(Color.red);
 			lblTotalViaje.setFont(new Font("Dialog", Font.BOLD, 12));
 			GridBagConstraints gridBagConstraints24 = new GridBagConstraints();
@@ -1054,7 +1054,7 @@ public class PanelPresupuesto extends JPanel {
 			gridBagConstraints4.insets = new Insets(2, 10, 2, 2);
 			gridBagConstraints4.gridy = 0;
 			lblViajes = new JLabel();
-			lblViajes.setText("Nº de viajes:");
+			lblViajes.setText("Nâ‚¬ de viajes:");
 			GridBagConstraints gridBagConstraints3 = new GridBagConstraints();
 			gridBagConstraints3.anchor = GridBagConstraints.WEST;
 			gridBagConstraints3.insets = new Insets(2, 10, 2, 2);
@@ -1289,7 +1289,7 @@ public class PanelPresupuesto extends JPanel {
 	private JLabel getLblPorcentaje1() {
 		if (lblPorcentaje1 == null) {
 			lblPorcentaje1 = new JLabel();
-			lblPorcentaje1.setText("0 €");
+			lblPorcentaje1.setText("0 â‚¬");
 		}
 		return lblPorcentaje1;
 	}
@@ -1302,7 +1302,7 @@ public class PanelPresupuesto extends JPanel {
 	private JLabel getLblPorcentaje2() {
 		if (lblPorcentaje2 == null) {
 			lblPorcentaje2 = new JLabel();
-			lblPorcentaje2.setText("0 €");
+			lblPorcentaje2.setText("0 â‚¬");
 		}
 		return lblPorcentaje2;
 	}
@@ -1327,7 +1327,7 @@ public class PanelPresupuesto extends JPanel {
 	private JLabel getTotalPorcentaje() {
 		if (totalPorcentaje == null) {
 			totalPorcentaje = new JLabel();
-			totalPorcentaje.setText("0 €");
+			totalPorcentaje.setText("0 â‚¬");
 		}
 		return totalPorcentaje;
 	}
@@ -1385,12 +1385,12 @@ public class PanelPresupuesto extends JPanel {
 			}
 			
 			//lo muestro en el label
-			lblImpGan.setText(formateador.format(impuestoGanancia)+" €");
+			lblImpGan.setText(formateador.format(impuestoGanancia)+" â‚¬");
 			//guardo el transporte
 			transporte=Integer.parseInt(tfTransporte.getText());
 			
 			//asigno el total de gastos al label
-			lblTotalGastos.setText(totalGastos+" €");
+			lblTotalGastos.setText(totalGastos+" â‚¬");
 			
 			
 			
@@ -1403,27 +1403,27 @@ public class PanelPresupuesto extends JPanel {
 				
 			}
 			
-			lblPrecioNeto.setText(formateador.format(totalNeto)+" €");
+			lblPrecioNeto.setText(formateador.format(totalNeto)+" â‚¬");
 			
 			//guardo el total sin impuestos
 			totalSinImp=totalNeto+totalGastos+ganancia+transporte;
 			
 			//asigno el total sin impuestos
-			lblTotalSinImp.setText(formateador.format(totalSinImp)+" €");
+			lblTotalSinImp.setText(formateador.format(totalSinImp)+" â‚¬");
 			
 			//calculo el iva
 			iva=totalSinImp*IVA;
 			
 			//lo muestro en el label
-			lblIva.setText(formateador.format(iva)+" €");
+			lblIva.setText(formateador.format(iva)+" â‚¬");
 			//calculo el total sin iva
 			totalSinIva=totalSinImp+impuestoGanancia;
 			//lo muestro en el label
-			lblTotalSinIva.setText(formateador.format(totalSinIva)+" €");
+			lblTotalSinIva.setText(formateador.format(totalSinIva)+" â‚¬");
 			//calculo el total con iva
 			totalIva=(totalSinIva*IVA)+totalSinIva;
 			//lo muestro en el label
-			lblTotalConIva.setText(formateador.format(totalIva)+" €");
+			lblTotalConIva.setText(formateador.format(totalIva)+" â‚¬");
 			
 			actualizarPorcentajes();
 			
@@ -1441,10 +1441,10 @@ public class PanelPresupuesto extends JPanel {
 		
 		tfPorcentaje2.setText(""+porcentaje2);
 		
-		lblPorcentaje1.setText(formateador.format((porcentaje1/100.0)*totalIva)+" €");
-		lblPorcentaje2.setText(formateador.format((porcentaje2/100.0)*totalIva)+" €");
+		lblPorcentaje1.setText(formateador.format((porcentaje1/100.0)*totalIva)+" â‚¬");
+		lblPorcentaje2.setText(formateador.format((porcentaje2/100.0)*totalIva)+" â‚¬");
 		
-		totalPorcentaje.setText(formateador.format(totalIva)+" €");
+		totalPorcentaje.setText(formateador.format(totalIva)+" â‚¬");
 		
 		
 	}
@@ -1627,6 +1627,8 @@ public class PanelPresupuesto extends JPanel {
 		
 		Vector data=new Vector();
 		
+		setIsPresupuesto(true);
+		
 		ListadoLineaPresup lineas=p.getListadoLineaPresup();
 		
 		for(int x=0; x< lineas.getSize(); x++){
@@ -1694,8 +1696,11 @@ public class PanelPresupuesto extends JPanel {
 		
 		if(presupuesto){
 			lblTitulo.setText("Presupuesto");
+			scrollTexto.setBorder(BorderFactory.createTitledBorder(null, "Texto que va en el presupuesto", TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, new Font("Dialog", Font.BOLD, 12), new Color(51, 51, 51)));
 		}else{
 			lblTitulo.setText("Factura");
+			scrollTexto.setBorder(BorderFactory.createTitledBorder(null, "Texto que va en la factura", TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, new Font("Dialog", Font.BOLD, 12), new Color(51, 51, 51)));
+
 		}
 		
 	}
@@ -1703,6 +1708,8 @@ public class PanelPresupuesto extends JPanel {
 	public void setFactura(Facturas f) {
 		
 		Vector data=new Vector();
+		
+		setIsPresupuesto(false);
 		
 		ListadoLineaFactura lineas=f.getListadoLineaFactura();
 		

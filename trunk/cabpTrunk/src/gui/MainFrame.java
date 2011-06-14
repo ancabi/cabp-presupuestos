@@ -12,35 +12,24 @@ import javax.swing.JButton;
 import java.awt.GridBagLayout;
 import java.awt.CardLayout;
 import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
+
 import java.sql.SQLException;
-import java.util.Vector;
+
 
 import javax.swing.ImageIcon;
 
-import clases.Cliente;
-import clases.Emails;
+
 import clases.ListadoClientes;
 import clases.ListadoDistribuidores;
 import clases.ListadoProductos;
-import clases.Telefonos;
+
 import conexion.Conectar;
-import javax.swing.JTabbedPane;
-import java.awt.Dimension;
-import javax.swing.JLabel;
-import java.awt.GridBagConstraints;
-import java.awt.FlowLayout;
+
 import java.awt.Insets;
 import java.awt.Toolkit;
 import java.awt.Color;
 import javax.swing.BorderFactory;
-import javax.swing.border.SoftBevelBorder;
-import javax.swing.border.TitledBorder;
 
-import org.w3c.dom.ls.LSInput;
-
-import java.awt.Font;
 
 public class MainFrame extends JFrame {
 
@@ -300,7 +289,7 @@ public class MainFrame extends JFrame {
 			btnPresupuesto = new JButton();
 			btnPresupuesto.setIcon(new ImageIcon(getClass().getResource("/img/presupuesto2.png")));
 			btnPresupuesto.setMargin(new Insets(20, 34, 2, 34));
-			btnPresupuesto.setToolTipText("Añadir presupuesto");
+			btnPresupuesto.setToolTipText("AÃ±adir presupuesto");
 			btnPresupuesto.setBorder(BorderFactory.createEmptyBorder(0, 5, 0, 5));
 			btnPresupuesto.addActionListener(new java.awt.event.ActionListener() {
 				public void actionPerformed(java.awt.event.ActionEvent e) {
@@ -419,6 +408,8 @@ public class MainFrame extends JFrame {
 				
 			dialogoAddPresupuesto.cargarProductos(listadoProductos);
 			
+			dialogoAddPresupuesto.setIsPresupuesto(true);
+			
 				
 			dialogoAddPresupuesto.setVisible(true);
 		}
@@ -473,6 +464,7 @@ public class MainFrame extends JFrame {
 				
 			dialogoAddFactura.cargarProductos(listadoProductos);
 			
+			dialogoAddFactura.setIsPresupuesto(false);
 				
 			dialogoAddFactura.setVisible(true);
 		}
@@ -498,7 +490,7 @@ public class MainFrame extends JFrame {
 		if (btnFactura == null) {
 			btnFactura = new JButton();
 			btnFactura.setBorder(BorderFactory.createEmptyBorder(0, 5, 0, 5));
-			btnFactura.setToolTipText("Añadir factura");
+			btnFactura.setToolTipText("AÃ±adir factura");
 			btnFactura.setIcon(new ImageIcon(getClass().getResource("/img/factura.png")));
 			btnFactura.addActionListener(new java.awt.event.ActionListener() {   
 				public void actionPerformed(java.awt.event.ActionEvent e) {    
@@ -519,6 +511,7 @@ public class MainFrame extends JFrame {
 		if (btnProductos == null) {
 			btnProductos = new JButton();
 			btnProductos.setBorder(BorderFactory.createEmptyBorder(0, 5, 0, 5));
+			btnProductos.setToolTipText("Gestion de productos");
 			btnProductos.setIcon(new ImageIcon(getClass().getResource("/img/producto.png")));
 			btnProductos.addActionListener(new java.awt.event.ActionListener() {
 				public void actionPerformed(java.awt.event.ActionEvent e) {
@@ -559,6 +552,7 @@ public class MainFrame extends JFrame {
 		if (btnDistribuidor == null) {
 			btnDistribuidor = new JButton();
 			btnDistribuidor.setIcon(new ImageIcon(getClass().getResource("/img/distribuidor.png")));
+			btnDistribuidor.setToolTipText("Gestion de distribuidores");
 			btnDistribuidor.setBorder(BorderFactory.createEmptyBorder(0, 5, 0, 5));
 			btnDistribuidor.addActionListener(new java.awt.event.ActionListener() {
 				public void actionPerformed(java.awt.event.ActionEvent e) {

@@ -3,10 +3,6 @@ package gui;
 import javax.swing.JPanel;
 import java.awt.Dimension;
 import java.awt.BorderLayout;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.Iterator;
 import java.util.Vector;
 
@@ -14,22 +10,19 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
-import javax.swing.BoxLayout;
+
 import javax.swing.JButton;
 
 import modelo.ModeloClientes;
-import javax.swing.JTextField;
+
 
 import clases.Cliente;
 import clases.Emails;
 import clases.Telefonos;
 
 import javax.swing.JLabel;
-import java.awt.GridBagConstraints;
-import java.awt.Insets;
 import java.awt.FlowLayout;
 import java.awt.Font;
-import java.awt.GridBagLayout;
 import javax.swing.ImageIcon;
 
 public class PanelCliente extends JPanel {
@@ -110,7 +103,8 @@ public class PanelCliente extends JPanel {
 			jTable = new JTable(modelo);
 			jTable.setAutoCreateRowSorter(true);
 			jTable.getColumn("ID Cliente").setMaxWidth(70);
-			jTable.getColumn("DNI").setMaxWidth(75);
+			jTable.getColumn("DNI").setMaxWidth(80);
+			jTable.getColumn("DNI").setMinWidth(80);
 			jTable.getColumn("Telefono").setMaxWidth(75);
 					jTable.addMouseListener(new java.awt.event.MouseAdapter() { 
 							public void mouseClicked(java.awt.event.MouseEvent evt) {    

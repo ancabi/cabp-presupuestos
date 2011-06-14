@@ -12,6 +12,7 @@ import javax.swing.JFrame;
 
 import java.awt.FlowLayout;
 import java.util.Vector;
+import java.awt.Dimension;
 
 /**
  * @author ancabi
@@ -44,7 +45,7 @@ public class DialogoAddCliente extends JDialog {
 	 * @return void
 	 */
 	private void initialize() {
-		this.setSize(771, 535);
+		this.setSize(801, 554);
 		this.setContentPane(getJContentPane());
 		this.setModal(true);
 		this.addWindowListener(new java.awt.event.WindowAdapter() {
