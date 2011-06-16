@@ -180,7 +180,7 @@ public class DialogoSeleccionDistribuidor extends JDialog {
 						
 						String temp=(String) cbProveedor.getSelectedItem();
 						
-						temp=temp.substring(0, 1);
+						temp=temp.substring(0, temp.indexOf(' '));
 						
 						idDistribuidor=Integer.parseInt(temp);
 					}else{

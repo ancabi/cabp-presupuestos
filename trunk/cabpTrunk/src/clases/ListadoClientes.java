@@ -2,6 +2,7 @@ package clases;
 
 
 
+import java.io.File;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -25,6 +26,7 @@ public class ListadoClientes {
 	private PreparedStatement psBorrarTelCliente;
 	private PreparedStatement psBorrarEmailCliente;
 	private PreparedStatement psActualizarCliente;
+	private PreparedStatement psBorrarImagenesCliente;
 	
 	public ListadoClientes(){
 		
@@ -43,6 +45,8 @@ public class ListadoClientes {
 			psBorrarTelCliente=dbConnect.prepareStatement("DELETE FROM telefonos WHERE idCliente=?");
 			
 			psBorrarEmailCliente=dbConnect.prepareStatement("DELETE FROM email WHERE idCliente=?");
+			
+			psBorrarImagenesCliente=dbConnect.prepareStatement("DELETE FROM imagenes WHERE idCliente=?");
 			
 			psActualizarCliente=dbConnect.prepareStatement("UPDATE clientes SET dni=?, nombre=?, apellidos=?, direccion=?, ciudad=?, provincia=?, " +
 					"empresa=?, notas=? WHERE idCliente=?");
@@ -243,20 +247,36 @@ public class ListadoClientes {
 	public void delCliente(Cliente c) {
 		
 		try {
-
+			//borro el clientes
 			psBorrarCliente.setInt(1, c.getIdCliente());
 			
 			psBorrarCliente.executeUpdate();
-			
+			//los telefonos
 			psBorrarTelCliente.setInt(1, c.getIdCliente());
 			
 			psBorrarTelCliente.executeUpdate();
-			
+			//los emails
 			psBorrarEmailCliente.setInt(1, c.getIdCliente());
 			
 			psBorrarEmailCliente.executeUpdate();
+			//las imagenes
+			psBorrarImagenesCliente.setInt(1, c.getIdCliente());
+			
+			psBorrarImagenesCliente.executeUpdate();
 			
 			clientes.removeElement(c);
+			
+			File carpeta=new File(c.getIdCliente()+c.getNombre()+c.getApellidos());
+			
+			File[] ficheros=carpeta.listFiles();
+			
+			for(int x=0; x<ficheros.length; x++){
+				
+				ficheros[x].delete();
+				
+			}
+			
+			carpeta.delete();
 			
 		} catch (SQLException e) {
 			JOptionPane.showMessageDialog(null, e.getMessage());

@@ -312,8 +312,6 @@ public class PanelImagenes extends JPanel {
 						//traigo la seleccion
 						int index=tabalImagenes.getSelectedRow();
 						
-						String ruta="c:/windows/system32/mspaint.exe";
-						
 						index=tabalImagenes.convertRowIndexToModel(index);
 						//traigo el objeto Imagen
 						Imagen i=listado.getImagen(index);
@@ -329,6 +327,13 @@ public class PanelImagenes extends JPanel {
 							Runtime obj = Runtime.getRuntime();
 							try {
 								obj.exec("gimp "+f.toString());
+								
+								Date d=new Date();
+								
+								listado.setLastModified(i, d.getTime());
+								
+								cargarImagenes();
+								
 							} catch (IOException e1) {
 								JOptionPane.showMessageDialog(null, e1.getMessage());
 							}  
@@ -336,10 +341,18 @@ public class PanelImagenes extends JPanel {
 						}else{
 							try {
 								Desktop.getDesktop().edit(f);
+								
+								Date d=new Date();
+								
+								listado.setLastModified(i, d.getTime());
+								
+								cargarImagenes();
+								
 							} catch (IOException e1) {
 								JOptionPane.showMessageDialog(null, e1.getMessage());
 							}
 						}
+						
 						
 						
 					}else{

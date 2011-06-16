@@ -24,7 +24,7 @@ public class PanelClienteFactura extends JPanel {
 	private JTree treeFacturas = null;
 	private JPanel panelPresupuesto = null;
 	private ListadoFacturas facturas=new ListadoFacturas();  //  @jve:decl-index=0:
-	private DefaultMutableTreeNode bison, acorn, root;  //  @jve:decl-index=0:
+	private DefaultMutableTreeNode root;  //  @jve:decl-index=0:
 	private DefaultTreeModel modelo;
 	/**
 	 * This is the default constructor
@@ -69,7 +69,7 @@ public class PanelClienteFactura extends JPanel {
 							
 							String temp=(String) ultimoNodo.getUserObject();
 							
-							temp=temp.substring(temp.indexOf('ยบ')+2);
+							temp=temp.substring(temp.indexOf('บ')+2);
 							
 							try{
 							//convierto lo que antes hice un substring a int, si lanza la excepcion, la capturo pero no hago nada con ella
@@ -132,36 +132,22 @@ public class PanelClienteFactura extends JPanel {
 		modelo=new DefaultTreeModel(root);
 		treeFacturas.setModel(modelo);
 		
-		bison=makeNode("Bison", root);
-		acorn=makeNode("Acorn", root);
-		
 		for(int x=0; x<facturas.getSize(); x++){
 			
-			Facturas temp=facturas.getFacturaProveedor(x, 1);
+			Facturas temp=facturas.getFacturaProveedor(x);
 			
 			if(temp!=null){
 				
-				String titulo="Factura Nยบ "+temp.getIdFactura();
+				String titulo="Factura Nบ "+temp.getIdFactura();
 				
-				makeNode(titulo, bison);
+				makeNode(titulo, root);
 			}
 			
-			temp=facturas.getFacturaProveedor(x, 2);
-			
-			if(temp!=null){
-				
-				String titulo="Factura Nยบ "+temp.getIdFactura();
-				
-				makeNode(titulo, acorn);
-			}
 		}
 		
-		if(bison.getChildCount()==0){
-			makeNode("No hay facturas", bison);
-		}
 		
-		if(acorn.getChildCount()==0){
-			makeNode("No hay facturas", acorn);
+		if(root.getChildCount()==0){
+			makeNode("No hay facturas", root);
 		}
 		
 	}

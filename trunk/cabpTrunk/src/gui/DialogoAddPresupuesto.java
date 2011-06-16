@@ -171,6 +171,8 @@ public class DialogoAddPresupuesto extends JDialog {
 						
 					}
 					
+					((PanelPresupuesto) panelPresupuesto).limpiarCampos();
+					
 				}
 			});
 		}

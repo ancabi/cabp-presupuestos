@@ -102,15 +102,11 @@ public class ListadoFacturas {
 		
 	}
 	
-	public Facturas getFacturaProveedor(int index, int idDistribuidor){
-		
-		if(idDistribuidor==facturas.get(index).getIdDistribuidor()){
+	public Facturas getFacturaProveedor(int index){
+
 			
-			return facturas.get(index);
-			
-		}
-		
-		return null;
+		return facturas.get(index);
+
 		
 	}
 	

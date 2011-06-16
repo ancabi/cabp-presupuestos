@@ -33,7 +33,7 @@ public class PanelClientePres extends JPanel {
 	private JTree treePresupuestos = null;
 	private JPanel panelPresupuesto = null;
 	private ListadoPresupuestos presupuestos=new ListadoPresupuestos();  //  @jve:decl-index=0:
-	private DefaultMutableTreeNode bison, acorn, root;  //  @jve:decl-index=0:
+	private DefaultMutableTreeNode root;  //  @jve:decl-index=0:
 	private DefaultTreeModel modelo=null;
 	private JPanel panelHerramientas = null;
 	private JButton btnConvert = null;
@@ -86,7 +86,7 @@ public class PanelClientePres extends JPanel {
 							
 							String temp=(String) ultimoNodo.getUserObject();
 							
-							temp=temp.substring(temp.indexOf('ยบ')+2);
+							temp=temp.substring(temp.indexOf('บ')+2);
 							
 							try{
 							//convierto lo que antes hice un substring a int, si lanza la excepcion, la capturo pero no hago nada con ella
@@ -185,38 +185,24 @@ public class PanelClientePres extends JPanel {
 		modelo=new DefaultTreeModel(root);
 		treePresupuestos.setModel(modelo);
 		
-		bison=makeNode("Bison", root);
-		acorn=makeNode("Acorn", root);
-		
 		for(int x=0; x<presupuestos.getSize(); x++){
-			
-			Presupuestos temp=presupuestos.getPresupuestoProveedor(x, 1);
-			
-			if(temp!=null){
-				
-				String titulo="Presupuesto Nยบ "+temp.getIdPresupuesto();
-				
-				makeNode(titulo, bison);
-			}
-			
-			temp=presupuestos.getPresupuestoProveedor(x, 2);
+
+			Presupuestos temp=presupuestos.getPresupuestoProveedor(x);
 			
 			if(temp!=null){
 				
-				String titulo="Presupuesto Nยบ "+temp.getIdPresupuesto();
+				String titulo="Presupuesto Nบ "+temp.getIdPresupuesto();
 				
-				makeNode(titulo, acorn);
+				makeNode(titulo, root);
 			}
+			
 		}
 		
-		if(bison.getChildCount()==0){
-			makeNode("No hay presupuestos", bison);
+		if(root.getChildCount()==0){
+			makeNode("No hay presupuestos", root);
 		}
 		
-		if(acorn.getChildCount()==0){
-			makeNode("No hay presupuestos", acorn);
-		}
-		
+	
 	}
 	
 	private DefaultMutableTreeNode makeNode(String title, DefaultMutableTreeNode parent){

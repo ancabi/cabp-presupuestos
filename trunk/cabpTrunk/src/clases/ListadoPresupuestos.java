@@ -114,15 +114,12 @@ public class ListadoPresupuestos {
 		
 	}
 	
-	public Presupuestos getPresupuestoProveedor(int index, int idDistribuidor){
+	public Presupuestos getPresupuestoProveedor(int index){
 		
-		if(idDistribuidor==presupuestos.get(index).getIdDistribuidor()){
-			
-			return presupuestos.get(index);
-			
-		}
 		
-		return null;
+			
+		return presupuestos.get(index);
+
 		
 	}
 	
