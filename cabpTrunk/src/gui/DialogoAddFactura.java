@@ -53,6 +53,8 @@ public class DialogoAddFactura extends JDialog {
 				
 				((PanelPresupuesto) panelPresupuesto).limpiarCampos();
 				
+				valorPulsado=VALOR_CANCELAR;
+				
 			}
 		});
 		this.setLocationRelativeTo(getOwner());
@@ -157,6 +159,8 @@ public class DialogoAddFactura extends JDialog {
 						f.addLineaFactura(idProducto, nomProducto, precio, cantidad);
 						
 					}
+					
+					((PanelPresupuesto) panelPresupuesto).limpiarCampos();
 					
 				}
 			});

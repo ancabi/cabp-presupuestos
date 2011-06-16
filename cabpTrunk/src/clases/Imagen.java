@@ -5,9 +5,9 @@ import java.io.File;
 public class Imagen {
 	
 	
-	int idCliente;
-	File imagen;
-	long lastModified;
+	private int idCliente;
+	private File imagen;
+	private long lastModified;
 	
 	
 	/**
@@ -62,6 +62,16 @@ public class Imagen {
 		return imagen.getName();
 		
 	}
+
+
+
+	public void setLastModified(long time) {
+		
+		lastModified=time;
+		
+	}
+
+
 	
 	
 	

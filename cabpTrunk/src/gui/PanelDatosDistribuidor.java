@@ -485,4 +485,12 @@ public class PanelDatosDistribuidor extends JPanel {
 		
 	}
 
+	public void comprobarCampos() throws Exception {
+		
+		if(tfNombre.getText().equals("")){
+			throw new Exception("Debe completar el nombre como minimo");
+		}
+		
+	}
+
 }  //  @jve:decl-index=0:visual-constraint="10,10"

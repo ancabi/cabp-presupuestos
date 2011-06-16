@@ -1,5 +1,6 @@
 package gui;
 
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import java.awt.Frame;
 import java.awt.BorderLayout;
@@ -104,9 +105,19 @@ public class DialogoAddDistribuidor extends JDialog {
 			btnAceptar.addActionListener(new java.awt.event.ActionListener() {
 				public void actionPerformed(java.awt.event.ActionEvent e) {
 					
-					valorPulsado=VALOR_ACEPTAR;
 					
-					setVisible(false);
+					try {
+						((PanelDatosDistribuidor) panelDatos).comprobarCampos();
+						
+						valorPulsado=VALOR_ACEPTAR;
+						
+						setVisible(false);
+						
+					} catch (Exception e1) {
+						JOptionPane.showMessageDialog(null, e1.getMessage());
+					}
+					
+					
 					
 				}
 			});

@@ -35,7 +35,7 @@ public class PanelProductos extends JPanel {
 	private ModeloProductos modelo=null;
 	private MainFrame mainFrame=null;
 	private DialogoAddProducto dialogoAddProducto;
-	private int idDistribuidor=0;
+	private int idDistribuidor;
 	private DialogoModProducto dialogoModProducto;
 
 	/**
@@ -115,7 +115,7 @@ public class PanelProductos extends JPanel {
 							
 							mainFrame.getListadoProductos().actualizarProducto(p, nombre, precio);
 							
-							cargarProductos();
+							cargarProductos(idDistribuidor);
 							
 						}
 						
@@ -182,9 +182,10 @@ public class PanelProductos extends JPanel {
 						String nombre=dialogoAddProducto.getNombre();
 						double precio=dialogoAddProducto.getPrecio();
 						//al listado le paso el producto
+
 						mainFrame.getListadoProductos().addProducto(new Productos(nombre, precio, idDistribuidor));
 						//recargo los productos para que se actualice el nuevo
-						cargarProductos();
+						cargarProductos(idDistribuidor);
 						
 					}
 					
@@ -252,28 +253,34 @@ public class PanelProductos extends JPanel {
 		return btnDelProducto;
 	}
 	
-	public void cargarProductos(){
+	public void cargarProductos(int idDistribuidor){
 		//traigo el listado con el que voy a trabajar
 		ListadoProductos listado=mainFrame.getListadoProductos();
+
 		//guardo el distribuidor de estos productos
-		idDistribuidor=listado.getProducto(0).getIdDistribuidor();
-		Vector linea=new Vector();
-		Vector<Vector> data=new Vector<Vector>();
+		this.idDistribuidor=idDistribuidor;
 		
-		for(int x=0; x< listado.getSize(); x++){
+		if(listado.getSize()>0){
 			
-			linea=new Vector();
 			
-			Productos p=listado.getProducto(x);
+			Vector linea=new Vector();
+			Vector<Vector> data=new Vector<Vector>();
 			
-			linea.add(p.getIdProducto());
-			linea.add(p.getNombre());
-			linea.add(p.getPrecio());
-		
-			data.add(linea);
+			for(int x=0; x< listado.getSize(); x++){
+				
+				linea=new Vector();
+				
+				Productos p=listado.getProducto(x);
+				
+				linea.add(p.getIdProducto());
+				linea.add(p.getNombre());
+				linea.add(p.getPrecio());
+			
+				data.add(linea);
+			}
+			
+			modelo.setData(data);
 		}
-		
-		modelo.setData(data);
 		
 		
 	}

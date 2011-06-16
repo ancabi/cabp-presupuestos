@@ -25,6 +25,7 @@ public class ListadoDistribuidores {
 	private PreparedStatement psInsertarDistribuidores;
 	private PreparedStatement psBorrarDistribuidor;
 	private PreparedStatement psActualizarDistribuidor;
+	private PreparedStatement psBorrarProductos;
 	/**
 	 * Constructor vacio
 	 */
@@ -37,6 +38,8 @@ public class ListadoDistribuidores {
 					"pais, numeroCta, iban, swif) VALUES(?,?,?,?,?,?,?,?,?,?)");
 			
 			psBorrarDistribuidor=dbConnect.prepareStatement("DELETE FROM distribuidores WHERE idDistribuidor=?");
+			
+			psBorrarProductos=dbConnect.prepareStatement("DELETE FROM productos WHERE idDistribuidor=?");
 			
 			psActualizarDistribuidor=dbConnect.prepareStatement("UPDATE distribuidores SET nombre=?, ciudad=?, email=?, telefono=?, ciudad=?, provincia=?," +
 					"pais=?, numeroCta=?, iban=?, swif=? WHERE idDistribuidor=?");
@@ -120,7 +123,7 @@ public class ListadoDistribuidores {
 			rs.next();
 			
 			d.setIdDistribuidor(rs.getInt(1));
-			
+
 			distribuidores.add(d);
 			
 		} catch (SQLException e) {
@@ -141,7 +144,12 @@ public class ListadoDistribuidores {
 		
 			psBorrarDistribuidor.executeUpdate();
 			
+			psBorrarProductos.setInt(1, id);
+			
+			psBorrarProductos.executeUpdate();
+			
 			distribuidores.removeElement(d);
+			
 			
 		} catch (SQLException e) {
 			JOptionPane.showMessageDialog(null, e.getMessage());

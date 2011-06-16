@@ -26,6 +26,7 @@ public class ListadoImagenes {
 	private PreparedStatement psAgregarImagen;
 	private PreparedStatement psImagenes;
 	private PreparedStatement psBorrarImagen;
+	private PreparedStatement psActualizarMod;
 	
 	/**
 	 * @param idCliente
@@ -39,6 +40,8 @@ public class ListadoImagenes {
 			psAgregarImagen=dbConnect.prepareStatement("INSERT INTO imagenes(idCliente, imagen, lastModified) VALUES(?,?,?)");
 			
 			psBorrarImagen=dbConnect.prepareStatement("DELETE FROM imagenes WHERE idCliente=? AND imagen=?");
+			
+			psActualizarMod=dbConnect.prepareStatement("UPDATE imagenes SET lastModified=? WHERE imagen=?");
 			
 		} catch (SQLException e) {
 			JOptionPane.showMessageDialog(null, e.getMessage());
@@ -112,6 +115,26 @@ public class ListadoImagenes {
 		} catch (SQLException e) {
 			JOptionPane.showMessageDialog(null, e.getMessage());
 		}
+		
+	}
+
+	public void setLastModified(Imagen i, long time) {
+		
+		try {
+			psActualizarMod.setLong(1, time);
+			
+			psActualizarMod.setString(2, i.getName());
+			
+			psActualizarMod.executeUpdate();
+			
+			i.setLastModified(time);
+			
+		} catch (SQLException e) {
+			JOptionPane.showMessageDialog(null, e.getMessage());
+		}
+		
+		
+		
 		
 	}
 	

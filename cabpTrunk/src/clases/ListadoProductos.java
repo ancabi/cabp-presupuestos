@@ -72,6 +72,7 @@ public class ListadoProductos {
 	
 	public Productos getProducto(int index){
 		
+		
 		return productos.get(index);
 		
 	}
@@ -109,12 +110,12 @@ public class ListadoProductos {
 		
 		String nombre=producto.getNombre();
 		double precio=producto.getPrecio();
-		int idDistribuidor=producto.getIdDistribuidor();
+		int idDist=producto.getIdDistribuidor();
 		try {
 			psInsertarProducto.setString(1, nombre);
 			psInsertarProducto.setDouble(2, precio);
-			psInsertarProducto.setInt(3, idDistribuidor);
-			
+			psInsertarProducto.setInt(3, idDist);
+
 			psInsertarProducto.executeUpdate();
 			//pido el id generado por el auto increment
 			ResultSet rs=psInsertarProducto.getGeneratedKeys();

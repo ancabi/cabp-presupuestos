@@ -11,7 +11,7 @@ import java.util.Vector;
 
 import javax.swing.JDialog;
 
-import clases.ListadoLineaPresup;
+
 import clases.ListadoProductos;
 import clases.Presupuestos;
 
@@ -177,6 +177,8 @@ public class DialogoModPresupuesto extends JDialog {
 						presupuestoActual.addLineaPresupuesto(idProducto, nomProducto, precio, cantidad);
 						
 					}
+					
+					((PanelPresupuesto) panelPresupuesto).limpiarCampos();
 					
 				}
 			});

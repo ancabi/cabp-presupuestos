@@ -172,16 +172,23 @@ public class DialogoAddProducto extends JDialog {
 					
 					nombre=tfNombre.getText();
 					
-					valorPulsado=VALOR_ACEPTAR;
+					if(!nombre.equals("")){
 					
-					setVisible(false);
-					
-					limpiarCampos();
+						valorPulsado=VALOR_ACEPTAR;
+						
+						setVisible(false);
+						
+						limpiarCampos();
+					}else{
+						throw new Exception("Debe completar el nombre");
+					}
 					
 					}catch(NumberFormatException e1){
 						
 						JOptionPane.showMessageDialog(null, "Debe poner un numero valido");
 						
+					} catch (Exception e1) {
+						JOptionPane.showMessageDialog(null, e1.getMessage());
 					}
 				}
 

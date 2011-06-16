@@ -172,6 +172,11 @@ public class MainFrame extends JFrame {
 		if (jMenuItem == null) {
 			jMenuItem = new JMenuItem();
 			jMenuItem.setText("Salir");
+			jMenuItem.addActionListener(new java.awt.event.ActionListener() {
+				public void actionPerformed(java.awt.event.ActionEvent e) {
+					System.exit(0);
+				}
+			});
 		}
 		return jMenuItem;
 	}
@@ -289,7 +294,7 @@ public class MainFrame extends JFrame {
 			btnPresupuesto = new JButton();
 			btnPresupuesto.setIcon(new ImageIcon(getClass().getResource("/img/presupuesto2.png")));
 			btnPresupuesto.setMargin(new Insets(20, 34, 2, 34));
-			btnPresupuesto.setToolTipText("AÃ±adir presupuesto");
+			btnPresupuesto.setToolTipText("Añadir presupuesto");
 			btnPresupuesto.setBorder(BorderFactory.createEmptyBorder(0, 5, 0, 5));
 			btnPresupuesto.addActionListener(new java.awt.event.ActionListener() {
 				public void actionPerformed(java.awt.event.ActionEvent e) {
@@ -392,7 +397,7 @@ public class MainFrame extends JFrame {
 		if(dialogoSeleccionDistribuidor.getValorPulsado()==DialogoSeleccionDistribuidor.VALOR_ACEPTAR){
 
 			int idDistribuidor=dialogoSeleccionDistribuidor.getIdDistribuidor();
-				
+
 			//traigo el listado de productos del proveedor elegido
 			listadoProductos=getListatoProductos(idDistribuidor);
 			//cargo los productos en memoria
@@ -490,7 +495,7 @@ public class MainFrame extends JFrame {
 		if (btnFactura == null) {
 			btnFactura = new JButton();
 			btnFactura.setBorder(BorderFactory.createEmptyBorder(0, 5, 0, 5));
-			btnFactura.setToolTipText("AÃ±adir factura");
+			btnFactura.setToolTipText("Añadir factura");
 			btnFactura.setIcon(new ImageIcon(getClass().getResource("/img/factura.png")));
 			btnFactura.addActionListener(new java.awt.event.ActionListener() {   
 				public void actionPerformed(java.awt.event.ActionEvent e) {    
@@ -531,8 +536,8 @@ public class MainFrame extends JFrame {
 						listadoProductos=getListatoProductos(idDistribuidor);
 						//cargo los productos en memoria
 						listadoProductos.cargarProductos();
-						
-						((PanelProductos) panelProductos).cargarProductos();
+
+						((PanelProductos) panelProductos).cargarProductos(idDistribuidor);
 						
 						cambiarCapa("panelProductos");
 						
