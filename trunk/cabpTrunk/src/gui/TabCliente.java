@@ -89,12 +89,22 @@ public class TabCliente extends JTabbedPane {
 		
 		((PanelImagenes) panelImg).setCliente(c);
 		
+		//le doy el cliente para q sepa cuales son los datos
+		((PanelPresupuesto) ((PanelClientePres) panelClientePres).getPanelPresupuesto()).setCliente(c);
+		
+		((PanelPresupuesto) ((PanelClienteFactura) panelClienteFactura).getPanelPresupuesto()).setCliente(c);
+		
 	}
 	
 	public void cargarPresupuestos(){
+		
+		System.out.println("Entra");
+		
 		((PanelClientePres) panelClientePres).cargarPresupuestos();
 		//limpio los campos del panel presupuestos
 		limpiarCampos();
+		
+		
 	}
 	
 	public void guardarCliente(){

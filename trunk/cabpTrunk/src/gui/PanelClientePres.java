@@ -148,7 +148,7 @@ public class PanelClientePres extends JPanel {
 	 * 	
 	 * @return javax.swing.JPanel	
 	 */
-	private JPanel getPanelPresupuesto() {
+	public JPanel getPanelPresupuesto() {
 		if (panelPresupuesto == null) {
 			panelPresupuesto = new PanelPresupuesto();
 			

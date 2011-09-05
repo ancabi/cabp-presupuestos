@@ -12,6 +12,8 @@ import javax.swing.tree.TreePath;
 
 import clases.ListadoFacturas;
 import clases.Facturas;
+import clases.Presupuestos;
+
 import java.awt.Dimension;
 
 /**
@@ -60,6 +62,7 @@ public class PanelClienteFactura extends JPanel {
 			treeFacturas = new JTree(root);
 			treeFacturas.setMinimumSize(new Dimension(100, 0));
 			treeFacturas.setPreferredSize(new Dimension(170, 0));
+			treeFacturas.setShowsRootHandles(true);
 			treeFacturas.addTreeSelectionListener(new javax.swing.event.TreeSelectionListener() {
 						public void valueChanged(javax.swing.event.TreeSelectionEvent e) {
 							TreePath path = e.getPath();
@@ -97,7 +100,7 @@ public class PanelClienteFactura extends JPanel {
 	 * 	
 	 * @return javax.swing.JPanel	
 	 */
-	private JPanel getPanelPresupuesto() {
+	public JPanel getPanelPresupuesto() {
 		if (panelPresupuesto == null) {
 			panelPresupuesto = new PanelPresupuesto();
 			
@@ -129,26 +132,54 @@ public class PanelClienteFactura extends JPanel {
 	private void cargarTree(){
 		
 		root=new DefaultMutableTreeNode("Facturas");
+		DefaultMutableTreeNode bison = new DefaultMutableTreeNode("Bison");
+		DefaultMutableTreeNode acorn = new DefaultMutableTreeNode("Acorn");
 		modelo=new DefaultTreeModel(root);
 		treeFacturas.setModel(modelo);
 		
+		root.add(bison);
+		root.add(acorn);
+		
 		for(int x=0; x<facturas.getSize(); x++){
-			
+
 			Facturas temp=facturas.getFacturaProveedor(x);
 			
 			if(temp!=null){
 				
-				String titulo="Factura Nº "+temp.getIdFactura();
+				if(temp.getIdDistribuidor()==1){
 				
-				makeNode(titulo, root);
+					String titulo="Presupuesto Nº "+temp.getIdFactura();
+				
+					makeNode(titulo, bison);
+					
+				}else if(temp.getIdDistribuidor()==2){
+					
+					String titulo="Presupuesto Nº "+temp.getIdFactura();
+					
+					makeNode(titulo, acorn);
+				}else{
+					
+					String titulo="Presupuesto Nº "+temp.getIdFactura();
+					
+					makeNode(titulo, root);
+				}
 			}
 			
 		}
 		
-		
 		if(root.getChildCount()==0){
 			makeNode("No hay facturas", root);
 		}
+		
+		if(bison.getChildCount()==0){
+			makeNode("No hay facturas", bison);
+		}
+		
+		if(acorn.getChildCount()==0){
+			makeNode("No hay facturas", acorn);
+		}
+		
+		treeFacturas.expandRow(0);
 		
 	}
 	

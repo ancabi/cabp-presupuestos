@@ -32,6 +32,7 @@ import java.util.Vector;
 
 import javax.swing.JCheckBox;
 
+import clases.Cliente;
 import clases.Facturas;
 import clases.ListadoLineaFactura;
 import clases.ListadoLineaPresup;
@@ -134,7 +135,9 @@ public class PanelPresupuesto extends JPanel {
 	private JButton btnBorrar = null;
 	private boolean isPresupuesto=true;
 	private JButton btnPrint = null;
-	private int idPresupuesto;
+	private int id;
+	private int idCliente;
+	private Cliente c;
 	/**
 	 * This is the default constructor
 	 */
@@ -1668,7 +1671,8 @@ public class PanelPresupuesto extends JPanel {
 		tfPrecioGasolina.setText(""+p.getPrecioGasolina());
 		tfPorcentaje1.setText(""+p.getPorcentaje());
 		taTexto.setText(p.getTexto());
-		idPresupuesto=p.getIdPresupuesto();
+		id=p.getIdPresupuesto();
+		idCliente=p.getIdCliente();
 		
 		cbGanancia.setSelected(p.isGanancia());
 		
@@ -1757,8 +1761,11 @@ public class PanelPresupuesto extends JPanel {
 		tfPrecioGasolina.setText(""+f.getPrecioGasolina());
 		tfPorcentaje1.setText(""+f.getPorcentaje());
 		taTexto.setText(f.getTexto());
+		id=f.getIdFactura();
 		
 		cbGanancia.setSelected(f.isGanancia());
+		
+		btnPrint.setEnabled(true);
 		
 		actualizarValores();
 		actualizarGasolina();
@@ -1786,17 +1793,32 @@ public class PanelPresupuesto extends JPanel {
 						
 						HashMap<String, Object> param = new HashMap<String, Object>();
 						
-						param.put("concepto", taTexto.getText());
-						param.put("precioSinIva", lblTotalSinIva.getText());
-						param.put("id", idPresupuesto);
-						param.put("id", idPresupuesto);
-						param.put("nombre", "pepe");
-						param.put("ciudad", "pepe");
-						param.put("provincia", "pepe");
-						param.put("telefono", "pepe");
-						param.put("IVA", lblIva.getText());
-						param.put("total", lblTotalConIva.getText());
-						
+						if(isPresupuesto){
+							
+							param.put("concepto", taTexto.getText());
+							param.put("precioSinIva", lblTotalSinIva.getText());
+							param.put("id", id);
+							param.put("nombre", c.getNombre()+" "+c.getApellidos());
+							param.put("ciudad", c.getCiudad());
+							param.put("provincia", c.getProvincia());
+							param.put("telefono", c.getTelefono());
+							param.put("IVA", lblIva.getText());
+							param.put("total", lblTotalConIva.getText());
+							
+							
+						}else{
+							
+							param.put("concepto", taTexto.getText());
+							param.put("precioSinIva", lblTotalSinIva.getText());
+							param.put("id", id);
+							param.put("nombre", c.getNombre()+" "+c.getApellidos());
+							param.put("ciudad", c.getCiudad());
+							param.put("provincia", c.getProvincia());
+							param.put("telefono", c.getTelefono());
+							param.put("IVA", lblIva.getText());
+							param.put("total", lblTotalConIva.getText());
+							
+						}
 						
 						DialogoViewer viewer=new DialogoViewer();
 						
@@ -1813,6 +1835,12 @@ public class PanelPresupuesto extends JPanel {
 			});
 		}
 		return btnPrint;
+	}
+	
+	public void setCliente(Cliente c){
+
+		this.c=c;
+		
 	}
 
 	
