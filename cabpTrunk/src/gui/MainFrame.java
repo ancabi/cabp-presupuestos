@@ -99,6 +99,8 @@ public class MainFrame extends JFrame {
 			
 			listadoDistribuidores.cargarDistribuidores();
 			
+		}else{
+			desactivarBotones();
 		}
 
 		this.setContentPane(getJContentPane());
@@ -110,8 +112,10 @@ public class MainFrame extends JFrame {
 			public void windowClosing(java.awt.event.WindowEvent e) {
 				
 				try {
-					//cierro la conexion
-					Conectar.closeConnection();
+					if(dbConnect!=null){
+						//cierro la conexion
+						Conectar.closeConnection();
+					}
 				} catch (SQLException e1) {
 					JOptionPane.showMessageDialog(null, e1.getMessage());
 				}
@@ -119,6 +123,15 @@ public class MainFrame extends JFrame {
 			}
 		});
 		
+	}
+
+	private void desactivarBotones() {
+		
+		btnDistribuidor.setEnabled(false);
+		btnFactura.setEnabled(false);
+		btnPresupuesto.setEnabled(false);
+		btnProductos.setEnabled(false);
+		jButton.setEnabled(false);
 	}
 
 	/**

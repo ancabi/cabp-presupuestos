@@ -48,7 +48,7 @@ public class ListadoPresupuestos {
 			psBorrarLineas=dbConnect.prepareStatement("DELETE FROM lineaPresupuesto WHERE idPresupuesto=?");
 			
 			psActualizarPresupuesto=dbConnect.prepareStatement("UPDATE presupuestos SET ganancia=?, combustible=?, pasaje=?, restaurante=?, otros=?, hotel=?, kilometros=?, totViajes=?," +
-					"precioGasolina=?, isGanancia=?, porcentaje=?, totalConIva=?, totalSinIva=?, transporte=?, texto=?");
+					"precioGasolina=?, isGanancia=?, porcentaje=?, totalConIva=?, totalSinIva=?, transporte=?, texto=? WHERE idPresupuesto=?");
 			
 			
 		} catch (SQLException e) {
@@ -226,7 +226,7 @@ public class ListadoPresupuestos {
 			psActualizarPresupuesto.setDouble(13, p.getTotalSinIva());
 			psActualizarPresupuesto.setInt(14, p.getTransporte());
 			psActualizarPresupuesto.setString(15, p.getTexto());
-		
+			psActualizarPresupuesto.setInt(16, id);
 		
 			psActualizarPresupuesto.executeUpdate();
 			
