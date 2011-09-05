@@ -4,6 +4,8 @@ import javax.swing.JFrame;
 import javax.swing.JTabbedPane;
 import javax.swing.JPanel;
 import clases.Cliente;
+
+import java.awt.Component;
 import java.awt.GridBagLayout;
 
 
@@ -35,8 +37,16 @@ public class TabCliente extends JTabbedPane {
 
 		this.addTab("Datos", null, getPanelDatos(), null);
 		this.addTab("Imagenes", null, getPanelImg(), null);
+		this.addTab("PDF", null, getPanelPdf(), null);
 		this.addTab("Presupuestos", null, getPanelClientePres(), null);
 		this.addTab("Facturas", null, getPanelClienteFactura(), null);
+	}
+
+	private Component getPanelPdf() {
+		if(panelPdf == null){
+			panelPdf=new PanelPdf();
+		}
+		return panelPdf;
 	}
 
 	/**
@@ -88,6 +98,8 @@ public class TabCliente extends JTabbedPane {
 		((PanelClienteFactura) panelClienteFactura).setIdCliente(c.getIdCliente());
 		
 		((PanelImagenes) panelImg).setCliente(c);
+		
+		((PanelPdf) panelPdf).setCliente(c);
 		
 		//le doy el cliente para q sepa cuales son los datos
 		((PanelPresupuesto) ((PanelClientePres) panelClientePres).getPanelPresupuesto()).setCliente(c);
