@@ -232,6 +232,15 @@ public class Cliente {
 		return telefonos;
 
 	}
+	
+	/**
+	 * @return the telefono
+	 */
+	public String getTelefono() {
+		
+		return telefonos.getTelefono(0).getTelefono();
+
+	}
 
 
 	/**
