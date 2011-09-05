@@ -12,6 +12,10 @@ import java.awt.GridBagConstraints;
 import java.awt.FlowLayout;
 import java.awt.Font;
 
+import net.sf.jasperreports.engine.*;
+import net.sf.jasperreports.view.JRViewer.*;
+import net.sf.jasperreports.view.*;
+
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComboBox;
 import javax.swing.JScrollPane;
@@ -23,6 +27,7 @@ import javax.swing.border.TitledBorder;
 import java.awt.Color;
 import java.awt.event.KeyEvent;
 import java.text.DecimalFormat;
+import java.util.HashMap;
 import java.util.Vector;
 
 import javax.swing.JCheckBox;
@@ -128,6 +133,8 @@ public class PanelPresupuesto extends JPanel {
 	private JPanel panelHerramientas = null;
 	private JButton btnBorrar = null;
 	private boolean isPresupuesto=true;
+	private JButton btnPrint = null;
+	private int idPresupuesto;
 	/**
 	 * This is the default constructor
 	 */
@@ -1506,6 +1513,8 @@ public class PanelPresupuesto extends JPanel {
 		
 		taTexto.setText("");
 		
+		btnPrint.setEnabled(false);
+		
 		actualizarValores();
 		
 		actualizarGasolina();
@@ -1586,6 +1595,7 @@ public class PanelPresupuesto extends JPanel {
 		if (panelHerramientas == null) {
 			panelHerramientas = new JPanel();
 			panelHerramientas.setLayout(new FlowLayout());
+			panelHerramientas.add(getBtnPrint(), null);
 			panelHerramientas.add(getBtnBorrar(), null);
 		}
 		return panelHerramientas;
@@ -1658,8 +1668,11 @@ public class PanelPresupuesto extends JPanel {
 		tfPrecioGasolina.setText(""+p.getPrecioGasolina());
 		tfPorcentaje1.setText(""+p.getPorcentaje());
 		taTexto.setText(p.getTexto());
+		idPresupuesto=p.getIdPresupuesto();
 		
 		cbGanancia.setSelected(p.isGanancia());
+		
+		btnPrint.setEnabled(true);
 		
 		
 		
@@ -1750,6 +1763,56 @@ public class PanelPresupuesto extends JPanel {
 		actualizarValores();
 		actualizarGasolina();
 		
+	}
+
+	/**
+	 * This method initializes btnPrint	
+	 * 	
+	 * @return javax.swing.JButton	
+	 */
+	private JButton getBtnPrint() {
+		if (btnPrint == null) {
+			btnPrint = new JButton();
+			btnPrint.setIcon(new ImageIcon(getClass().getResource("/img/print.png")));
+			btnPrint.setEnabled(false);
+			btnPrint.addActionListener(new java.awt.event.ActionListener() {
+				public void actionPerformed(java.awt.event.ActionEvent e) {
+					
+					try {
+						
+						if(taTexto.getText().isEmpty()){
+							throw new Exception("Debe escribir algo en el campo");
+						}
+						
+						HashMap<String, Object> param = new HashMap<String, Object>();
+						
+						param.put("concepto", taTexto.getText());
+						param.put("precioSinIva", lblTotalSinIva.getText());
+						param.put("id", idPresupuesto);
+						param.put("id", idPresupuesto);
+						param.put("nombre", "pepe");
+						param.put("ciudad", "pepe");
+						param.put("provincia", "pepe");
+						param.put("telefono", "pepe");
+						param.put("IVA", lblIva.getText());
+						param.put("total", lblTotalConIva.getText());
+						
+						
+						DialogoViewer viewer=new DialogoViewer();
+						
+						viewer.run("src/reportes/facturaCABP.jrxml", param);
+						
+						viewer.setVisible(true);
+						
+						
+					} catch (Exception e1) {
+						JOptionPane.showMessageDialog(null, e1.getMessage());
+					}
+					
+				}
+			});
+		}
+		return btnPrint;
 	}
 
 	

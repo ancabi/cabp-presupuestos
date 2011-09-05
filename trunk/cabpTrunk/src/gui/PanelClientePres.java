@@ -75,8 +75,9 @@ public class PanelClientePres extends JPanel {
 			
 			
 			treePresupuestos = new JTree(root);
-			treePresupuestos.setPreferredSize(new Dimension(180, 0));
+			treePresupuestos.setPreferredSize(new Dimension(190, 0));
 			treePresupuestos.setMinimumSize(new Dimension(180, 0));
+			treePresupuestos.setShowsRootHandles(true);
 			treePresupuestos.addTreeSelectionListener(new javax.swing.event.TreeSelectionListener() {
 						public void valueChanged(javax.swing.event.TreeSelectionEvent e) {
 							TreePath path = e.getPath();
@@ -106,7 +107,7 @@ public class PanelClientePres extends JPanel {
 							}
 							
 						}
-					});
+					});			
 			treePresupuestos.addMouseListener(new java.awt.event.MouseAdapter() {
 				public void mouseClicked(java.awt.event.MouseEvent e) {
 					if (e.getClickCount() >= 2){
@@ -176,14 +177,20 @@ public class PanelClientePres extends JPanel {
 		
 		cargarTree();
 		
+		
 		id=-1;
 	}
 	
 	private void cargarTree(){
 		
 		root=new DefaultMutableTreeNode("Presupuestos");
+		DefaultMutableTreeNode bison = new DefaultMutableTreeNode("Bison");
+		DefaultMutableTreeNode acorn = new DefaultMutableTreeNode("Acorn");
 		modelo=new DefaultTreeModel(root);
 		treePresupuestos.setModel(modelo);
+		
+		root.add(bison);
+		root.add(acorn);
 		
 		for(int x=0; x<presupuestos.getSize(); x++){
 
@@ -191,9 +198,23 @@ public class PanelClientePres extends JPanel {
 			
 			if(temp!=null){
 				
-				String titulo="Presupuesto Nº "+temp.getIdPresupuesto();
+				if(temp.getIdDistribuidor()==1){
 				
-				makeNode(titulo, root);
+					String titulo="Presupuesto Nº "+temp.getIdPresupuesto();
+				
+					makeNode(titulo, bison);
+					
+				}else if(temp.getIdDistribuidor()==2){
+					
+					String titulo="Presupuesto Nº "+temp.getIdPresupuesto();
+					
+					makeNode(titulo, acorn);
+				}else{
+					
+					String titulo="Presupuesto Nº "+temp.getIdPresupuesto();
+					
+					makeNode(titulo, root);
+				}
 			}
 			
 		}
@@ -201,6 +222,16 @@ public class PanelClientePres extends JPanel {
 		if(root.getChildCount()==0){
 			makeNode("No hay presupuestos", root);
 		}
+		
+		if(bison.getChildCount()==0){
+			makeNode("No hay presupuestos", bison);
+		}
+		
+		if(acorn.getChildCount()==0){
+			makeNode("No hay presupuestos", acorn);
+		}
+		
+		treePresupuestos.expandRow(0);
 		
 	
 	}
