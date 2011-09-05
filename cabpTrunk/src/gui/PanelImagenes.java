@@ -94,7 +94,7 @@ public class PanelImagenes extends JPanel {
 	private JPanel getPanelSuperior() {
 		if (panelSuperior == null) {
 			lblTitulo = new JLabel();
-			lblTitulo.setText("Imagenes del usuario");
+			lblTitulo.setText("Imagenes del cliente");
 			lblTitulo.setFont(new Font("Verdana", Font.BOLD, 18));
 			panelSuperior = new JPanel();
 			panelSuperior.setLayout(new BorderLayout());

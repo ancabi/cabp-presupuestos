@@ -67,7 +67,7 @@ public class DialogoViewer extends JDialog {
 		
 		JasperReport report;
 		try {
-			report = JasperCompileManager.compileReport("src/reportes/facturaCABP.jrxml");
+			report = JasperCompileManager.compileReport("facturaCABP.jrxml");
 			
 			JasperPrint print = JasperFillManager.fillReport(report, param, new JREmptyDataSource());
 			
