@@ -13,6 +13,7 @@ import java.awt.Dimension;
 import javax.swing.JButton;
 
 
+import clases.Cliente;
 import clases.ListadoProductos;
 import clases.Presupuestos;
 
@@ -215,8 +216,12 @@ public class DialogoAddPresupuesto extends JDialog {
 	/**
 	 * @param idCliente the idCliente to set
 	 */
-	public void setIdCliente(int idCliente) {
-		this.idCliente = idCliente;
+	public void setIdCliente(Cliente cliente) {
+		
+		((PanelPresupuesto) panelPresupuesto).setCliente(cliente);
+		
+		
+		this.idCliente = cliente.getIdCliente();
 	}
 
 	public void cargarProductos(ListadoProductos listado){
@@ -239,6 +244,12 @@ public class DialogoAddPresupuesto extends JDialog {
 	public void setIsPresupuesto(boolean b) {
 		
 		((PanelPresupuesto) panelPresupuesto).setIsPresupuesto(b);
+		
+	}
+
+	public void setLastId(int lastPresup) {
+		
+		((PanelPresupuesto) panelPresupuesto).setLastId(lastPresup);
 		
 	}
 	

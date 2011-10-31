@@ -34,6 +34,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.Vector;
@@ -63,7 +64,7 @@ public class PanelImagenes extends JPanel {
 	private ModeloImagenes modelo;
 	private JPanel panelPrev = null;
 	private JLabel lblPrev = new JLabel();
-
+	private SimpleDateFormat formateador = new SimpleDateFormat("dd/MM/yyyy H:mm");
 	/**
 	 * This is the default constructor
 	 */
@@ -133,7 +134,7 @@ public class PanelImagenes extends JPanel {
 					
 					File[] imagenes=getFiles();
 					
-					File carpeta=new File(clienteActual.getIdCliente()+clienteActual.getNombre()+clienteActual.getApellidos());
+					File carpeta=new File(clienteActual.getIdCliente()+clienteActual.getNomSinEspacios()+clienteActual.getApelSinEspacios());
 					//si la carpeta del usuario no existe
 					if(!carpeta.exists()){
 						//la creo
@@ -255,6 +256,8 @@ public class PanelImagenes extends JPanel {
 		Vector info;
 		Vector data=new Vector();
 		Date d;
+		String fecha;
+		
 		for(int x=0; x<listado.getSize(); x++){
 			
 			
@@ -262,8 +265,12 @@ public class PanelImagenes extends JPanel {
 			
 			info=new Vector();
 			
+			d=new Date(i.getLastModified());
+			
+			fecha=formateador.format(d);
+			
 			info.add(i.getName());
-			info.add(d=new Date(i.getLastModified()));
+			info.add(fecha);
 			
 			data.add(info);
 
@@ -307,93 +314,102 @@ public class PanelImagenes extends JPanel {
 			tabalImagenes.addMouseListener(new java.awt.event.MouseAdapter() {
 				public void mouseClicked(java.awt.event.MouseEvent e) {
 					
-					if (e.getClickCount() >= 2){
-						
-						//traigo la seleccion
-						int index=tabalImagenes.getSelectedRow();
-						
-						index=tabalImagenes.convertRowIndexToModel(index);
-						//traigo el objeto Imagen
-						Imagen i=listado.getImagen(index);
+					try{
+					
+						if (e.getClickCount() >= 2){
 							
-						//Consigo el objeto file
-						File f=new File(clienteActual.getIdCliente()+clienteActual.getNombre()+clienteActual.getApellidos()+"/"+i.getName());
-
-						
-						
-						
-						if(System.getProperty("os.name").equals("Linux") && !Desktop.isDesktopSupported()){
 							
-							Runtime obj = Runtime.getRuntime();
-							try {
-								obj.exec("gimp "+f.toString());
+							
+							//traigo la seleccion
+							int index=tabalImagenes.getSelectedRow();
+							
+							index=tabalImagenes.convertRowIndexToModel(index);
+							//traigo el objeto Imagen
+							Imagen i=listado.getImagen(index);
+							
+							
 								
-								Date d=new Date();
+							//Consigo el objeto file
+							File f=new File(clienteActual.getIdCliente()+clienteActual.getNomSinEspacios()+clienteActual.getApelSinEspacios()+"/"+i.getName());
+	
+							
+							
+							
+							if(System.getProperty("os.name").equals("Linux") && !Desktop.isDesktopSupported()){
 								
-								listado.setLastModified(i, d.getTime());
+								Runtime obj = Runtime.getRuntime();
+								try {
+									obj.exec("gimp "+f.toString());
+									
+									Date d=new Date();
+									
+									listado.setLastModified(i, d.getTime());
+									
+									cargarImagenes();
+									
+								} catch (IOException e1) {
+									JOptionPane.showMessageDialog(null, e1.getMessage());
+								}  
 								
-								cargarImagenes();
-								
-							} catch (IOException e1) {
-								JOptionPane.showMessageDialog(null, e1.getMessage());
-							}  
+							}else{
+								try {
+									Desktop.getDesktop().edit(f);
+									
+									Date d=new Date();
+									
+									listado.setLastModified(i, d.getTime());
+									
+									cargarImagenes();
+									
+								} catch (IOException e1) {
+									JOptionPane.showMessageDialog(null, e1.getMessage());
+								}
+							}
+							
+							
 							
 						}else{
-							try {
-								Desktop.getDesktop().edit(f);
+							//traigo la seleccion
+							int index=tabalImagenes.getSelectedRow();
+							
+							index=tabalImagenes.convertRowIndexToModel(index);
 								
-								Date d=new Date();
+							lblPrev.setText("");
+							//traigo el objeto Imagen
+							Imagen i=listado.getImagen(index);
 								
-								listado.setLastModified(i, d.getTime());
+							//Consigo el objeto file
+							File f=new File(clienteActual.getIdCliente()+clienteActual.getNomSinEspacios()+clienteActual.getApelSinEspacios()+"/"+i.getName());
 								
-								cargarImagenes();
+							ImageIcon imagen=new ImageIcon(f.getAbsolutePath());
+							try{
+								int panelW=panelPrev.getWidth();
+								int panelH=panelPrev.getHeight();
+								int imagenW=imagen.getIconWidth();
+								int imagenH=imagen.getIconHeight();
 								
-							} catch (IOException e1) {
-								JOptionPane.showMessageDialog(null, e1.getMessage());
+								while(imagenW>panelW){
+									imagenW=(int) (imagenW*0.5);
+								}
+								
+								while(imagenH>panelH){
+									imagenH=(int) (imagenH*0.5);
+								}
+									//redimenciono la imagen
+								imagen=new ImageIcon(imagen.getImage().getScaledInstance(imagenW, 
+										imagenH, Image.SCALE_FAST));
+									
+								lblPrev.setIcon(imagen);
+								
+							}catch(java.lang.IllegalArgumentException e1){
+									
+								lblPrev.setIcon(null);
+								lblPrev.setText("Previsualizacion no disponible");
+									
 							}
 						}
-						
-						
-						
-					}else{
-						//traigo la seleccion
-						int index=tabalImagenes.getSelectedRow();
-						
-						index=tabalImagenes.convertRowIndexToModel(index);
-							
-						lblPrev.setText("");
-						//traigo el objeto Imagen
-						Imagen i=listado.getImagen(index);
-							
-						//Consigo el objeto file
-						File f=new File(clienteActual.getIdCliente()+clienteActual.getNombre()+clienteActual.getApellidos()+"/"+i.getName());
-							
-						ImageIcon imagen=new ImageIcon(f.getAbsolutePath());
-						try{
-							int panelW=panelPrev.getWidth();
-							int panelH=panelPrev.getHeight();
-							int imagenW=imagen.getIconWidth();
-							int imagenH=imagen.getIconHeight();
-							
-							while(imagenW>panelW){
-								imagenW=(int) (imagenW*0.5);
-							}
-							
-							while(imagenH>panelH){
-								imagenH=(int) (imagenH*0.5);
-							}
-								//redimenciono la imagen
-							imagen=new ImageIcon(imagen.getImage().getScaledInstance(imagenW, 
-									imagenH, Image.SCALE_FAST));
-								
-							lblPrev.setIcon(imagen);
-							
-						}catch(java.lang.IllegalArgumentException e1){
-								
-							lblPrev.setIcon(null);
-							lblPrev.setText("Previsualizacion no disponible");
-								
-						}
+					}catch(IllegalArgumentException i){
+						JOptionPane.showMessageDialog(null, i.getMessage());
 					}
 				}
 					

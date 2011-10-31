@@ -989,7 +989,7 @@ public class PanelDatosClientes extends JPanel {
 			btnAddPresup.addActionListener(new java.awt.event.ActionListener() {
 				public void actionPerformed(java.awt.event.ActionEvent e) {
 
-					((MainFrame) mainFrame).nuevoPresupuesto(idCliente);
+					((MainFrame) mainFrame).nuevoPresupuesto(clienteActual);
 					
 					//necesito llegar al tab cliente para poder actualizar el presupuesto recien creado
 					((PanelCliente) ((MainFrame) mainFrame).getPanelCliente()).getDialogoModCliente().getTabbedCliente().cargarPresupuestos();

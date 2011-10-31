@@ -19,6 +19,7 @@ import java.sql.SQLException;
 import javax.swing.ImageIcon;
 
 
+import clases.Cliente;
 import clases.ListadoClientes;
 import clases.ListadoDistribuidores;
 import clases.ListadoProductos;
@@ -390,16 +391,16 @@ public class MainFrame extends JFrame {
 		
 		if(dialogoSeleccionCliente.getValorPulsado()== DialogoSeleccionCliente.VALOR_ACEPTAR){
 			
-			int idCliente=dialogoSeleccionCliente.getIdCliente();
-		
-			nuevoPresupuesto(idCliente);
+			int idCliente=dialogoSeleccionCliente.getIdCliente()-1;
+
+			nuevoPresupuesto(listadoClientes.getCliente(idCliente));
 			
 			
 		}
 		
 	}
 	
-	public void nuevoPresupuesto(int idCliente){
+	public void nuevoPresupuesto(Cliente c){
 
 		dialogoSeleccionDistribuidor=getDialogoSeleccionDistribuidor();
 			
@@ -422,7 +423,9 @@ public class MainFrame extends JFrame {
 			dialogoAddPresupuesto.setIdDistribuidor(idDistribuidor);
 
 			//le asigno el cliente para el cual va a ser el presupuesto
-			dialogoAddPresupuesto.setIdCliente(idCliente);
+			dialogoAddPresupuesto.setIdCliente(c);
+			
+			dialogoAddPresupuesto.setLastId(listadoClientes.getLastPresup());
 				
 			dialogoAddPresupuesto.cargarProductos(listadoProductos);
 			

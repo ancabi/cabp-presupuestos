@@ -4,6 +4,7 @@
 package gui;
 
 import java.awt.GridBagLayout;
+
 import javax.swing.JPanel;
 import java.awt.Dimension;
 import java.awt.BorderLayout;
@@ -13,8 +14,6 @@ import java.awt.FlowLayout;
 import java.awt.Font;
 
 import net.sf.jasperreports.engine.*;
-import net.sf.jasperreports.view.JRViewer.*;
-import net.sf.jasperreports.view.*;
 
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComboBox;
@@ -26,6 +25,7 @@ import javax.swing.BorderFactory;
 import javax.swing.border.TitledBorder;
 import java.awt.Color;
 import java.awt.event.KeyEvent;
+import java.io.File;
 import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.Vector;
@@ -36,6 +36,7 @@ import clases.Cliente;
 import clases.Facturas;
 import clases.ListadoLineaFactura;
 import clases.ListadoLineaPresup;
+import clases.ListadoPdf;
 import clases.ListadoProductos;
 import clases.Presupuestos;
 import clases.Productos;
@@ -137,7 +138,7 @@ public class PanelPresupuesto extends JPanel {
 	private JButton btnPrint = null;
 	private int id;
 	private int idCliente;
-	private Cliente c;
+	private Cliente c;  //  @jve:decl-index=0:
 	/**
 	 * This is the default constructor
 	 */
@@ -1420,16 +1421,17 @@ public class PanelPresupuesto extends JPanel {
 			
 			//asigno el total sin impuestos
 			lblTotalSinImp.setText(formateador.format(totalSinImp)+" €");
-			
-			//calculo el iva
-			iva=totalSinImp*IVA;
-			
-			//lo muestro en el label
-			lblIva.setText(formateador.format(iva)+" €");
+
 			//calculo el total sin iva
 			totalSinIva=totalSinImp+impuestoGanancia;
 			//lo muestro en el label
 			lblTotalSinIva.setText(formateador.format(totalSinIva)+" €");
+			
+			//calculo el iva
+			iva=totalSinIva*IVA;
+			//lo muestro en el label
+			lblIva.setText(formateador.format(iva)+" €");
+			
 			//calculo el total con iva
 			totalIva=(totalSinIva*IVA)+totalSinIva;
 			//lo muestro en el label
@@ -1516,7 +1518,7 @@ public class PanelPresupuesto extends JPanel {
 		
 		taTexto.setText("");
 		
-		btnPrint.setEnabled(false);
+		//btnPrint.setEnabled(false);
 		
 		actualizarValores();
 		
@@ -1781,7 +1783,7 @@ public class PanelPresupuesto extends JPanel {
 		if (btnPrint == null) {
 			btnPrint = new JButton();
 			btnPrint.setIcon(new ImageIcon(getClass().getResource("/img/print.png")));
-			btnPrint.setEnabled(false);
+			btnPrint.setEnabled(true);
 			btnPrint.addActionListener(new java.awt.event.ActionListener() {
 				public void actionPerformed(java.awt.event.ActionEvent e) {
 					
@@ -1792,6 +1794,16 @@ public class PanelPresupuesto extends JPanel {
 						}
 						
 						HashMap<String, Object> param = new HashMap<String, Object>();
+						String tipo;
+						
+						File carpeta=new File(c.getIdCliente()+c.getNomSinEspacios()+c.getApelSinEspacios());
+						//si la carpeta del usuario no existe
+						if(!carpeta.exists()){
+							//la creo
+							carpeta.mkdir();
+							carpeta.setExecutable(true);
+							
+						}
 						
 						if(isPresupuesto){
 							
@@ -1804,6 +1816,9 @@ public class PanelPresupuesto extends JPanel {
 							param.put("telefono", c.getTelefono());
 							param.put("IVA", lblIva.getText());
 							param.put("total", lblTotalConIva.getText());
+							
+							//esto es para el nombre del fichero
+							tipo="presupuesto";
 							
 							
 						}else{
@@ -1818,13 +1833,30 @@ public class PanelPresupuesto extends JPanel {
 							param.put("IVA", lblIva.getText());
 							param.put("total", lblTotalConIva.getText());
 							
+							//esto es para el nombre del fichero
+							tipo="factura";
+							
 						}
 						
-						DialogoViewer viewer=new DialogoViewer();
+						//esto es para mostrar el pdf antes de guardarlo
+						//DialogoViewer viewer=new DialogoViewer();
+						//viewer.run("src/reportes/facturaCABP.jrxml", param);
+						//viewer.setVisible(true);
 						
-						viewer.run("src/reportes/facturaCABP.jrxml", param);
+						//JasperReport report = JasperCompileManager.compileReport("facturaCABP.jrxml");
 						
-						viewer.setVisible(true);
+						JasperPrint print= JasperFillManager.fillReport("facturaCABP.jasper", param, new JREmptyDataSource());
+						
+						JasperExportManager.exportReportToPdfFile(print, carpeta.toString()+"/"+tipo+id+".pdf");
+						
+						//agrego el pdf a la base de datos del cliente
+						ListadoPdf listadoPdf=new ListadoPdf(c.getIdCliente());//creo el listado donde agregar el pdf
+						File pdf=new File(carpeta.toString()+"/"+tipo+id+".pdf");//creo el objeto file para pasarselo a la clase
+						
+						listadoPdf.addPdf(pdf, pdf.lastModified());//lo agrego
+
+
+						JOptionPane.showMessageDialog(null, "Pdf generado con exito", "Información", JOptionPane.INFORMATION_MESSAGE);
 						
 						
 					} catch (Exception e1) {
@@ -1840,6 +1872,12 @@ public class PanelPresupuesto extends JPanel {
 	public void setCliente(Cliente c){
 
 		this.c=c;
+		
+	}
+
+	public void setLastId(int lastId) {
+		
+		id=lastId;
 		
 	}
 
