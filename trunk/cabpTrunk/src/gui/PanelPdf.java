@@ -7,9 +7,7 @@ import java.awt.GridBagLayout;
 import javax.swing.JPanel;
 
 import java.awt.Desktop;
-import java.awt.Dimension;
 import java.awt.BorderLayout;
-import java.awt.Image;
 
 import javax.swing.JLabel;
 import java.awt.GridBagConstraints;
@@ -30,6 +28,7 @@ import java.io.OutputStream;
 import java.io.RandomAccessFile;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Vector;
 
@@ -41,11 +40,8 @@ import com.sun.pdfview.PDFPage;
 import com.sun.pdfview.PagePanel;
 
 import clases.Cliente;
-import clases.Imagen;
-import clases.ListadoImagenes;
 import clases.ListadoPdf;
 import clases.Pdf;
-import filtos.FiltroImagenes;
 import filtos.FiltroPdf;
 
 import modelo.ModeloImagenes;
@@ -70,6 +66,7 @@ public class PanelPdf extends JPanel {
 	private Cliente clienteActual;
 	private ListadoPdf listado;
 	private JFileChooser fc;
+	private SimpleDateFormat formateador = new SimpleDateFormat("dd/MM/yyyy H:mm");
 	/**
 	 * This is the default constructor
 	 */
@@ -171,7 +168,7 @@ public class PanelPdf extends JPanel {
 							//copio el ficheron en la carpeta destino
 							try {
 								
-								listado.addImagen(new File(pdf[x].getName()), pdf[x].lastModified());
+								listado.addPdf(new File(pdf[x].getName()), pdf[x].lastModified());
 								
 								InputStream in = new FileInputStream(pdf[x].getAbsoluteFile());
 								OutputStream out = new FileOutputStream(new File(carpeta.toString()+"/"+pdf[x].getName()));
@@ -385,6 +382,9 @@ public class PanelPdf extends JPanel {
 		Vector info;
 		Vector data=new Vector();
 		Date d;
+		String fecha;
+		
+		
 		for(int x=0; x<listado.getSize(); x++){
 			
 			
@@ -393,7 +393,12 @@ public class PanelPdf extends JPanel {
 			info=new Vector();
 			
 			info.add(p.getName());
-			info.add(d=new Date(p.getLastModified()));
+
+			d=new Date(p.getLastModified());
+			
+			fecha=formateador.format(d);
+			
+			info.add(fecha);
 			
 			data.add(info);
 

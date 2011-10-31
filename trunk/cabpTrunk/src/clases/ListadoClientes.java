@@ -27,6 +27,7 @@ public class ListadoClientes {
 	private PreparedStatement psBorrarEmailCliente;
 	private PreparedStatement psActualizarCliente;
 	private PreparedStatement psBorrarImagenesCliente;
+	private PreparedStatement psLastIdPresup;
 	
 	public ListadoClientes(){
 		
@@ -50,6 +51,8 @@ public class ListadoClientes {
 			
 			psActualizarCliente=dbConnect.prepareStatement("UPDATE clientes SET dni=?, nombre=?, apellidos=?, direccion=?, ciudad=?, provincia=?, " +
 					"empresa=?, notas=? WHERE idCliente=?");
+			
+			psLastIdPresup=dbConnect.prepareStatement("SELECT MAX(idPresupuesto) FROM presupuestos");
 			
 		} catch (SQLException e) {
 			JOptionPane.showMessageDialog(null, e.getMessage()+"Constructor listadoClientes");
@@ -404,6 +407,23 @@ public class ListadoClientes {
 	public int getSize(){
 		
 		return clientes.size();
+		
+	}
+
+	public int getLastPresup() {
+		
+		try {
+			ResultSet rs=psLastIdPresup.executeQuery();
+			
+			rs.next();
+			
+			return rs.getInt(1)+1;
+			
+		} catch (SQLException e) {
+			JOptionPane.showMessageDialog(null, e.getMessage());
+		}
+		
+		return 0;
 		
 	}
 

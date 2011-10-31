@@ -74,7 +74,7 @@ public class ListadoPdf {
 		
 	}
 	
-	public void addImagen(File pdf, long lastModified){
+	public void addPdf(File pdf, long lastModified){
 		try {
 			psAgregarPdf.setInt(1, idCliente);
 			psAgregarPdf.setString(2, pdf.getName());
@@ -86,7 +86,7 @@ public class ListadoPdf {
 			pdfs.add(new Pdf(idCliente, pdf));
 			
 		} catch (SQLException e) {
-			JOptionPane.showMessageDialog(null, "No pueden haber 2 imagenes con el mismo nombre");
+			JOptionPane.showMessageDialog(null, "No pueden haber 2 pdf con el mismo nombre");
 		}
 		
 	}

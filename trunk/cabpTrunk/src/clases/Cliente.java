@@ -333,5 +333,31 @@ public class Cliente {
 		
 	}
 	
+	public String getNomSinEspacios(){
+
+		String nomSinEspacios="";
+		
+		for (int x=0; x < nombre.length(); x++) {
+			  if (nombre.charAt(x) != ' ')
+			    nomSinEspacios += nombre.charAt(x);
+		}
+		
+		return nomSinEspacios;
+		
+	}
+	
+	public String getApelSinEspacios(){
+
+		String apelSinEspacios="";
+		
+		for (int x=0; x < apellidos.length(); x++) {
+			  if (apellidos.charAt(x) != ' ')
+			    apelSinEspacios += apellidos.charAt(x);
+		}
+		
+		return apelSinEspacios;
+		
+	}
+	
 
 }
