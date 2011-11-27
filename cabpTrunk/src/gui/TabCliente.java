@@ -17,6 +17,7 @@ public class TabCliente extends JTabbedPane {
 	private JPanel panelImg = null;
 	private JPanel panelPdf = null;
 	private PanelClienteFactura panelClienteFactura;
+	private JTabbedPane tab=this;
 
 	/**
 	 * This is the default constructor
@@ -40,6 +41,17 @@ public class TabCliente extends JTabbedPane {
 		this.addTab("PDF", null, getPanelPdf(), null);
 		this.addTab("Presupuestos", null, getPanelClientePres(), null);
 		this.addTab("Facturas", null, getPanelClienteFactura(), null);
+		
+		this.addMouseListener(new java.awt.event.MouseAdapter() {
+			public void mouseClicked(java.awt.event.MouseEvent e) {
+				
+				if(tab.getSelectedIndex()==2){
+					((PanelPdf) getPanelPdf()).cargarPdf();
+				}
+				
+				
+			}
+		});
 	}
 
 	private Component getPanelPdf() {

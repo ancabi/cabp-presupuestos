@@ -152,7 +152,8 @@ public class PanelPdf extends JPanel {
 					
 					File[] pdf=getFiles();
 					
-					File carpeta=new File(clienteActual.getIdCliente()+clienteActual.getNombre()+clienteActual.getApellidos());
+					File carpeta=new File(clienteActual.getIdCliente()+clienteActual.getNomSinEspacios()+clienteActual.getApelSinEspacios());
+
 					//si la carpeta del usuario no existe
 					if(!carpeta.exists()){
 						//la creo
@@ -221,7 +222,7 @@ public class PanelPdf extends JPanel {
 						//traigo el objeto Imagen
 						Pdf p=listado.getPdf(index);
 						//Consigo el objeto file
-						File f=new File(clienteActual.getIdCliente()+clienteActual.getNombre()+clienteActual.getApellidos()+"/"+p.getName());
+						File f=new File(clienteActual.getIdCliente()+clienteActual.getNomSinEspacios()+clienteActual.getApelSinEspacios()+"/"+p.getName());
 						//lo borro
 						f.delete();
 						
@@ -292,7 +293,7 @@ public class PanelPdf extends JPanel {
 						Pdf p=listado.getPdf(index);
 							
 						//Consigo el objeto file
-						File f=new File(clienteActual.getIdCliente()+clienteActual.getNombre()+clienteActual.getApellidos()+"/"+p.getName());
+						File f=new File(clienteActual.getIdCliente()+clienteActual.getNomSinEspacios()+clienteActual.getApelSinEspacios()+"/"+p.getName());
 
 						
 						if(System.getProperty("os.name").equals("Linux") && !Desktop.isDesktopSupported()){
@@ -339,7 +340,7 @@ public class PanelPdf extends JPanel {
 						Pdf p=listado.getPdf(index);
 							
 						//Consigo el objeto file
-						File f=new File(clienteActual.getIdCliente()+clienteActual.getNombre()+clienteActual.getApellidos()+"/"+p.getName());
+						File f=new File(clienteActual.getIdCliente()+clienteActual.getNomSinEspacios()+clienteActual.getApelSinEspacios()+"/"+p.getName());
 							
 						try {
 							RandomAccessFile raf = new RandomAccessFile(f, "r");
@@ -376,7 +377,7 @@ public class PanelPdf extends JPanel {
 		
 	}
 
-	private void cargarPdf() {
+	public void cargarPdf() {
 		
 		listado.cargarPdf();
 		Vector info;
