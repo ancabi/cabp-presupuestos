@@ -148,18 +148,18 @@ public class PanelClienteFactura extends JPanel {
 				
 				if(temp.getIdDistribuidor()==1){
 				
-					String titulo="Presupuesto Nº "+temp.getIdFactura();
+					String titulo="Factura Nº "+temp.getIdFactura();
 				
 					makeNode(titulo, bison);
 					
 				}else if(temp.getIdDistribuidor()==2){
 					
-					String titulo="Presupuesto Nº "+temp.getIdFactura();
+					String titulo="Factura Nº "+temp.getIdFactura();
 					
 					makeNode(titulo, acorn);
 				}else{
 					
-					String titulo="Presupuesto Nº "+temp.getIdFactura();
+					String titulo="Factura Nº "+temp.getIdFactura();
 					
 					makeNode(titulo, root);
 				}
@@ -171,13 +171,13 @@ public class PanelClienteFactura extends JPanel {
 			makeNode("No hay facturas", root);
 		}
 		
-		if(bison.getChildCount()==0){
+		/*if(bison.getChildCount()==0){
 			makeNode("No hay facturas", bison);
 		}
 		
 		if(acorn.getChildCount()==0){
 			makeNode("No hay facturas", acorn);
-		}
+		}*/
 		
 		treeFacturas.expandRow(0);
 		

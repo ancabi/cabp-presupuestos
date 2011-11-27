@@ -8,6 +8,7 @@ import java.awt.Frame;
 import java.awt.BorderLayout;
 import javax.swing.JDialog;
 
+import clases.Cliente;
 import clases.ListadoProductos;
 import clases.Facturas;
 
@@ -204,8 +205,12 @@ public class DialogoAddFactura extends JDialog {
 	/**
 	 * @param idCliente the idCliente to set
 	 */
-	public void setIdCliente(int idCliente) {
-		this.idCliente = idCliente;
+	public void setIdCliente(Cliente c) {
+		
+		((PanelPresupuesto) panelPresupuesto).setCliente(c);
+		
+		
+		this.idCliente = c.getIdCliente();
 	}
 
 	public void cargarProductos(ListadoProductos listado){
@@ -228,6 +233,12 @@ public class DialogoAddFactura extends JDialog {
 	public void setIsPresupuesto(boolean b) {
 		
 		((PanelPresupuesto) panelPresupuesto).setIsPresupuesto(b);
+		
+	}
+
+	public void setLastId(int lastFactura) {
+		
+		((PanelPresupuesto) panelPresupuesto).setLastId(lastFactura);
 		
 	}
 

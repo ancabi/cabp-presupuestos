@@ -223,13 +223,13 @@ public class PanelClientePres extends JPanel {
 			makeNode("No hay presupuestos", root);
 		}
 		
-		if(bison.getChildCount()==0){
+		/*if(bison.getChildCount()==0){
 			makeNode("No hay presupuestos", bison);
 		}
 		
 		if(acorn.getChildCount()==0){
 			makeNode("No hay presupuestos", acorn);
-		}
+		}*/
 		
 		treePresupuestos.expandRow(0);
 		

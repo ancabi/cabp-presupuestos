@@ -451,14 +451,14 @@ public class MainFrame extends JFrame {
 			
 			int idCliente=dialogoSeleccionCliente.getIdCliente();
 		
-			nuevaFactura(idCliente);
+			nuevaFactura(listadoClientes.getCliente(idCliente-1));
 			
 			
 		}
 		
 	}
 	
-	public void nuevaFactura(int idCliente){
+	public void nuevaFactura(Cliente c){
 
 		dialogoSeleccionDistribuidor=getDialogoSeleccionDistribuidor();
 			
@@ -481,7 +481,9 @@ public class MainFrame extends JFrame {
 			dialogoAddFactura.setIdDistribuidor(idDistribuidor);
 
 			//le asigno el cliente para el cual va a ser el presupuesto
-			dialogoAddFactura.setIdCliente(idCliente);
+			dialogoAddFactura.setIdCliente(c);
+			
+			dialogoAddFactura.setLastId(listadoClientes.getLastFactura());
 				
 			dialogoAddFactura.cargarProductos(listadoProductos);
 			

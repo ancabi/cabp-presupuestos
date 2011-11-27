@@ -1019,7 +1019,7 @@ public class PanelDatosClientes extends JPanel {
 			btnAddFactura.addActionListener(new java.awt.event.ActionListener() {
 				public void actionPerformed(java.awt.event.ActionEvent e) {
 					
-					((MainFrame) mainFrame).nuevaFactura(idCliente);
+					((MainFrame) mainFrame).nuevaFactura(clienteActual);
 					
 					//necesito llegar al tab cliente para poder actualizar el presupuesto recien creado
 					((PanelCliente) ((MainFrame) mainFrame).getPanelCliente()).getDialogoModCliente().getTabbedCliente().cargarFacturas();

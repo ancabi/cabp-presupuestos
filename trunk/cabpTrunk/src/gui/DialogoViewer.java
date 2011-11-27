@@ -5,7 +5,6 @@ package gui;
 
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import java.awt.Frame;
 import java.awt.BorderLayout;
 import javax.swing.JDialog;
 
@@ -16,9 +15,6 @@ import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.JasperPrint;
 import net.sf.jasperreports.engine.JasperReport;
 import net.sf.jasperreports.swing.JRViewer;
-import net.sf.jasperreports.view.JasperViewer;
-
-import java.awt.Dimension;
 import java.util.HashMap;
 
 /**

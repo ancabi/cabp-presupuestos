@@ -131,14 +131,14 @@ public class PanelPresupuesto extends JPanel {
 	private int nViajes=0;
 	private double precioGasolina=0.0;
 	private double totalSinIva;
-	private DecimalFormat formateador = new DecimalFormat ("#####.##");  //  @jve:decl-index=0:
+	private DecimalFormat formateador = new DecimalFormat ("#####.##");
 	private JPanel panelHerramientas = null;
 	private JButton btnBorrar = null;
 	private boolean isPresupuesto=true;
 	private JButton btnPrint = null;
 	private int id;
 	private int idCliente;
-	private Cliente c;  //  @jve:decl-index=0:
+	private Cliente c;  
 	/**
 	 * This is the default constructor
 	 */
@@ -1843,7 +1843,9 @@ public class PanelPresupuesto extends JPanel {
 						//viewer.run("src/reportes/facturaCABP.jrxml", param);
 						//viewer.setVisible(true);
 						
-						//JasperReport report = JasperCompileManager.compileReport("facturaCABP.jrxml");
+						/*if(!new File("facturaCABP.jasper").exists()){
+							JasperReport report = JasperCompileManager.compileReport("facturaCABP.jrxml");
+						}*/
 						
 						JasperPrint print= JasperFillManager.fillReport("facturaCABP.jasper", param, new JREmptyDataSource());
 						
@@ -1857,7 +1859,7 @@ public class PanelPresupuesto extends JPanel {
 
 
 						JOptionPane.showMessageDialog(null, "Pdf generado con exito", "Información", JOptionPane.INFORMATION_MESSAGE);
-						
+					
 						
 					} catch (Exception e1) {
 						JOptionPane.showMessageDialog(null, e1.getMessage());
@@ -1883,4 +1885,4 @@ public class PanelPresupuesto extends JPanel {
 
 	
 
-}  //  @jve:decl-index=0:visual-constraint="10,10"
+} 
