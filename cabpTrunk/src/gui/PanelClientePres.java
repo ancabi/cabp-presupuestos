@@ -294,9 +294,11 @@ public class PanelClientePres extends JPanel {
 						
 						((PanelClienteFactura) tabCliente.getPanelClienteFactura()).cargarFacturas();
 						
+						((PanelPresupuesto) panelPresupuesto).limpiarCampos();
+						
 						JOptionPane.showMessageDialog(null, "El presupuesto se ha convertido satisfactoriamente", "Conversion", JOptionPane.INFORMATION_MESSAGE);
 					
-						((PanelPresupuesto) panelPresupuesto).limpiarCampos();
+						
 						
 					}else{
 						try {
