@@ -4,6 +4,7 @@
 package clases;
 
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -31,14 +32,19 @@ private Connection dbConnect=Conectar.getConnection();
 	private int nViajes;
 	private double precioGasolina;
 	private boolean isGanancia;
+	private boolean isCanarias;
 	private int porcentaje;
 	private double totalConIva;
 	private double totalSinIva;
 	private int transporte;
-	private String texto;
+	private String textoLinea;
+	private String textoFormaPago;
+	private String textoExplicativo;
 	private ListadoLineaFactura listadoLineaFactura=null;
+	private Date fecha;
 	private int idCliente;
 	private int idDistribuidor;
+	
 	/**
 	 * @param idPresupuesto
 	 * @param ganancia
@@ -51,23 +57,28 @@ private Connection dbConnect=Conectar.getConnection();
 	 * @param nViajes
 	 * @param precioGasolina
 	 * @param isGanancia
+	 * @param isCanarias
 	 * @param porcentaje
 	 * @param totalConIva
 	 * @param totalSinIva
 	 * @param transporte
-	 * @param texto
-	 * @param listadoLineaPresup
+	 * @param textoLinea
+	 * @param textoFormaPago
+	 * @param textoExplicativo
+	 * @param fecha
 	 * @param idCliente
 	 * @param idDistribuidor
 	 */
 	public Facturas(int idFactura, int ganancia, int restaurante,
 			int pasaje, int combustible, int otros, int hotel, int kilometros,
-			int nViajes, double precioGasolina, boolean isGanancia,
+			int nViajes, double precioGasolina, boolean isGanancia, boolean isCanarias,
 			int porcentaje, double totalConIva, double totalSinIva,
-			int transporte, String texto, int idCliente, int idDistribuidor) {
+			int transporte, String textoLinea, String textoFormaPago, String textoExplicativo, Date fecha,
+			int idCliente, int idDistribuidor) {
 		
-		this(ganancia, restaurante, pasaje, combustible, otros, hotel, kilometros, nViajes, precioGasolina, isGanancia,
-				porcentaje, totalConIva, totalSinIva, transporte, texto, idCliente, idDistribuidor);
+		this(ganancia, restaurante, pasaje, combustible, otros, hotel, kilometros, nViajes, precioGasolina, isGanancia, isCanarias,
+				porcentaje, totalConIva, totalSinIva, transporte, textoLinea, textoFormaPago, textoExplicativo
+				, fecha, idCliente, idDistribuidor);
 		
 		this.idFactura = idFactura;
 		listadoLineaFactura.setIdFactura(idFactura);
@@ -75,6 +86,7 @@ private Connection dbConnect=Conectar.getConnection();
 	}
 	
 	/**
+	 * @param idPresupuesto
 	 * @param ganancia
 	 * @param restaurante
 	 * @param pasaje
@@ -85,20 +97,24 @@ private Connection dbConnect=Conectar.getConnection();
 	 * @param nViajes
 	 * @param precioGasolina
 	 * @param isGanancia
+	 * @param isCanarias
 	 * @param porcentaje
 	 * @param totalConIva
 	 * @param totalSinIva
 	 * @param transporte
-	 * @param texto
-	 * @param listadoLineaPresup
+	 * @param textoLinea
+	 * @param textoFormaPago
+	 * @param textoExplicativo
+	 * @param fecha
 	 * @param idCliente
 	 * @param idDistribuidor
 	 */
 	public Facturas(int ganancia, int restaurante,
 			int pasaje, int combustible, int otros, int hotel, int kilometros,
-			int nViajes, double precioGasolina, boolean isGanancia,
+			int nViajes, double precioGasolina, boolean isGanancia, boolean isCanarias,
 			int porcentaje, double totalConIva, double totalSinIva,
-			int transporte, String texto, int idCliente, int idDistribuidor) {
+			int transporte, String textoLinea, String textoFormaPago, String textoExplicativo,
+			Date fecha, int idCliente, int idDistribuidor) {
 		
 		this.ganancia = ganancia;
 		this.restaurante = restaurante;
@@ -110,11 +126,15 @@ private Connection dbConnect=Conectar.getConnection();
 		this.nViajes = nViajes;
 		this.precioGasolina = precioGasolina;
 		this.isGanancia = isGanancia;
+		this.isCanarias = isCanarias;
 		this.porcentaje = porcentaje;
 		this.totalConIva = totalConIva;
 		this.totalSinIva = totalSinIva;
 		this.transporte = transporte;
-		this.texto = texto;
+		this.textoLinea = textoLinea;
+		this.textoFormaPago = textoFormaPago;
+		this.textoExplicativo = textoExplicativo;
+		this.fecha = fecha;
 		this.idCliente = idCliente;
 		this.idDistribuidor=idDistribuidor;
 		
@@ -127,8 +147,9 @@ private Connection dbConnect=Conectar.getConnection();
 		
 		try {
 			PreparedStatement ps=dbConnect.prepareStatement("INSERT INTO facturas(ganancia, restaurante, pasaje, combustible, otros, " +
-					"hotel, kilometros, isGanancia, porcentaje, totalConIva, transporte, texto, idCliente, totViajes, precioGasolina, " +
-					"totalSinIva, idDistribuidor) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
+					"hotel, kilometros, isGanancia, isCanarias, porcentaje, totalConIva, transporte, textoLinea, textoFormaPago, textoExplicativo" +
+					", idCliente, totViajes, precioGasolina, " +
+					"totalSinIva, fecha, idDistribuidor) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
 			
 			ps.setInt(1, ganancia);
 			ps.setInt(2, restaurante);
@@ -138,15 +159,19 @@ private Connection dbConnect=Conectar.getConnection();
 			ps.setInt(6, hotel);
 			ps.setInt(7, kilometros);
 			ps.setBoolean(8, isGanancia);
-			ps.setInt(9, porcentaje);
-			ps.setDouble(10, totalConIva);
-			ps.setInt(11, transporte);
-			ps.setString(12, texto);
-			ps.setInt(13, idCliente);
-			ps.setInt(14, nViajes);
-			ps.setDouble(15, precioGasolina);
-			ps.setDouble(16, totalSinIva);
-			ps.setInt(17, idDistribuidor);
+			ps.setBoolean(9, isCanarias);
+			ps.setInt(10, porcentaje);
+			ps.setDouble(11, totalConIva);
+			ps.setInt(12, transporte);
+			ps.setString(13, textoLinea);
+			ps.setString(14, textoFormaPago);
+			ps.setString(15, textoExplicativo);
+			ps.setInt(16, idCliente);
+			ps.setInt(17, nViajes);
+			ps.setDouble(18, precioGasolina);
+			ps.setDouble(19, totalSinIva);
+			ps.setDate(20, fecha);
+			ps.setInt(21, idDistribuidor);
 			
 			ps.executeUpdate();
 			
@@ -292,8 +317,8 @@ private Connection dbConnect=Conectar.getConnection();
 	/**
 	 * @return the texto
 	 */
-	public String getTexto() {
-		return texto;
+	public String getTextoLinea() {
+		return textoLinea;
 	}
 
 	/**
@@ -315,6 +340,36 @@ private Connection dbConnect=Conectar.getConnection();
 		listadoLineaFactura.cargarLineaFactura();
 		
 	}
+
+	/**
+	 * @return the isCanarias
+	 */
+	public boolean isCanarias() {
+		return isCanarias;
+	}
+
+	/**
+	 * @return the textoFormaPago
+	 */
+	public String getTextoFormaPago() {
+		return textoFormaPago;
+	}
+
+	/**
+	 * @return the textoExplicativo
+	 */
+	public String getTextoExplicativo() {
+		return textoExplicativo;
+	}
+
+	/**
+	 * @return the fecha
+	 */
+	public Date getFecha() {
+		return fecha;
+	}
+	
+	
 
 	
 	

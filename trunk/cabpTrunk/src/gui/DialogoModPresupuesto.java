@@ -7,6 +7,7 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Frame;
 import java.awt.BorderLayout;
+import java.util.Date;
 import java.util.Vector;
 
 import javax.swing.JDialog;
@@ -46,7 +47,7 @@ public class DialogoModPresupuesto extends JDialog {
 	 * @return void
 	 */
 	private void initialize() {
-		this.setSize(846, 743);
+		this.setSize(1169, 743);
 		this.setResizable(false);
 		this.setTitle("Modificar presupuesto");
 		this.setMinimumSize(new Dimension(775, 441));
@@ -136,12 +137,15 @@ public class DialogoModPresupuesto extends JDialog {
 					int restaurante=((PanelPresupuesto) panelPresupuesto).getRestaurante();
 					int combustible=((PanelPresupuesto) panelPresupuesto).getCombustible();
 					boolean isGanancia=((PanelPresupuesto) panelPresupuesto).isGanancia();
+					boolean isCanarias=((PanelPresupuesto) panelPresupuesto).isCanarias();
 					int transporte=((PanelPresupuesto) panelPresupuesto).getTransporte();
 					int kilometros=((PanelPresupuesto) panelPresupuesto).getKilometros();
 					int nViajes=((PanelPresupuesto) panelPresupuesto).getnViajes();
 					double precioGasolina=((PanelPresupuesto) panelPresupuesto).getPrecioGasolina();
 					double totalSinIva=((PanelPresupuesto) panelPresupuesto).getTotalSinIva();
-					String texto=((PanelPresupuesto) panelPresupuesto).getTexto();
+					String textoLinea=((PanelPresupuesto) panelPresupuesto).getTexto();
+					String textoFormaPago=((PanelPresupuesto) panelPresupuesto).getTextoFormaPago();
+					String textoExplicativo=((PanelPresupuesto) panelPresupuesto).getTextoExplicativo();
 					
 					
 					Vector<Vector> lineas=((PanelPresupuesto) panelPresupuesto).getLineas();
@@ -154,13 +158,19 @@ public class DialogoModPresupuesto extends JDialog {
 					presupuestoActual.setRestaurante(restaurante);
 					presupuestoActual.setCombustible(combustible);
 					presupuestoActual.setGanancia(isGanancia);
+					presupuestoActual.setCanarias(isCanarias);
 					presupuestoActual.setKilometros(kilometros);
 					presupuestoActual.setnViajes(nViajes);
 					presupuestoActual.setPrecioGasolina(precioGasolina);
 					presupuestoActual.setTotalConIva(totalConIva);
 					presupuestoActual.setTotalSinIva(totalSinIva);
-					presupuestoActual.setTexto(texto);
+					presupuestoActual.setTexto(textoLinea);
+					presupuestoActual.setTextoFormaPago(textoFormaPago);
+					presupuestoActual.setTextoExplicativo(textoExplicativo);
 					presupuestoActual.setPorcentaje(porcentaje);
+					java.util.Date date = new Date();
+				    java.sql.Date fecha = new java.sql.Date(date.getTime());
+				    presupuestoActual.setFecha(fecha);
 					
 					presupuestoActual.removeAllLineas();
 					
@@ -268,4 +278,4 @@ public class DialogoModPresupuesto extends JDialog {
 		
 	}
 
-}
+}  //  @jve:decl-index=0:visual-constraint="10,10"

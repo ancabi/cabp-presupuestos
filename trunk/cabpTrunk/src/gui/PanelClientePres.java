@@ -296,6 +296,8 @@ public class PanelClientePres extends JPanel {
 						
 						JOptionPane.showMessageDialog(null, "El presupuesto se ha convertido satisfactoriamente", "Conversion", JOptionPane.INFORMATION_MESSAGE);
 					
+						((PanelPresupuesto) panelPresupuesto).limpiarCampos();
+						
 					}else{
 						try {
 							throw new Exception("Debe seleccionar un presupuesto");

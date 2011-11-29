@@ -64,7 +64,7 @@ public class PanelPdf extends JPanel {
 	private JTable tabla = null;
 	private ModeloImagenes modelo;
 	private Cliente clienteActual;
-	private ListadoPdf listado;
+	private ListadoPdf listado;  //  @jve:decl-index=0:
 	private JFileChooser fc;
 	private SimpleDateFormat formateador = new SimpleDateFormat("dd/MM/yyyy H:mm");
 	/**
@@ -302,10 +302,6 @@ public class PanelPdf extends JPanel {
 							try {
 								obj.exec("okular "+f.toString());
 								
-								Date d=new Date();
-								
-								listado.setLastModified(p, d.getTime());
-								
 								cargarPdf();
 								
 							} catch (IOException e1) {
@@ -315,10 +311,6 @@ public class PanelPdf extends JPanel {
 						}else{
 							try {
 								Desktop.getDesktop().open(f);
-								
-								Date d=new Date();
-								
-								listado.setLastModified(p, d.getTime());
 								
 								cargarPdf();
 								
