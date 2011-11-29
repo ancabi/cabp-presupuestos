@@ -19,6 +19,7 @@ import clases.Presupuestos;
 
 
 import java.awt.FlowLayout;
+import java.util.Date;
 import java.util.Vector;
 
 /**
@@ -54,7 +55,7 @@ public class DialogoAddPresupuesto extends JDialog {
 	 * @return void
 	 */
 	private void initialize() {
-		this.setSize(846, 743);
+		this.setSize(1172, 743);
 		this.setResizable(false);
 		this.setTitle("Agregar presupuesto");
 		this.setMinimumSize(new Dimension(775, 441));
@@ -144,17 +145,23 @@ public class DialogoAddPresupuesto extends JDialog {
 					int restaurante=((PanelPresupuesto) panelPresupuesto).getRestaurante();
 					int combustible=((PanelPresupuesto) panelPresupuesto).getCombustible();
 					boolean isGanancia=((PanelPresupuesto) panelPresupuesto).isGanancia();
+					boolean isCanarias=((PanelPresupuesto) panelPresupuesto).isCanarias();
 					int transporte=((PanelPresupuesto) panelPresupuesto).getTransporte();
 					int kilometros=((PanelPresupuesto) panelPresupuesto).getKilometros();
 					int nViajes=((PanelPresupuesto) panelPresupuesto).getnViajes();
 					double precioGasolina=((PanelPresupuesto) panelPresupuesto).getPrecioGasolina();
 					double totalSinIva=((PanelPresupuesto) panelPresupuesto).getTotalSinIva();
-					String texto=((PanelPresupuesto) panelPresupuesto).getTexto();
+					String textoLinea=((PanelPresupuesto) panelPresupuesto).getTexto();
+					String textoFormaPago=((PanelPresupuesto) panelPresupuesto).getTextoFormaPago();
+					String textoExplicativo=((PanelPresupuesto) panelPresupuesto).getTextoExplicativo();
+				    java.util.Date date = new Date();
+				    java.sql.Date fecha = new java.sql.Date(date.getTime());
 					
 					Vector<Vector> lineas=((PanelPresupuesto) panelPresupuesto).getLineas();
 					
 					Presupuestos p= new Presupuestos(ganancia, restaurante, pasaje, combustible, otros, hotel, kilometros, nViajes, 
-							precioGasolina, isGanancia, porcentaje, totalIva, totalSinIva, transporte, texto, idCliente, idDistribuidor);
+							precioGasolina, isGanancia, isCanarias, porcentaje, totalIva, totalSinIva, transporte, textoLinea, textoFormaPago, textoExplicativo, fecha,
+							idCliente, idDistribuidor);
 					
 					p.addBD();
 					

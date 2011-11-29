@@ -27,6 +27,8 @@ import java.awt.Color;
 import java.awt.event.KeyEvent;
 import java.io.File;
 import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Vector;
 
@@ -49,6 +51,7 @@ import javax.swing.JTextArea;
 import javax.swing.JViewport;
 import javax.swing.JButton;
 import javax.swing.ImageIcon;
+import javax.swing.BoxLayout;
 
 /**
  * @author ancabi
@@ -124,6 +127,7 @@ public class PanelPresupuesto extends JPanel {
 	private int restaurante;
 	private int combustible;
 	private boolean isGanancia;
+	private boolean isCanarias;
 	private int transporte;
 	private JScrollPane scrollTexto = null;
 	private JTextArea taTexto = null;
@@ -131,14 +135,27 @@ public class PanelPresupuesto extends JPanel {
 	private int nViajes=0;
 	private double precioGasolina=0.0;
 	private double totalSinIva;
-	private DecimalFormat formateador = new DecimalFormat ("#####.##");
+	private DecimalFormat formateador = new DecimalFormat ("#####.##");  //  @jve:decl-index=0:
 	private JPanel panelHerramientas = null;
 	private JButton btnBorrar = null;
 	private boolean isPresupuesto=true;
 	private JButton btnPrint = null;
 	private int id;
 	private int idCliente;
-	private Cliente c;  
+	private Cliente c;
+	private JPanel panelCuadrados = null;
+	private JPanel panelTextos = null;
+	private JTextArea taFormaPago = null;
+	private JTextArea taExplicativo = null;
+	private JLabel lblFormaPago = null;
+	private JLabel lblExplicativo = null;
+	private JCheckBox cbCanarias = null;
+	private JLabel lblFecha = null;
+	private JPanel panelFecha = null;
+	private JLabel lblSeparador = null;
+	private SimpleDateFormat formateadorFecha = new SimpleDateFormat("dd/MM/yyyy");
+	private JScrollPane scrollFormaPago = null;
+	private JScrollPane scrollExplicativo = null;
 	/**
 	 * This is the default constructor
 	 */
@@ -153,11 +170,12 @@ public class PanelPresupuesto extends JPanel {
 	 * @return void
 	 */
 	private void initialize() {
-		this.setSize(887, 606);
+		this.setSize(1149, 606);
 		this.setLayout(new BorderLayout());
 		this.add(getPanelTitulo(), BorderLayout.NORTH);
 		this.add(getPanelDatos(), BorderLayout.CENTER);
 		this.add(getScrollTexto(), BorderLayout.SOUTH);
+		this.add(getPanelCuadrados(), BorderLayout.EAST);
 	}
 
 	/**
@@ -167,10 +185,19 @@ public class PanelPresupuesto extends JPanel {
 	 */
 	private JPanel getPanelTitulo() {
 		if (panelTitulo == null) {
+			lblFecha = new JLabel();
+			java.util.Date date = new Date();
+		    java.sql.Date fecha = new java.sql.Date(date.getTime());
+			lblFecha.setText(formateadorFecha.format(fecha));
+			lblFecha.setFont(new Font("Dialog", Font.BOLD, 18));
 			panelTitulo = new JPanel();
 			panelTitulo.setLayout(new BorderLayout());
+			panelTitulo.setMinimumSize(new Dimension(1024, 44));
+			panelTitulo.setMaximumSize(new Dimension(1024, 44));
+			panelTitulo.setPreferredSize(new Dimension(1024, 44));
 			panelTitulo.add(getLblTitulo(), BorderLayout.WEST);
 			panelTitulo.add(getPanelHerramientas(), BorderLayout.EAST);
+			panelTitulo.add(getPanelFecha(), BorderLayout.CENTER);
 		}
 		return panelTitulo;
 	}
@@ -345,6 +372,9 @@ public class PanelPresupuesto extends JPanel {
 	 */
 	private JPanel getPanelGastos() {
 		if (panelGastos == null) {
+			GridBagConstraints gridBagConstraints110 = new GridBagConstraints();
+			gridBagConstraints110.gridx = 1;
+			gridBagConstraints110.gridy = 9;
 			GridBagConstraints gridBagConstraints151 = new GridBagConstraints();
 			gridBagConstraints151.gridx = 4;
 			gridBagConstraints151.gridheight = 3;
@@ -494,6 +524,9 @@ public class PanelPresupuesto extends JPanel {
 			lblNeto.setText("Precio neto:");
 			panelGastos = new JPanel();
 			panelGastos.setLayout(new GridBagLayout());
+			panelGastos.setMaximumSize(new Dimension(1024, 282));
+			panelGastos.setMinimumSize(new Dimension(1024, 282));
+			panelGastos.setPreferredSize(new Dimension(1024, 282));
 			panelGastos.add(lblNeto, gridBagConstraints);
 			panelGastos.add(lblPrecioNeto, gridBagConstraints1);
 			panelGastos.add(lblGanancia, gridBagConstraints6);
@@ -516,6 +549,7 @@ public class PanelPresupuesto extends JPanel {
 			panelGastos.add(lblTotalConIva, gridBagConstraints131);
 			panelGastos.add(getCbGanancia(), gridBagConstraints141);
 			panelGastos.add(getPanelPorcentaje(), gridBagConstraints151);
+			panelGastos.add(getCbCanarias(), gridBagConstraints110);
 		}
 		return panelGastos;
 	}
@@ -1374,6 +1408,7 @@ public class PanelPresupuesto extends JPanel {
 			double totalSinImp=0;
 			double iva=0;
 			isGanancia=cbGanancia.isSelected();
+			isCanarias=cbCanarias.isSelected();
 			double impuestoGanancia=0;
 			
 			//guardo los datos de los gastos
@@ -1428,12 +1463,16 @@ public class PanelPresupuesto extends JPanel {
 			lblTotalSinIva.setText(formateador.format(totalSinIva)+" €");
 			
 			//calculo el iva
-			iva=totalSinIva*IVA;
+			if(!isCanarias){
+				iva=0;
+			}else{
+				iva=totalSinIva*IVA;
+			}
 			//lo muestro en el label
 			lblIva.setText(formateador.format(iva)+" €");
 			
 			//calculo el total con iva
-			totalIva=(totalSinIva*IVA)+totalSinIva;
+			totalIva=iva+totalSinIva;
 			//lo muestro en el label
 			lblTotalConIva.setText(formateador.format(totalIva)+" €");
 			
@@ -1473,9 +1512,10 @@ public class PanelPresupuesto extends JPanel {
 			JViewport jViewport = new JViewport();
 			jViewport.setView(jTextArea);
 			scrollTexto = new JScrollPane();
-			scrollTexto.setMinimumSize(new Dimension(22, 76));
-			scrollTexto.setPreferredSize(new Dimension(22, 110));
+			scrollTexto.setMinimumSize(new Dimension(1024, 110));
+			scrollTexto.setPreferredSize(new Dimension(1024, 110));
 			scrollTexto.setBorder(BorderFactory.createTitledBorder(null, "Texto que va en el presupuesto", TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, new Font("Dialog", Font.BOLD, 12), new Color(51, 51, 51)));
+			scrollTexto.setMaximumSize(new Dimension(1024, 110));
 			scrollTexto.setViewport(jViewport);
 			scrollTexto.setViewportView(getTaTexto());
 		}
@@ -1491,6 +1531,7 @@ public class PanelPresupuesto extends JPanel {
 		if (taTexto == null) {
 			taTexto = new JTextArea(4,4);
 			taTexto.setMinimumSize(new Dimension(0, 76));
+			taTexto.setLineWrap(true);
 		}
 		return taTexto;
 	}
@@ -1509,6 +1550,7 @@ public class PanelPresupuesto extends JPanel {
 		tfCombustible.setText("0");
 		
 		cbGanancia.setSelected(true);
+		cbCanarias.setSelected(true);
 		
 		tfPorcentaje1.setText("50");
 		
@@ -1517,6 +1559,8 @@ public class PanelPresupuesto extends JPanel {
 		tfPrecioGasolina.setText("1.0");
 		
 		taTexto.setText("");
+		taExplicativo.setText("");
+		taFormaPago.setText("");
 		
 		//btnPrint.setEnabled(false);
 		
@@ -1672,11 +1716,17 @@ public class PanelPresupuesto extends JPanel {
 		tfViajes.setText(""+p.getnViajes());
 		tfPrecioGasolina.setText(""+p.getPrecioGasolina());
 		tfPorcentaje1.setText(""+p.getPorcentaje());
-		taTexto.setText(p.getTexto());
+		taTexto.setText(p.getTextoLinea());
+		taFormaPago.setText(p.getTextoFormaPago());
+		taExplicativo.setText(p.getTextoExplicativo());
 		id=p.getIdPresupuesto();
 		idCliente=p.getIdCliente();
 		
 		cbGanancia.setSelected(p.isGanancia());
+		
+		cbCanarias.setSelected(p.isCanarias());
+		
+		lblFecha.setText(formateadorFecha.format(p.getFecha()));
 		
 		btnPrint.setEnabled(true);
 		
@@ -1704,10 +1754,13 @@ public class PanelPresupuesto extends JPanel {
 		tfPorcentaje1.setEditable(b);
 		taTexto.setEditable(b);
 		tablaProductos.setEnabled(false);
+		taExplicativo.setEditable(b);
+		taFormaPago.setEditable(b);
 		
 		//estos son distintos
 		cbGanancia.setEnabled(b);
 		cbProductos.setEnabled(b);
+		cbCanarias.setEnabled(b);
 		
 	}
 
@@ -1762,10 +1815,16 @@ public class PanelPresupuesto extends JPanel {
 		tfViajes.setText(""+f.getnViajes());
 		tfPrecioGasolina.setText(""+f.getPrecioGasolina());
 		tfPorcentaje1.setText(""+f.getPorcentaje());
-		taTexto.setText(f.getTexto());
+		taTexto.setText(f.getTextoLinea());
+		taFormaPago.setText(f.getTextoFormaPago());
+		taExplicativo.setText(f.getTextoExplicativo());
 		id=f.getIdFactura();
 		
 		cbGanancia.setSelected(f.isGanancia());
+		
+		cbCanarias.setSelected(f.isCanarias());
+		
+		lblFecha.setText(formateadorFecha.format(f.getFecha()));
 		
 		btnPrint.setEnabled(true);
 		
@@ -1883,6 +1942,175 @@ public class PanelPresupuesto extends JPanel {
 		
 	}
 
+	/**
+	 * This method initializes panelCuadrados	
+	 * 	
+	 * @return javax.swing.JPanel	
+	 */
+	private JPanel getPanelCuadrados() {
+		if (panelCuadrados == null) {
+			panelCuadrados = new JPanel();
+			panelCuadrados.setLayout(new BorderLayout());
+			panelCuadrados.setMinimumSize(new Dimension(0, 114));
+			panelCuadrados.setPreferredSize(new Dimension(350, 114));
+			panelCuadrados.setVisible(true);
+			panelCuadrados.add(getPanelTextos(), BorderLayout.CENTER);
+		}
+		return panelCuadrados;
+	}
+
+	/**
+	 * This method initializes panelTextos	
+	 * 	
+	 * @return javax.swing.JPanel	
+	 */
+	private JPanel getPanelTextos() {
+		if (panelTextos == null) {
+			GridBagConstraints gridBagConstraints35 = new GridBagConstraints();
+			gridBagConstraints35.fill = GridBagConstraints.BOTH;
+			gridBagConstraints35.gridy = 3;
+			gridBagConstraints35.weightx = 1.0;
+			gridBagConstraints35.weighty = 1.0;
+			gridBagConstraints35.insets = new Insets(2, 10, 2, 2);
+			gridBagConstraints35.gridx = 0;
+			GridBagConstraints gridBagConstraints39 = new GridBagConstraints();
+			gridBagConstraints39.fill = GridBagConstraints.BOTH;
+			gridBagConstraints39.gridy = 1;
+			gridBagConstraints39.weightx = 1.0;
+			gridBagConstraints39.weighty = 1.0;
+			gridBagConstraints39.insets = new Insets(2, 10, 2, 2);
+			gridBagConstraints39.gridx = 0;
+			GridBagConstraints gridBagConstraints38 = new GridBagConstraints();
+			gridBagConstraints38.gridx = 0;
+			gridBagConstraints38.insets = new Insets(2, 10, 2, 2);
+			gridBagConstraints38.anchor = GridBagConstraints.WEST;
+			gridBagConstraints38.gridy = 2;
+			lblExplicativo = new JLabel();
+			lblExplicativo.setText("Explicación:");
+			GridBagConstraints gridBagConstraints37 = new GridBagConstraints();
+			gridBagConstraints37.gridx = 0;
+			gridBagConstraints37.insets = new Insets(2, 10, 2, 2);
+			gridBagConstraints37.anchor = GridBagConstraints.WEST;
+			gridBagConstraints37.gridy = 0;
+			lblFormaPago = new JLabel();
+			lblFormaPago.setText("Forma de pago:");
+			panelTextos = new JPanel();
+			panelTextos.setLayout(new GridBagLayout());
+			panelTextos.setVisible(true);
+			panelTextos.add(lblFormaPago, gridBagConstraints37);
+			panelTextos.add(lblExplicativo, gridBagConstraints38);
+			panelTextos.add(getScrollFormaPago(), gridBagConstraints39);
+			panelTextos.add(getScrollExplicativo(), gridBagConstraints35);
+		}
+		return panelTextos;
+	}
+
+	/**
+	 * This method initializes taFormaPago	
+	 * 	
+	 * @return javax.swing.JTextArea	
+	 */
+	private JTextArea getTaFormaPago() {
+		if (taFormaPago == null) {
+			taFormaPago = new JTextArea();
+			taFormaPago.setMaximumSize(new Dimension(100, 100));
+			taFormaPago.setLineWrap(true);
+			taFormaPago.setText("");
+		}
+		return taFormaPago;
+	}
+
+	/**
+	 * This method initializes taExplicativo	
+	 * 	
+	 * @return javax.swing.JTextArea	
+	 */
+	private JTextArea getTaExplicativo() {
+		if (taExplicativo == null) {
+			taExplicativo = new JTextArea();
+			taExplicativo.setText("");
+			taExplicativo.setLineWrap(true);
+		}
+		return taExplicativo;
+	}
+
+	/**
+	 * This method initializes cbCanarias	
+	 * 	
+	 * @return javax.swing.JCheckBox	
+	 */
+	private JCheckBox getCbCanarias() {
+		if (cbCanarias == null) {
+			cbCanarias = new JCheckBox();
+			cbCanarias.setSelected(true);
+			cbCanarias.addItemListener(new java.awt.event.ItemListener() {
+				public void itemStateChanged(java.awt.event.ItemEvent e) {
+					actualizarValores();
+				}
+			});
+		}
+		return cbCanarias;
+	}
+
+	/**
+	 * This method initializes panelFecha	
+	 * 	
+	 * @return javax.swing.JPanel	
+	 */
+	private JPanel getPanelFecha() {
+		if (panelFecha == null) {
+			lblSeparador = new JLabel();
+			lblSeparador.setText("   ---   ");
+			lblSeparador.setFont(new Font("Dialog", Font.BOLD, 18));
+			panelFecha = new JPanel();
+			panelFecha.setLayout(new BoxLayout(getPanelFecha(), BoxLayout.X_AXIS));
+			panelFecha.add(lblSeparador, null);
+			panelFecha.add(lblFecha, null);
+		}
+		return panelFecha;
+	}
+
+	public boolean isCanarias() {
+		
+		return cbCanarias.isSelected();
+	}
+
+	public String getTextoFormaPago() {
+		
+		return taFormaPago.getText();
+	}
+
+	public String getTextoExplicativo() {
+		
+		return taExplicativo.getText();
+	}
+
+	/**
+	 * This method initializes scrollFormaPago	
+	 * 	
+	 * @return javax.swing.JScrollPane	
+	 */
+	private JScrollPane getScrollFormaPago() {
+		if (scrollFormaPago == null) {
+			scrollFormaPago = new JScrollPane();
+			scrollFormaPago.setViewportView(getTaFormaPago());
+		}
+		return scrollFormaPago;
+	}
+
+	/**
+	 * This method initializes scrollExplicativo	
+	 * 	
+	 * @return javax.swing.JScrollPane	
+	 */
+	private JScrollPane getScrollExplicativo() {
+		if (scrollExplicativo == null) {
+			scrollExplicativo = new JScrollPane();
+			scrollExplicativo.setViewportView(getTaExplicativo());
+		}
+		return scrollExplicativo;
+	}
+
 	
 
-} 
+}  //  @jve:decl-index=0:visual-constraint="10,10" 

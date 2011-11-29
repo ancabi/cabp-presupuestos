@@ -4,6 +4,7 @@
 package clases;
 
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -23,7 +24,6 @@ public class ListadoFacturas {
 	private Connection dbConnect=Conectar.getConnection();
 	private int idCliente;
 	private PreparedStatement psFacturas=null;
-	private PreparedStatement psLineasFactura;
 	
 	public ListadoFacturas(int idCliente){
 		
@@ -65,10 +65,14 @@ public class ListadoFacturas {
 				int hotel=rs.getInt("hotel");
 				int kilometros=rs.getInt("kilometros");
 				boolean isGanancia=rs.getBoolean("isGanancia");
+				boolean isCanarias=rs.getBoolean("isCanarias");
 				int porcentaje=rs.getInt("porcentaje");
 				double totalConIva=rs.getDouble("totalConIva");
 				int transporte=rs.getInt("transporte");
-				String texto=rs.getString("texto");
+				String textoLinea=rs.getString("textoLinea");
+				String textoFormaPago=rs.getString("textoFormaPago");
+				String textoExplicativo=rs.getString("textoExplicativo");
+				Date fecha=rs.getDate("fecha");
 				int totViajes=rs.getInt("totViajes");
 				double precioGasolina=rs.getDouble("precioGasolina");
 				double totalSinIva=rs.getDouble("totalSinIva");
@@ -76,7 +80,8 @@ public class ListadoFacturas {
 				
 				//creo la factura y lo guardo en el vector
 				facturas.add(new Facturas(idFactura, ganancia, restaurante, pasaje, combustible, otros, hotel, kilometros, totViajes, precioGasolina, 
-						isGanancia, porcentaje, totalConIva, totalSinIva, transporte, texto, idCliente, idDistribuidor));
+						isGanancia, isCanarias, porcentaje, totalConIva, totalSinIva, transporte, textoLinea, textoFormaPago, textoExplicativo, fecha,
+						idCliente, idDistribuidor));
 				//traigo el ultimo indice introducido
 				int index=facturas.size()-1;
 				//cargo las lineas

@@ -122,7 +122,7 @@ public class TabCliente extends JTabbedPane {
 	
 	public void cargarPresupuestos(){
 		
-		System.out.println("Entra");
+		
 		
 		((PanelClientePres) panelClientePres).cargarPresupuestos();
 		//limpio los campos del panel presupuestos

@@ -4,6 +4,7 @@
 package clases;
 
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -31,12 +32,16 @@ public class Presupuestos {
 	private int nViajes;
 	private double precioGasolina;
 	private boolean isGanancia;
+	private boolean isCanarias;
 	private int porcentaje;
 	private double totalConIva;
 	private double totalSinIva;
 	private int transporte;
-	private String texto;
+	private String textoLinea;
+	private String textoFormaPago;
+	private String textoExplicativo;
 	private ListadoLineaPresup listadoLineaPresup=null;
+	private Date fecha;
 	private int idCliente;
 	private int idDistribuidor;
 	/**
@@ -51,23 +56,28 @@ public class Presupuestos {
 	 * @param nViajes
 	 * @param precioGasolina
 	 * @param isGanancia
+	 * @param isCanarias
 	 * @param porcentaje
 	 * @param totalConIva
 	 * @param totalSinIva
 	 * @param transporte
-	 * @param texto
-	 * @param listadoLineaPresup
+	 * @param textoLinea
+	 * @param textoFormaPago
+	 * @param textoExplicativo
+	 * @param fecha
 	 * @param idCliente
 	 * @param idDistribuidor
 	 */
 	public Presupuestos(int idPresupuesto, int ganancia, int restaurante,
 			int pasaje, int combustible, int otros, int hotel, int kilometros,
-			int nViajes, double precioGasolina, boolean isGanancia,
+			int nViajes, double precioGasolina, boolean isGanancia, boolean isCanarias,
 			int porcentaje, double totalConIva, double totalSinIva,
-			int transporte, String texto, int idCliente, int idDistribuidor) {
+			int transporte, String textoLinea, String textoFormaPago, String textoExplicativo, Date fecha,
+			int idCliente, int idDistribuidor) {
 		
-		this(ganancia, restaurante, pasaje, combustible, otros, hotel, kilometros, nViajes, precioGasolina, isGanancia,
-				porcentaje, totalConIva, totalSinIva, transporte, texto, idCliente, idDistribuidor);
+		this(ganancia, restaurante, pasaje, combustible, otros, hotel, kilometros, nViajes, precioGasolina, isGanancia, isCanarias,
+				porcentaje, totalConIva, totalSinIva, transporte, textoLinea, textoFormaPago, textoExplicativo,
+				fecha, idCliente, idDistribuidor);
 		
 		this.idPresupuesto = idPresupuesto;
 		listadoLineaPresup.setIdPresupuesto(idPresupuesto);
@@ -75,6 +85,7 @@ public class Presupuestos {
 	}
 	
 	/**
+	 * @param idPresupuesto
 	 * @param ganancia
 	 * @param restaurante
 	 * @param pasaje
@@ -85,20 +96,24 @@ public class Presupuestos {
 	 * @param nViajes
 	 * @param precioGasolina
 	 * @param isGanancia
+	 * @param isCanarias
 	 * @param porcentaje
 	 * @param totalConIva
 	 * @param totalSinIva
 	 * @param transporte
-	 * @param texto
-	 * @param listadoLineaPresup
+	 * @param textoLinea
+	 * @param textoFormaPago
+	 * @param textoExplicativo
+	 * @param fecha
 	 * @param idCliente
 	 * @param idDistribuidor
 	 */
 	public Presupuestos(int ganancia, int restaurante,
 			int pasaje, int combustible, int otros, int hotel, int kilometros,
-			int nViajes, double precioGasolina, boolean isGanancia,
+			int nViajes, double precioGasolina, boolean isGanancia, boolean isCanarias,
 			int porcentaje, double totalConIva, double totalSinIva,
-			int transporte, String texto, int idCliente, int idDistribuidor) {
+			int transporte, String textoLinea, String textoFormaPago, String textoExplicativo, Date fecha,
+			int idCliente, int idDistribuidor) {
 		
 		this.ganancia = ganancia;
 		this.restaurante = restaurante;
@@ -110,11 +125,15 @@ public class Presupuestos {
 		this.nViajes = nViajes;
 		this.precioGasolina = precioGasolina;
 		this.isGanancia = isGanancia;
+		this.isCanarias = isCanarias;
 		this.porcentaje = porcentaje;
 		this.totalConIva = totalConIva;
 		this.totalSinIva = totalSinIva;
 		this.transporte = transporte;
-		this.texto = texto;
+		this.textoLinea = textoLinea;
+		this.textoFormaPago = textoFormaPago;
+		this.textoExplicativo = textoExplicativo;
+		this.fecha = fecha;
 		this.idCliente = idCliente;
 		this.idDistribuidor=idDistribuidor;
 		
@@ -127,8 +146,9 @@ public class Presupuestos {
 		
 		try {
 			PreparedStatement ps=dbConnect.prepareStatement("INSERT INTO presupuestos(ganancia, restaurante, pasaje, combustible, otros, " +
-					"hotel, kilometros, isGanancia, porcentaje, totalConIva, transporte, texto, idCliente, totViajes, precioGasolina, " +
-					"totalSinIva, idDistribuidor) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
+					"hotel, kilometros, isGanancia, isCanarias, porcentaje, totalConIva, transporte, textoLinea, textoFormaPago, textoExplicativo, fecha" +
+					", idCliente, totViajes, precioGasolina, " +
+					"totalSinIva, idDistribuidor) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
 			
 			ps.setInt(1, ganancia);
 			ps.setInt(2, restaurante);
@@ -138,15 +158,19 @@ public class Presupuestos {
 			ps.setInt(6, hotel);
 			ps.setInt(7, kilometros);
 			ps.setBoolean(8, isGanancia);
-			ps.setInt(9, porcentaje);
-			ps.setDouble(10, totalConIva);
-			ps.setInt(11, transporte);
-			ps.setString(12, texto);
-			ps.setInt(13, idCliente);
-			ps.setInt(14, nViajes);
-			ps.setDouble(15, precioGasolina);
-			ps.setDouble(16, totalSinIva);
-			ps.setInt(17, idDistribuidor);
+			ps.setBoolean(9, isCanarias);
+			ps.setInt(10, porcentaje);
+			ps.setDouble(11, totalConIva);
+			ps.setInt(12, transporte);
+			ps.setString(13, textoLinea);
+			ps.setString(14, textoFormaPago);
+			ps.setString(15, textoExplicativo);
+			ps.setDate(16, fecha);
+			ps.setInt(17, idCliente);
+			ps.setInt(18, nViajes);
+			ps.setDouble(19, precioGasolina);
+			ps.setDouble(20, totalSinIva);
+			ps.setInt(21, idDistribuidor);
 			
 			ps.executeUpdate();
 			
@@ -290,10 +314,10 @@ public class Presupuestos {
 	}
 
 	/**
-	 * @return the texto
+	 * @return the textoLinea
 	 */
-	public String getTexto() {
-		return texto;
+	public String getTextoLinea() {
+		return textoLinea;
 	}
 
 	/**
@@ -429,10 +453,10 @@ public class Presupuestos {
 	}
 
 	/**
-	 * @param texto the texto to set
+	 * @param textoLinea the textoLinea to set
 	 */
-	public void setTexto(String texto) {
-		this.texto = texto;
+	public void setTexto(String textoLinea) {
+		this.textoLinea = textoLinea;
 	}
 
 	/**
@@ -460,6 +484,62 @@ public class Presupuestos {
 		
 		listadoLineaPresup.removeAllElements();
 		
+	}
+
+	/**
+	 * @return the isCanarias
+	 */
+	public boolean isCanarias() {
+		return isCanarias;
+	}
+
+	/**
+	 * @param isCanarias the isCanarias to set
+	 */
+	public void setCanarias(boolean isCanarias) {
+		this.isCanarias = isCanarias;
+	}
+
+	/**
+	 * @return the textoFormaPago
+	 */
+	public String getTextoFormaPago() {
+		return textoFormaPago;
+	}
+
+	/**
+	 * @param textoFormaPago the textoFormaPago to set
+	 */
+	public void setTextoFormaPago(String textoFormaPago) {
+		this.textoFormaPago = textoFormaPago;
+	}
+
+	/**
+	 * @return the textoExplicativo
+	 */
+	public String getTextoExplicativo() {
+		return textoExplicativo;
+	}
+
+	/**
+	 * @param textoExplicativo the textoExplicativo to set
+	 */
+	public void setTextoExplicativo(String textoExplicativo) {
+		this.textoExplicativo = textoExplicativo;
+	}
+
+	/**
+	 * @return the fecha
+	 */
+	public Date getFecha() {
+		return fecha;
+	}
+
+	/**
+	 * @param fecha the fecha to set
+	 */
+	public void setFecha(Date fecha) {
+		this.fecha = fecha;
 	}
 
 	
