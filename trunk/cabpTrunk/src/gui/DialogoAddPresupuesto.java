@@ -252,6 +252,9 @@ public class DialogoAddPresupuesto extends JDialog {
 		
 		((PanelPresupuesto) panelPresupuesto).setIsPresupuesto(b);
 		
+		//le pongo la fecha al label
+		((PanelPresupuesto) panelPresupuesto).setLblFecha();
+		
 	}
 
 	public void setLastId(int lastPresup) {

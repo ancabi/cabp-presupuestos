@@ -141,7 +141,6 @@ public class PanelPresupuesto extends JPanel {
 	private boolean isPresupuesto=true;
 	private JButton btnPrint = null;
 	private int id;
-	private int idCliente;
 	private Cliente c;
 	private JPanel panelCuadrados = null;
 	private JPanel panelTextos = null;
@@ -153,7 +152,7 @@ public class PanelPresupuesto extends JPanel {
 	private JLabel lblFecha = null;
 	private JPanel panelFecha = null;
 	private JLabel lblSeparador = null;
-	private SimpleDateFormat formateadorFecha = new SimpleDateFormat("dd/MM/yyyy");
+	private SimpleDateFormat formateadorFecha = new SimpleDateFormat("dd/MM/yyyy");  //  @jve:decl-index=0:
 	private JScrollPane scrollFormaPago = null;
 	private JScrollPane scrollExplicativo = null;
 	/**
@@ -186,9 +185,6 @@ public class PanelPresupuesto extends JPanel {
 	private JPanel getPanelTitulo() {
 		if (panelTitulo == null) {
 			lblFecha = new JLabel();
-			java.util.Date date = new Date();
-		    java.sql.Date fecha = new java.sql.Date(date.getTime());
-			lblFecha.setText(formateadorFecha.format(fecha));
 			lblFecha.setFont(new Font("Dialog", Font.BOLD, 18));
 			panelTitulo = new JPanel();
 			panelTitulo.setLayout(new BorderLayout());
@@ -1564,6 +1560,8 @@ public class PanelPresupuesto extends JPanel {
 		
 		//btnPrint.setEnabled(false);
 		
+		lblFecha.setText("");
+		
 		actualizarValores();
 		
 		actualizarGasolina();
@@ -1720,7 +1718,7 @@ public class PanelPresupuesto extends JPanel {
 		taFormaPago.setText(p.getTextoFormaPago());
 		taExplicativo.setText(p.getTextoExplicativo());
 		id=p.getIdPresupuesto();
-		idCliente=p.getIdCliente();
+		p.getIdCliente();
 		
 		cbGanancia.setSelected(p.isGanancia());
 		
@@ -2109,6 +2107,14 @@ public class PanelPresupuesto extends JPanel {
 			scrollExplicativo.setViewportView(getTaExplicativo());
 		}
 		return scrollExplicativo;
+	}
+
+	public void setLblFecha() {
+		
+		java.util.Date date = new Date();
+	    java.sql.Date fecha = new java.sql.Date(date.getTime());
+		lblFecha.setText(formateadorFecha.format(fecha));
+		
 	}
 
 	
