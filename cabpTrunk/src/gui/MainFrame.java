@@ -29,6 +29,14 @@ import conexion.Conectar;
 import java.awt.Insets;
 import java.awt.Toolkit;
 import java.awt.Color;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
+
 import javax.swing.BorderFactory;
 
 
@@ -58,6 +66,8 @@ public class MainFrame extends JFrame {
 	private JButton btnDistribuidor = null;
 	private JPanel panelProductos = null;
 	private JPanel panelDistribuidor = null;
+	private JMenu menuConfiguracion = null;
+	private JMenuItem itemIva = null;
 
 	/**
 	 * This is the default constructor
@@ -159,6 +169,7 @@ public class MainFrame extends JFrame {
 		if (jJMenuBar == null) {
 			jJMenuBar = new JMenuBar();
 			jJMenuBar.add(getJMenu());
+			jJMenuBar.add(getMenuConfiguracion());
 		}
 		return jJMenuBar;
 	}
@@ -623,6 +634,68 @@ public class MainFrame extends JFrame {
 	public ListadoDistribuidores getDistribuidores() {
 		
 		return listadoDistribuidores;
+	}
+
+	/**
+	 * This method initializes menuConfiguracion	
+	 * 	
+	 * @return javax.swing.JMenu	
+	 */
+	private JMenu getMenuConfiguracion() {
+		if (menuConfiguracion == null) {
+			menuConfiguracion = new JMenu();
+			menuConfiguracion.setText("Opciones");
+			menuConfiguracion.add(getItemIva());
+		}
+		return menuConfiguracion;
+	}
+
+	/**
+	 * This method initializes itemIva	
+	 * 	
+	 * @return javax.swing.JMenuItem	
+	 */
+	private JMenuItem getItemIva() {
+		if (itemIva == null) {
+			itemIva = new JMenuItem();
+			itemIva.setText("Cambiar IVA");
+			itemIva.addActionListener(new java.awt.event.ActionListener() {
+				public void actionPerformed(java.awt.event.ActionEvent e) {
+					
+					
+					try {
+						File archivo = new File("iva.cabp");
+						FileReader fr = new FileReader(archivo);
+						BufferedReader br = new BufferedReader(fr);
+						
+						String linea = br.readLine();
+						
+						String iva=(String) JOptionPane.showInputDialog(null, "Introduzca el IVA", "Cambiar IVA", JOptionPane.QUESTION_MESSAGE, null, null, linea);
+						
+						if(iva!=null){
+						
+							FileWriter fichero = new FileWriter("iva.cabp");
+				            PrintWriter pw = new PrintWriter(fichero);
+				            
+				            pw.println(iva);
+				            
+				            
+				            if(fichero!=null){
+				            	fichero.close();
+				            }
+						}
+						
+					} catch (FileNotFoundException e1) {
+						JOptionPane.showMessageDialog(null, e1.getMessage());
+					} catch (IOException e1) {
+						JOptionPane.showMessageDialog(null, e1.getMessage());
+					}
+					
+					
+				}
+			});
+		}
+		return itemIva;
 	}
 	
 	
