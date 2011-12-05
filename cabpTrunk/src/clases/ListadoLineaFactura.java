@@ -17,6 +17,7 @@ public class ListadoLineaFactura {
 	private int idFactura;
 	private PreparedStatement psLineaFactura;
 	private PreparedStatement psAddLineaFactura;
+	private PreparedStatement psBorrarLineas;
 	
 	/**
 	 * @param idFactura
@@ -36,6 +37,9 @@ public class ListadoLineaFactura {
 			
 			psAddLineaFactura=dbConnect.prepareStatement("INSERT INTO lineaFactura(idFactura, idProducto, cantidad, nomProducto, precio) VALUES" +
 					"(?,?,?,?,?)");
+			
+			psBorrarLineas=dbConnect.prepareStatement("DELETE FROM lineaFactura WHERE idFactura=?");
+			
 		} catch (SQLException e) {
 			JOptionPane.showMessageDialog(null, e.getMessage());
 		}
@@ -110,6 +114,21 @@ public class ListadoLineaFactura {
 	public LineaFactura get(int index) {
 		
 		return lineaFactura.get(index);
+		
+	}
+
+	public void removeAllElements() {
+		
+		try {
+			psBorrarLineas.setInt(1, idFactura);
+			
+			psBorrarLineas.executeUpdate();
+			
+			lineaFactura.removeAllElements();
+			
+		} catch (SQLException e) {
+			JOptionPane.showMessageDialog(null, e.getMessage());
+		}
 		
 	}
 

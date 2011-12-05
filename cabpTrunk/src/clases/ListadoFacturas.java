@@ -24,6 +24,7 @@ public class ListadoFacturas {
 	private Connection dbConnect=Conectar.getConnection();
 	private int idCliente;
 	private PreparedStatement psFacturas=null;
+	private PreparedStatement psActualizarFactura;
 	
 	public ListadoFacturas(int idCliente){
 		
@@ -38,6 +39,10 @@ public class ListadoFacturas {
 		
 		try {
 			psFacturas=dbConnect.prepareStatement("SELECT * FROM facturas WHERE idCliente=?");
+			
+			psActualizarFactura=dbConnect.prepareStatement("UPDATE facturas SET ganancia=?, combustible=?, pasaje=?, restaurante=?, otros=?, hotel=?, kilometros=?, totViajes=?," +
+					"precioGasolina=?, isGanancia=?, isCanarias=?, porcentaje=?, totalConIva=?, totalSinIva=?, transporte=?, textoLinea=?, " +
+					"textoFormaPago=?, textoExplicativo=?, fecha=?, isTotalManual=?, totalManual=? WHERE idFactura=?");
 			
 		} catch (SQLException e) {
 			JOptionPane.showMessageDialog(null, e.getMessage());
@@ -132,6 +137,42 @@ public class ListadoFacturas {
 		}
 		
 		return null;
+		
+	}
+
+	public void actualizarFactura(int id) {
+		
+		Facturas f=getFactura(id);
+		
+		try {
+			psActualizarFactura.setInt(1, f.getGanancia());
+			psActualizarFactura.setInt(2, f.getCombustible());
+			psActualizarFactura.setInt(3, f.getPasaje());
+			psActualizarFactura.setInt(4, f.getRestaurante());
+			psActualizarFactura.setInt(5, f.getOtros());
+			psActualizarFactura.setInt(6, f.getHotel());
+			psActualizarFactura.setInt(7, f.getKilometros());
+			psActualizarFactura.setInt(8, f.getnViajes());
+			psActualizarFactura.setDouble(9, f.getPrecioGasolina());
+			psActualizarFactura.setBoolean(10, f.isGanancia());
+			psActualizarFactura.setBoolean(11, f.isCanarias());
+			psActualizarFactura.setInt(12, f.getPorcentaje());
+			psActualizarFactura.setDouble(13, f.getTotalConIva());
+			psActualizarFactura.setDouble(14, f.getTotalSinIva());
+			psActualizarFactura.setInt(15, f.getTransporte());
+			psActualizarFactura.setString(16, f.getTextoLinea());
+			psActualizarFactura.setString(17, f.getTextoFormaPago());
+			psActualizarFactura.setString(18, f.getTextoExplicativo());
+			psActualizarFactura.setDate(19, f.getFecha());
+			psActualizarFactura.setBoolean(20, f.isTotalManual());
+			psActualizarFactura.setInt(21, f.getTotalManual());
+			psActualizarFactura.setInt(22, id);
+		
+			psActualizarFactura.executeUpdate();
+			
+		} catch (SQLException e) {
+			JOptionPane.showMessageDialog(null, e.getMessage());
+		}
 		
 	}
 
