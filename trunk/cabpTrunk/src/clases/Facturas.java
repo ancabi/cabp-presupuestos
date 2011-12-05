@@ -574,6 +574,18 @@ private Connection dbConnect=Conectar.getConnection();
 	public void setIdDistribuidor(int idDistribuidor) {
 		this.idDistribuidor = idDistribuidor;
 	}
+
+	public void removeAllLineas() {
+		
+		listadoLineaFactura.removeAllElements();
+		
+	}
+
+	public void addLineaPresupuesto(int idProducto, String nomProducto,	double precio, int cantidad) {
+		
+		listadoLineaFactura.addLinea(new LineaFactura(idFactura, idProducto, nomProducto, precio, cantidad));
+		
+	}
 	
 	
 	

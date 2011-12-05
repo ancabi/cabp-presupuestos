@@ -28,6 +28,9 @@ public class PanelClienteFactura extends JPanel {
 	private ListadoFacturas facturas=new ListadoFacturas();  //  @jve:decl-index=0:
 	private DefaultMutableTreeNode root;  //  @jve:decl-index=0:
 	private DefaultTreeModel modelo;
+	private int id;
+	private DialogoModPresupuesto dialogoModPresupuesto;
+	
 	/**
 	 * This is the default constructor
 	 */
@@ -77,13 +80,16 @@ public class PanelClienteFactura extends JPanel {
 							try{
 							//convierto lo que antes hice un substring a int, si lanza la excepcion, la capturo pero no hago nada con ella
 							//si no lanza nada, es que el numero es valido y traigo la factura
-							int id=Integer.parseInt(temp);
+							id=Integer.parseInt(temp);
 							
 							Facturas f=facturas.getFactura(id);
 							
 							((PanelPresupuesto) panelPresupuesto).setFactura(f);
 							
 							}catch(NumberFormatException e1){
+								
+								id=-1;
+								
 								limpiarCampos();
 							}catch(NullPointerException e1){
 								//no se porque salta esta excepcion
@@ -91,6 +97,40 @@ public class PanelClienteFactura extends JPanel {
 							
 						}
 					});
+			treeFacturas.addMouseListener(new java.awt.event.MouseAdapter() {
+				
+
+				public void mouseClicked(java.awt.event.MouseEvent e) {
+					if (e.getClickCount() >= 2){
+
+						if(id>-1){
+							//obtengo la instancia del objeto
+							dialogoModPresupuesto=getDialogoModPresupuesto();
+							//traigo el objeto clickeado
+							Facturas f=facturas.getFactura(id);
+
+							//se lo asigno a la ventana de modificar presupuesto
+							dialogoModPresupuesto.setFactura(f);
+							//cargo los productos del distribuidor asignado
+							dialogoModPresupuesto.cargarProductos();
+							//lo pongo visible
+							dialogoModPresupuesto.setVisible(true);
+							//si acepto
+							if(dialogoModPresupuesto.getValorPulsado()==DialogoModPresupuesto.VALOR_ACEPTAR){
+								
+								//lo actualizo en memoria y en bd
+								facturas.actualizarFactura(id);
+								
+								//recargo las facturas en el tree
+								cargarFacturas();
+								
+								limpiarCampos();
+							}
+						}
+						
+					}
+				}
+			});
 		}
 		return treeFacturas;
 	}
@@ -197,6 +237,18 @@ public class PanelClienteFactura extends JPanel {
 
 	public void limpiarCampos() {
 		((PanelPresupuesto) panelPresupuesto).limpiarCampos();
+		
+	}
+	
+	private DialogoModPresupuesto getDialogoModPresupuesto(){
+		
+		if(dialogoModPresupuesto==null){
+			
+			dialogoModPresupuesto=new DialogoModPresupuesto(null);
+			
+		}
+		
+		return dialogoModPresupuesto;
 		
 	}
 

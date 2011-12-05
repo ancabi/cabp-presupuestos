@@ -13,6 +13,7 @@ import java.util.Vector;
 import javax.swing.JDialog;
 
 
+import clases.Facturas;
 import clases.ListadoProductos;
 import clases.Presupuestos;
 
@@ -28,10 +29,10 @@ public class DialogoModPresupuesto extends JDialog {
 	private JButton btnCancelar = null;
 	private int idCliente;
 	private int valorPulsado=0;
-	private int idDistribuidor;
-	private Presupuestos presupuestoActual; 
-	private ListadoProductos listadoProductos;  
-	
+	private Presupuestos presupuestoActual;  //  @jve:decl-index=0:
+	private ListadoProductos listadoProductos;
+	private Facturas facturaActual;  
+	private boolean isFactura=false;
 
 	/**
 	 * @param panelClientePres
@@ -152,44 +153,86 @@ public class DialogoModPresupuesto extends JDialog {
 					
 					Vector<Vector> lineas=((PanelPresupuesto) panelPresupuesto).getLineas();
 					
-					presupuestoActual.setGanancia(ganancia);
-					presupuestoActual.setTransporte(transporte);
-					presupuestoActual.setHotel(hotel);
-					presupuestoActual.setPasaje(pasaje);
-					presupuestoActual.setOtros(otros);
-					presupuestoActual.setRestaurante(restaurante);
-					presupuestoActual.setCombustible(combustible);
-					presupuestoActual.setGanancia(isGanancia);
-					presupuestoActual.setCanarias(isCanarias);
-					presupuestoActual.setKilometros(kilometros);
-					presupuestoActual.setnViajes(nViajes);
-					presupuestoActual.setPrecioGasolina(precioGasolina);
-					presupuestoActual.setTotalConIva(totalConIva);
-					presupuestoActual.setTotalSinIva(totalSinIva);
-					presupuestoActual.setTexto(textoLinea);
-					presupuestoActual.setTextoFormaPago(textoFormaPago);
-					presupuestoActual.setTextoExplicativo(textoExplicativo);
-					presupuestoActual.setPorcentaje(porcentaje);
-					java.util.Date date = new Date();
-				    java.sql.Date fecha = new java.sql.Date(date.getTime());
-				    presupuestoActual.setFecha(fecha);
-				    presupuestoActual.setTotalManual(isTotalManual);
-				    presupuestoActual.setTotalManual(totalManual);
+					if(isFactura){
+						facturaActual.setGanancia(ganancia);
+						facturaActual.setTransporte(transporte);
+						facturaActual.setHotel(hotel);
+						facturaActual.setPasaje(pasaje);
+						facturaActual.setOtros(otros);
+						facturaActual.setRestaurante(restaurante);
+						facturaActual.setCombustible(combustible);
+						facturaActual.setGanancia(isGanancia);
+						facturaActual.setCanarias(isCanarias);
+						facturaActual.setKilometros(kilometros);
+						facturaActual.setnViajes(nViajes);
+						facturaActual.setPrecioGasolina(precioGasolina);
+						facturaActual.setTotalConIva(totalConIva);
+						facturaActual.setTotalSinIva(totalSinIva);
+						facturaActual.setTextoLinea(textoLinea);
+						facturaActual.setTextoFormaPago(textoFormaPago);
+						facturaActual.setTextoExplicativo(textoExplicativo);
+						facturaActual.setPorcentaje(porcentaje);
+						java.util.Date date = new Date();
+					    java.sql.Date fecha = new java.sql.Date(date.getTime());
+					    facturaActual.setFecha(fecha);
+					    facturaActual.setTotalManual(isTotalManual);
+					    facturaActual.setTotalManual(totalManual);
+						
+						facturaActual.removeAllLineas();
+						
+						for(int x=0; x<lineas.size(); x++){
+							
+							Vector temp=lineas.get(x);
+	
+							idProducto=(Integer) temp.get(0);
+							nomProducto=(String) temp.get(1);
+							precio=(Double) temp.get(2);
+							cantidad=Integer.parseInt(temp.get(3).toString());
+							
+							
+							facturaActual.addLineaPresupuesto(idProducto, nomProducto, precio, cantidad);
+						}
+					}else{
 					
-					presupuestoActual.removeAllLineas();
-					
-					for(int x=0; x<lineas.size(); x++){
+						presupuestoActual.setGanancia(ganancia);
+						presupuestoActual.setTransporte(transporte);
+						presupuestoActual.setHotel(hotel);
+						presupuestoActual.setPasaje(pasaje);
+						presupuestoActual.setOtros(otros);
+						presupuestoActual.setRestaurante(restaurante);
+						presupuestoActual.setCombustible(combustible);
+						presupuestoActual.setGanancia(isGanancia);
+						presupuestoActual.setCanarias(isCanarias);
+						presupuestoActual.setKilometros(kilometros);
+						presupuestoActual.setnViajes(nViajes);
+						presupuestoActual.setPrecioGasolina(precioGasolina);
+						presupuestoActual.setTotalConIva(totalConIva);
+						presupuestoActual.setTotalSinIva(totalSinIva);
+						presupuestoActual.setTexto(textoLinea);
+						presupuestoActual.setTextoFormaPago(textoFormaPago);
+						presupuestoActual.setTextoExplicativo(textoExplicativo);
+						presupuestoActual.setPorcentaje(porcentaje);
+						java.util.Date date = new Date();
+					    java.sql.Date fecha = new java.sql.Date(date.getTime());
+					    presupuestoActual.setFecha(fecha);
+					    presupuestoActual.setTotalManual(isTotalManual);
+					    presupuestoActual.setTotalManual(totalManual);
 						
-						Vector temp=lineas.get(x);
-
-						idProducto=(Integer) temp.get(0);
-						nomProducto=(String) temp.get(1);
-						precio=(Double) temp.get(2);
-						cantidad=Integer.parseInt(temp.get(3).toString());
+						presupuestoActual.removeAllLineas();
 						
-						
-						presupuestoActual.addLineaPresupuesto(idProducto, nomProducto, precio, cantidad);
-						
+						for(int x=0; x<lineas.size(); x++){
+							
+							Vector temp=lineas.get(x);
+	
+							idProducto=(Integer) temp.get(0);
+							nomProducto=(String) temp.get(1);
+							precio=(Double) temp.get(2);
+							cantidad=Integer.parseInt(temp.get(3).toString());
+							
+							
+							presupuestoActual.addLineaPresupuesto(idProducto, nomProducto, precio, cantidad);
+							
+						}
 					}
 					
 					((PanelPresupuesto) panelPresupuesto).limpiarCampos();
@@ -243,7 +286,11 @@ public class DialogoModPresupuesto extends JDialog {
 	public void cargarProductos(){
 		
 		//traigo el listado de productos del proveedor elegido
-		listadoProductos=getListadoProductos(presupuestoActual.getIdDistribuidor());
+		if(isFactura){
+			listadoProductos=getListadoProductos(facturaActual.getIdDistribuidor());
+		}else{
+			listadoProductos=getListadoProductos(presupuestoActual.getIdDistribuidor());
+		}
 		//cargo los productos en memoria
 		listadoProductos.cargarProductos();
 		
@@ -254,18 +301,21 @@ public class DialogoModPresupuesto extends JDialog {
 	public int getValorPulsado() {
 		return valorPulsado;
 	}
-
-	/**
-	 * @param idDistribuidor the idDistribuidor to set
-	 */
-	public void setIdDistribuidor(int idDistribuidor) {
-		this.idDistribuidor = idDistribuidor;
-	}
 	
 	public void setPresupuesto(Presupuestos p){
 		((PanelPresupuesto) panelPresupuesto).setPresupuesto(p);
 		
 		presupuestoActual=p;
+		
+		isFactura=false;
+	}
+	
+	public void setFactura(Facturas f){
+		((PanelPresupuesto) panelPresupuesto).setFactura(f);
+		
+		facturaActual=f;
+		
+		isFactura=true;
 	}
 	
 	private ListadoProductos getListadoProductos(int idDistribuidor){
