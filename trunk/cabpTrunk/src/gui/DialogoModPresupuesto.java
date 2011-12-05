@@ -29,8 +29,8 @@ public class DialogoModPresupuesto extends JDialog {
 	private int idCliente;
 	private int valorPulsado=0;
 	private int idDistribuidor;
-	private Presupuestos presupuestoActual;  //  @jve:decl-index=0:
-	private ListadoProductos listadoProductos;  //  @jve:decl-index=0:
+	private Presupuestos presupuestoActual; 
+	private ListadoProductos listadoProductos;  
 	
 
 	/**
@@ -146,6 +146,8 @@ public class DialogoModPresupuesto extends JDialog {
 					String textoLinea=((PanelPresupuesto) panelPresupuesto).getTexto();
 					String textoFormaPago=((PanelPresupuesto) panelPresupuesto).getTextoFormaPago();
 					String textoExplicativo=((PanelPresupuesto) panelPresupuesto).getTextoExplicativo();
+					boolean isTotalManual=((PanelPresupuesto) panelPresupuesto).getIsTotalmanual();
+					int totalManual=((PanelPresupuesto) panelPresupuesto).getTotalManual();
 					
 					
 					Vector<Vector> lineas=((PanelPresupuesto) panelPresupuesto).getLineas();
@@ -171,6 +173,8 @@ public class DialogoModPresupuesto extends JDialog {
 					java.util.Date date = new Date();
 				    java.sql.Date fecha = new java.sql.Date(date.getTime());
 				    presupuestoActual.setFecha(fecha);
+				    presupuestoActual.setTotalManual(isTotalManual);
+				    presupuestoActual.setTotalManual(totalManual);
 					
 					presupuestoActual.removeAllLineas();
 					

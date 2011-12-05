@@ -49,7 +49,8 @@ public class ListadoPresupuestos {
 			psBorrarLineas=dbConnect.prepareStatement("DELETE FROM lineaPresupuesto WHERE idPresupuesto=?");
 			
 			psActualizarPresupuesto=dbConnect.prepareStatement("UPDATE presupuestos SET ganancia=?, combustible=?, pasaje=?, restaurante=?, otros=?, hotel=?, kilometros=?, totViajes=?," +
-					"precioGasolina=?, isGanancia=?, isCanarias=?, porcentaje=?, totalConIva=?, totalSinIva=?, transporte=?, textoLinea=?, textoFormaPago=?, textoExplicativo=?, fecha=? WHERE idPresupuesto=?");
+					"precioGasolina=?, isGanancia=?, isCanarias=?, porcentaje=?, totalConIva=?, totalSinIva=?, transporte=?, textoLinea=?, " +
+					"textoFormaPago=?, textoExplicativo=?, fecha=?, isTotalManual=?, totalManual=? WHERE idPresupuesto=?");
 			
 			
 		} catch (SQLException e) {
@@ -86,6 +87,8 @@ public class ListadoPresupuestos {
 				String textoFormaPago=rs.getString("textoFormaPago");
 				String textoExplicativo=rs.getString("textoExplicativo");
 				Date fecha=rs.getDate("fecha");
+				boolean isTotalManual=rs.getBoolean("isTotalManual");
+				int totalManual=rs.getInt("totalManual");
 				int totViajes=rs.getInt("totViajes");
 				double precioGasolina=rs.getDouble("precioGasolina");
 				double totalSinIva=rs.getDouble("totalSinIva");
@@ -93,7 +96,7 @@ public class ListadoPresupuestos {
 				
 				//creo el presupuesto y lo guardo en el vector
 				presupuestos.add(new Presupuestos(idPresupuesto, ganancia, restaurante, pasaje, combustible, otros, hotel, kilometros, totViajes, precioGasolina, 
-						isGanancia, isCanarias, porcentaje, totalConIva, totalSinIva, transporte, textoLinea, textoFormaPago, textoExplicativo, fecha,
+						isGanancia, isCanarias, porcentaje, totalConIva, totalSinIva, transporte, textoLinea, textoFormaPago, textoExplicativo, fecha, isTotalManual, totalManual,
 						idCliente, idDistribuidor));
 				//traigo el ultimo indice introducido
 				int index=presupuestos.size()-1;
@@ -170,12 +173,14 @@ public class ListadoPresupuestos {
 		String textoFormaPago=p.getTextoFormaPago();
 		String textoExplicativo=p.getTextoExplicativo();
 		Date fecha=p.getFecha();
+		boolean isTotalManual=p.isTotalManual();
+		int totalManual=p.getTotalManual();
 		int idDistribuidor=p.getIdDistribuidor();
 		
 		
 		Facturas f=new Facturas(ganancia, restaurante, pasaje, combustible, otros, hotel, kilometros, nViajes, precioGasolina, 
-				isGanancia, isCanarias, porcentaje, totalConIva, totalSinIva, transporte, textoLinea, textoFormaPago, textoExplicativo, fecha,
-				idCliente, idDistribuidor);
+				isGanancia, isCanarias, porcentaje, totalConIva, totalSinIva, transporte, textoLinea, textoFormaPago, textoExplicativo, fecha, 
+				isTotalManual, totalManual,	idCliente, idDistribuidor);
 		
 		f.addBD();
 		
@@ -241,7 +246,9 @@ public class ListadoPresupuestos {
 			psActualizarPresupuesto.setString(17, p.getTextoFormaPago());
 			psActualizarPresupuesto.setString(18, p.getTextoExplicativo());
 			psActualizarPresupuesto.setDate(19, p.getFecha());
-			psActualizarPresupuesto.setInt(20, id);
+			psActualizarPresupuesto.setBoolean(20, p.isTotalManual());
+			psActualizarPresupuesto.setInt(21, p.getTotalManual());
+			psActualizarPresupuesto.setInt(22, id);
 		
 			psActualizarPresupuesto.executeUpdate();
 			

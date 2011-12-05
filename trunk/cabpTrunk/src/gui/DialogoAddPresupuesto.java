@@ -156,12 +156,14 @@ public class DialogoAddPresupuesto extends JDialog {
 					String textoExplicativo=((PanelPresupuesto) panelPresupuesto).getTextoExplicativo();
 				    java.util.Date date = new Date();
 				    java.sql.Date fecha = new java.sql.Date(date.getTime());
-					
+				    boolean isTotalManual=((PanelPresupuesto) panelPresupuesto).getIsTotalmanual();
+					int totalManual=((PanelPresupuesto) panelPresupuesto).getTotalManual();
+				    
 					Vector<Vector> lineas=((PanelPresupuesto) panelPresupuesto).getLineas();
 					
 					Presupuestos p= new Presupuestos(ganancia, restaurante, pasaje, combustible, otros, hotel, kilometros, nViajes, 
-							precioGasolina, isGanancia, isCanarias, porcentaje, totalIva, totalSinIva, transporte, textoLinea, textoFormaPago, textoExplicativo, fecha,
-							idCliente, idDistribuidor);
+							precioGasolina, isGanancia, isCanarias, porcentaje, totalIva, totalSinIva, transporte, textoLinea, 
+							textoFormaPago, textoExplicativo, fecha, isTotalManual, totalManual, idCliente, idDistribuidor);
 					
 					p.addBD();
 					

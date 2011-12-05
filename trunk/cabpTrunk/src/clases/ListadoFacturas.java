@@ -76,12 +76,14 @@ public class ListadoFacturas {
 				int totViajes=rs.getInt("totViajes");
 				double precioGasolina=rs.getDouble("precioGasolina");
 				double totalSinIva=rs.getDouble("totalSinIva");
+				boolean isTotalManual= rs.getBoolean("isTotalManual");
+				int totalManual = rs.getInt("totalManual");
 				int idDistribuidor=rs.getInt("idDistribuidor");
 				
 				//creo la factura y lo guardo en el vector
 				facturas.add(new Facturas(idFactura, ganancia, restaurante, pasaje, combustible, otros, hotel, kilometros, totViajes, precioGasolina, 
 						isGanancia, isCanarias, porcentaje, totalConIva, totalSinIva, transporte, textoLinea, textoFormaPago, textoExplicativo, fecha,
-						idCliente, idDistribuidor));
+						isTotalManual, totalManual, idCliente, idDistribuidor));
 				//traigo el ultimo indice introducido
 				int index=facturas.size()-1;
 				//cargo las lineas

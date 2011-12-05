@@ -42,6 +42,8 @@ private Connection dbConnect=Conectar.getConnection();
 	private String textoExplicativo;
 	private ListadoLineaFactura listadoLineaFactura=null;
 	private Date fecha;
+	private boolean isTotalManual;
+	private int totalManual;
 	private int idCliente;
 	private int idDistribuidor;
 	
@@ -66,6 +68,8 @@ private Connection dbConnect=Conectar.getConnection();
 	 * @param textoFormaPago
 	 * @param textoExplicativo
 	 * @param fecha
+	 * @param isTotalManual
+	 * @param totalManual
 	 * @param idCliente
 	 * @param idDistribuidor
 	 */
@@ -73,12 +77,12 @@ private Connection dbConnect=Conectar.getConnection();
 			int pasaje, int combustible, int otros, int hotel, int kilometros,
 			int nViajes, double precioGasolina, boolean isGanancia, boolean isCanarias,
 			int porcentaje, double totalConIva, double totalSinIva,
-			int transporte, String textoLinea, String textoFormaPago, String textoExplicativo, Date fecha,
+			int transporte, String textoLinea, String textoFormaPago, String textoExplicativo, Date fecha, boolean isTotalManual, int totalManual,
 			int idCliente, int idDistribuidor) {
 		
 		this(ganancia, restaurante, pasaje, combustible, otros, hotel, kilometros, nViajes, precioGasolina, isGanancia, isCanarias,
 				porcentaje, totalConIva, totalSinIva, transporte, textoLinea, textoFormaPago, textoExplicativo
-				, fecha, idCliente, idDistribuidor);
+				, fecha, isTotalManual, totalManual, idCliente, idDistribuidor);
 		
 		this.idFactura = idFactura;
 		listadoLineaFactura.setIdFactura(idFactura);
@@ -106,6 +110,8 @@ private Connection dbConnect=Conectar.getConnection();
 	 * @param textoFormaPago
 	 * @param textoExplicativo
 	 * @param fecha
+	 * @param isTotalManual
+	 * @param totalManual
 	 * @param idCliente
 	 * @param idDistribuidor
 	 */
@@ -114,7 +120,7 @@ private Connection dbConnect=Conectar.getConnection();
 			int nViajes, double precioGasolina, boolean isGanancia, boolean isCanarias,
 			int porcentaje, double totalConIva, double totalSinIva,
 			int transporte, String textoLinea, String textoFormaPago, String textoExplicativo,
-			Date fecha, int idCliente, int idDistribuidor) {
+			Date fecha, boolean isTotalManual, int totalManual, int idCliente, int idDistribuidor) {
 		
 		this.ganancia = ganancia;
 		this.restaurante = restaurante;
@@ -135,6 +141,8 @@ private Connection dbConnect=Conectar.getConnection();
 		this.textoFormaPago = textoFormaPago;
 		this.textoExplicativo = textoExplicativo;
 		this.fecha = fecha;
+		this.isTotalManual = isTotalManual;
+		this.totalManual = totalManual;
 		this.idCliente = idCliente;
 		this.idDistribuidor=idDistribuidor;
 		
@@ -149,7 +157,7 @@ private Connection dbConnect=Conectar.getConnection();
 			PreparedStatement ps=dbConnect.prepareStatement("INSERT INTO facturas(ganancia, restaurante, pasaje, combustible, otros, " +
 					"hotel, kilometros, isGanancia, isCanarias, porcentaje, totalConIva, transporte, textoLinea, textoFormaPago, textoExplicativo" +
 					", idCliente, totViajes, precioGasolina, " +
-					"totalSinIva, fecha, idDistribuidor) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
+					"totalSinIva, fecha, isTotalManual, totalManual, idDistribuidor) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
 			
 			ps.setInt(1, ganancia);
 			ps.setInt(2, restaurante);
@@ -171,7 +179,9 @@ private Connection dbConnect=Conectar.getConnection();
 			ps.setDouble(18, precioGasolina);
 			ps.setDouble(19, totalSinIva);
 			ps.setDate(20, fecha);
-			ps.setInt(21, idDistribuidor);
+			ps.setBoolean(21, isTotalManual);
+			ps.setInt(22, totalManual);
+			ps.setInt(23, idDistribuidor);
 			
 			ps.executeUpdate();
 			
@@ -368,6 +378,204 @@ private Connection dbConnect=Conectar.getConnection();
 	public Date getFecha() {
 		return fecha;
 	}
+
+	/**
+	 * @return the isTotalManual
+	 */
+	public boolean isTotalManual() {
+		return isTotalManual;
+	}
+
+	/**
+	 * @return the totalManual
+	 */
+	public int getTotalManual() {
+		return totalManual;
+	}
+
+	/**
+	 * @param dbConnect the dbConnect to set
+	 */
+	public void setDbConnect(Connection dbConnect) {
+		this.dbConnect = dbConnect;
+	}
+
+	/**
+	 * @param idFactura the idFactura to set
+	 */
+	public void setIdFactura(int idFactura) {
+		this.idFactura = idFactura;
+	}
+
+	/**
+	 * @param ganancia the ganancia to set
+	 */
+	public void setGanancia(int ganancia) {
+		this.ganancia = ganancia;
+	}
+
+	/**
+	 * @param restaurante the restaurante to set
+	 */
+	public void setRestaurante(int restaurante) {
+		this.restaurante = restaurante;
+	}
+
+	/**
+	 * @param pasaje the pasaje to set
+	 */
+	public void setPasaje(int pasaje) {
+		this.pasaje = pasaje;
+	}
+
+	/**
+	 * @param combustible the combustible to set
+	 */
+	public void setCombustible(int combustible) {
+		this.combustible = combustible;
+	}
+
+	/**
+	 * @param otros the otros to set
+	 */
+	public void setOtros(int otros) {
+		this.otros = otros;
+	}
+
+	/**
+	 * @param hotel the hotel to set
+	 */
+	public void setHotel(int hotel) {
+		this.hotel = hotel;
+	}
+
+	/**
+	 * @param kilometros the kilometros to set
+	 */
+	public void setKilometros(int kilometros) {
+		this.kilometros = kilometros;
+	}
+
+	/**
+	 * @param nViajes the nViajes to set
+	 */
+	public void setnViajes(int nViajes) {
+		this.nViajes = nViajes;
+	}
+
+	/**
+	 * @param precioGasolina the precioGasolina to set
+	 */
+	public void setPrecioGasolina(double precioGasolina) {
+		this.precioGasolina = precioGasolina;
+	}
+
+	/**
+	 * @param isGanancia the isGanancia to set
+	 */
+	public void setGanancia(boolean isGanancia) {
+		this.isGanancia = isGanancia;
+	}
+
+	/**
+	 * @param isCanarias the isCanarias to set
+	 */
+	public void setCanarias(boolean isCanarias) {
+		this.isCanarias = isCanarias;
+	}
+
+	/**
+	 * @param porcentaje the porcentaje to set
+	 */
+	public void setPorcentaje(int porcentaje) {
+		this.porcentaje = porcentaje;
+	}
+
+	/**
+	 * @param totalConIva the totalConIva to set
+	 */
+	public void setTotalConIva(double totalConIva) {
+		this.totalConIva = totalConIva;
+	}
+
+	/**
+	 * @param totalSinIva the totalSinIva to set
+	 */
+	public void setTotalSinIva(double totalSinIva) {
+		this.totalSinIva = totalSinIva;
+	}
+
+	/**
+	 * @param transporte the transporte to set
+	 */
+	public void setTransporte(int transporte) {
+		this.transporte = transporte;
+	}
+
+	/**
+	 * @param textoLinea the textoLinea to set
+	 */
+	public void setTextoLinea(String textoLinea) {
+		this.textoLinea = textoLinea;
+	}
+
+	/**
+	 * @param textoFormaPago the textoFormaPago to set
+	 */
+	public void setTextoFormaPago(String textoFormaPago) {
+		this.textoFormaPago = textoFormaPago;
+	}
+
+	/**
+	 * @param textoExplicativo the textoExplicativo to set
+	 */
+	public void setTextoExplicativo(String textoExplicativo) {
+		this.textoExplicativo = textoExplicativo;
+	}
+
+	/**
+	 * @param listadoLineaFactura the listadoLineaFactura to set
+	 */
+	public void setListadoLineaFactura(ListadoLineaFactura listadoLineaFactura) {
+		this.listadoLineaFactura = listadoLineaFactura;
+	}
+
+	/**
+	 * @param fecha the fecha to set
+	 */
+	public void setFecha(Date fecha) {
+		this.fecha = fecha;
+	}
+
+	/**
+	 * @param isTotalManual the isTotalManual to set
+	 */
+	public void setTotalManual(boolean isTotalManual) {
+		this.isTotalManual = isTotalManual;
+	}
+
+	/**
+	 * @param totalManual the totalManual to set
+	 */
+	public void setTotalManual(int totalManual) {
+		this.totalManual = totalManual;
+	}
+
+	/**
+	 * @param idCliente the idCliente to set
+	 */
+	public void setIdCliente(int idCliente) {
+		this.idCliente = idCliente;
+	}
+
+	/**
+	 * @param idDistribuidor the idDistribuidor to set
+	 */
+	public void setIdDistribuidor(int idDistribuidor) {
+		this.idDistribuidor = idDistribuidor;
+	}
+	
+	
 	
 	
 

@@ -42,6 +42,8 @@ public class Presupuestos {
 	private String textoExplicativo;
 	private ListadoLineaPresup listadoLineaPresup=null;
 	private Date fecha;
+	private boolean isTotalManual;
+	private int totalManual;
 	private int idCliente;
 	private int idDistribuidor;
 	/**
@@ -65,6 +67,8 @@ public class Presupuestos {
 	 * @param textoFormaPago
 	 * @param textoExplicativo
 	 * @param fecha
+	 * @param isTotalManual
+	 * @param totalManual
 	 * @param idCliente
 	 * @param idDistribuidor
 	 */
@@ -72,12 +76,12 @@ public class Presupuestos {
 			int pasaje, int combustible, int otros, int hotel, int kilometros,
 			int nViajes, double precioGasolina, boolean isGanancia, boolean isCanarias,
 			int porcentaje, double totalConIva, double totalSinIva,
-			int transporte, String textoLinea, String textoFormaPago, String textoExplicativo, Date fecha,
+			int transporte, String textoLinea, String textoFormaPago, String textoExplicativo, Date fecha, boolean isTotalManual, int totalManual,
 			int idCliente, int idDistribuidor) {
 		
 		this(ganancia, restaurante, pasaje, combustible, otros, hotel, kilometros, nViajes, precioGasolina, isGanancia, isCanarias,
 				porcentaje, totalConIva, totalSinIva, transporte, textoLinea, textoFormaPago, textoExplicativo,
-				fecha, idCliente, idDistribuidor);
+				fecha, isTotalManual, totalManual, idCliente, idDistribuidor);
 		
 		this.idPresupuesto = idPresupuesto;
 		listadoLineaPresup.setIdPresupuesto(idPresupuesto);
@@ -105,6 +109,8 @@ public class Presupuestos {
 	 * @param textoFormaPago
 	 * @param textoExplicativo
 	 * @param fecha
+	 * @param isTotalManual
+	 * @param totalManual
 	 * @param idCliente
 	 * @param idDistribuidor
 	 */
@@ -112,7 +118,7 @@ public class Presupuestos {
 			int pasaje, int combustible, int otros, int hotel, int kilometros,
 			int nViajes, double precioGasolina, boolean isGanancia, boolean isCanarias,
 			int porcentaje, double totalConIva, double totalSinIva,
-			int transporte, String textoLinea, String textoFormaPago, String textoExplicativo, Date fecha,
+			int transporte, String textoLinea, String textoFormaPago, String textoExplicativo, Date fecha, boolean isTotalManual, int totalManual,
 			int idCliente, int idDistribuidor) {
 		
 		this.ganancia = ganancia;
@@ -134,6 +140,8 @@ public class Presupuestos {
 		this.textoFormaPago = textoFormaPago;
 		this.textoExplicativo = textoExplicativo;
 		this.fecha = fecha;
+		this.isTotalManual = isTotalManual;
+		this.totalManual = totalManual;
 		this.idCliente = idCliente;
 		this.idDistribuidor=idDistribuidor;
 		
@@ -148,7 +156,7 @@ public class Presupuestos {
 			PreparedStatement ps=dbConnect.prepareStatement("INSERT INTO presupuestos(ganancia, restaurante, pasaje, combustible, otros, " +
 					"hotel, kilometros, isGanancia, isCanarias, porcentaje, totalConIva, transporte, textoLinea, textoFormaPago, textoExplicativo, fecha" +
 					", idCliente, totViajes, precioGasolina, " +
-					"totalSinIva, idDistribuidor) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
+					"totalSinIva, isTotalManual, totalManual, idDistribuidor) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
 			
 			ps.setInt(1, ganancia);
 			ps.setInt(2, restaurante);
@@ -170,7 +178,9 @@ public class Presupuestos {
 			ps.setInt(18, nViajes);
 			ps.setDouble(19, precioGasolina);
 			ps.setDouble(20, totalSinIva);
-			ps.setInt(21, idDistribuidor);
+			ps.setBoolean(21, isTotalManual);
+			ps.setInt(22, totalManual);
+			ps.setInt(23, idDistribuidor);
 			
 			ps.executeUpdate();
 			
@@ -540,6 +550,34 @@ public class Presupuestos {
 	 */
 	public void setFecha(Date fecha) {
 		this.fecha = fecha;
+	}
+
+	/**
+	 * @return the isTotalManual
+	 */
+	public boolean isTotalManual() {
+		return isTotalManual;
+	}
+
+	/**
+	 * @param isTotalManual the isTotalManual to set
+	 */
+	public void setTotalManual(boolean isTotalManual) {
+		this.isTotalManual = isTotalManual;
+	}
+
+	/**
+	 * @return the totalManual
+	 */
+	public int getTotalManual() {
+		return totalManual;
+	}
+
+	/**
+	 * @param totalManual the totalManual to set
+	 */
+	public void setTotalManual(int totalManual) {
+		this.totalManual = totalManual;
 	}
 
 	
