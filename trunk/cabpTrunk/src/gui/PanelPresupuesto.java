@@ -25,7 +25,11 @@ import javax.swing.BorderFactory;
 import javax.swing.border.TitledBorder;
 import java.awt.Color;
 import java.awt.event.KeyEvent;
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -60,7 +64,7 @@ import javax.swing.BoxLayout;
 public class PanelPresupuesto extends JPanel {
 
 	private static final long serialVersionUID = 1L;
-	private final double IVA=0.08;
+	private double IVA;
 	private final double IMPUESTOgANANCIA=0.2;
 	private JPanel panelTitulo = null;
 	private JPanel panelDatos = null;
@@ -177,6 +181,21 @@ public class PanelPresupuesto extends JPanel {
 		this.add(getPanelDatos(), BorderLayout.CENTER);
 		this.add(getScrollTexto(), BorderLayout.SOUTH);
 		this.add(getPanelCuadrados(), BorderLayout.EAST);
+		
+		try{
+			
+			File archivo = new File("iva.cabp");
+			FileReader fr = new FileReader(archivo);
+			BufferedReader br = new BufferedReader(fr);
+			IVA=Double.parseDouble(br.readLine())/100.0;
+			
+		}catch(FileNotFoundException e){
+			JOptionPane.showMessageDialog(null, e.getMessage());
+		} catch (NumberFormatException e) {
+			JOptionPane.showMessageDialog(null, e.getMessage());
+		} catch (IOException e) {
+			JOptionPane.showMessageDialog(null, e.getMessage());
+		}
 	}
 
 	/**
@@ -2189,6 +2208,7 @@ public class PanelPresupuesto extends JPanel {
 			tfTotalManual = new JTextField();
 			tfTotalManual.setPreferredSize(new Dimension(80, 20));
 			tfTotalManual.setMinimumSize(new Dimension(80, 20));
+			tfTotalManual.setText("0");
 			tfTotalManual.setEnabled(false);
 			tfTotalManual.addFocusListener(new java.awt.event.FocusAdapter() {   
 				public void focusGained(java.awt.event.FocusEvent e) {    
