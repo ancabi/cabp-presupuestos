@@ -155,6 +155,8 @@ public class PanelPresupuesto extends JPanel {
 	private SimpleDateFormat formateadorFecha = new SimpleDateFormat("dd/MM/yyyy");  //  @jve:decl-index=0:
 	private JScrollPane scrollFormaPago = null;
 	private JScrollPane scrollExplicativo = null;
+	private JCheckBox cbTotalManual = null;
+	private JTextField tfTotalManual = null;
 	/**
 	 * This is the default constructor
 	 */
@@ -169,7 +171,7 @@ public class PanelPresupuesto extends JPanel {
 	 * @return void
 	 */
 	private void initialize() {
-		this.setSize(1149, 606);
+		this.setSize(1148, 606);
 		this.setLayout(new BorderLayout());
 		this.add(getPanelTitulo(), BorderLayout.NORTH);
 		this.add(getPanelDatos(), BorderLayout.CENTER);
@@ -368,6 +370,16 @@ public class PanelPresupuesto extends JPanel {
 	 */
 	private JPanel getPanelGastos() {
 		if (panelGastos == null) {
+			GridBagConstraints gridBagConstraints210 = new GridBagConstraints();
+			gridBagConstraints210.fill = GridBagConstraints.VERTICAL;
+			gridBagConstraints210.gridy = 0;
+			gridBagConstraints210.weightx = 1.0;
+			gridBagConstraints210.anchor = GridBagConstraints.WEST;
+			gridBagConstraints210.insets = new Insets(2, 10, 2, 2);
+			gridBagConstraints210.gridx = 4;
+			GridBagConstraints gridBagConstraints113 = new GridBagConstraints();
+			gridBagConstraints113.gridx = 3;
+			gridBagConstraints113.gridy = 0;
 			GridBagConstraints gridBagConstraints110 = new GridBagConstraints();
 			gridBagConstraints110.gridx = 1;
 			gridBagConstraints110.gridy = 9;
@@ -546,6 +558,8 @@ public class PanelPresupuesto extends JPanel {
 			panelGastos.add(getCbGanancia(), gridBagConstraints141);
 			panelGastos.add(getPanelPorcentaje(), gridBagConstraints151);
 			panelGastos.add(getCbCanarias(), gridBagConstraints110);
+			panelGastos.add(getCbTotalManual(), gridBagConstraints113);
+			panelGastos.add(getTfTotalManual(), gridBagConstraints210);
 		}
 		return panelGastos;
 	}
@@ -1435,14 +1449,17 @@ public class PanelPresupuesto extends JPanel {
 			lblTotalGastos.setText(totalGastos+" €");
 			
 			
-			
-			for(int x=0; x<modelo.getRowCount(); x++){
-				
-				double precio=Double.parseDouble(modelo.getValueAt(x, 2).toString());
-				int cantidad=Integer.parseInt(modelo.getValueAt(x, 3).toString());
-				
-				totalNeto+=precio*cantidad;
-				
+			if(!cbTotalManual.isSelected()){
+				for(int x=0; x<modelo.getRowCount(); x++){
+					
+					double precio=Double.parseDouble(modelo.getValueAt(x, 2).toString());
+					int cantidad=Integer.parseInt(modelo.getValueAt(x, 3).toString());
+					
+					totalNeto+=precio*cantidad;
+					
+				}
+			}else{
+				totalNeto=Integer.parseInt(tfTotalManual.getText());
 			}
 			
 			lblPrecioNeto.setText(formateador.format(totalNeto)+" €");
@@ -1557,6 +1574,9 @@ public class PanelPresupuesto extends JPanel {
 		taTexto.setText("");
 		taExplicativo.setText("");
 		taFormaPago.setText("");
+		
+		tfTotalManual.setText("");
+		cbTotalManual.setSelected(false);
 		
 		//btnPrint.setEnabled(false);
 		
@@ -1717,12 +1737,15 @@ public class PanelPresupuesto extends JPanel {
 		taTexto.setText(p.getTextoLinea());
 		taFormaPago.setText(p.getTextoFormaPago());
 		taExplicativo.setText(p.getTextoExplicativo());
+		tfTotalManual.setText(""+p.getTotalManual());
 		id=p.getIdPresupuesto();
 		p.getIdCliente();
 		
 		cbGanancia.setSelected(p.isGanancia());
 		
 		cbCanarias.setSelected(p.isCanarias());
+		
+		cbTotalManual.setSelected(p.isTotalManual());
 		
 		lblFecha.setText(formateadorFecha.format(p.getFecha()));
 		
@@ -1754,11 +1777,13 @@ public class PanelPresupuesto extends JPanel {
 		tablaProductos.setEnabled(false);
 		taExplicativo.setEditable(b);
 		taFormaPago.setEditable(b);
+		tfTotalManual.setEditable(b);
 		
 		//estos son distintos
 		cbGanancia.setEnabled(b);
 		cbProductos.setEnabled(b);
 		cbCanarias.setEnabled(b);
+		cbTotalManual.setEnabled(b);
 		
 	}
 
@@ -1816,11 +1841,14 @@ public class PanelPresupuesto extends JPanel {
 		taTexto.setText(f.getTextoLinea());
 		taFormaPago.setText(f.getTextoFormaPago());
 		taExplicativo.setText(f.getTextoExplicativo());
+		tfTotalManual.setText(""+f.getTotalManual());
 		id=f.getIdFactura();
 		
 		cbGanancia.setSelected(f.isGanancia());
 		
 		cbCanarias.setSelected(f.isCanarias());
+		
+		cbTotalManual.setSelected(f.isTotalManual());
 		
 		lblFecha.setText(formateadorFecha.format(f.getFecha()));
 		
@@ -1977,6 +2005,7 @@ public class PanelPresupuesto extends JPanel {
 			gridBagConstraints39.weightx = 1.0;
 			gridBagConstraints39.weighty = 1.0;
 			gridBagConstraints39.insets = new Insets(2, 10, 2, 2);
+			gridBagConstraints39.gridwidth = 1;
 			gridBagConstraints39.gridx = 0;
 			GridBagConstraints gridBagConstraints38 = new GridBagConstraints();
 			gridBagConstraints38.gridx = 0;
@@ -1995,6 +2024,9 @@ public class PanelPresupuesto extends JPanel {
 			panelTextos = new JPanel();
 			panelTextos.setLayout(new GridBagLayout());
 			panelTextos.setVisible(true);
+			panelTextos.setPreferredSize(new Dimension(323, 86));
+			panelTextos.setMaximumSize(new Dimension(323, 86));
+			panelTextos.setMinimumSize(new Dimension(323, 86));
 			panelTextos.add(lblFormaPago, gridBagConstraints37);
 			panelTextos.add(lblExplicativo, gridBagConstraints38);
 			panelTextos.add(getScrollFormaPago(), gridBagConstraints39);
@@ -2013,6 +2045,7 @@ public class PanelPresupuesto extends JPanel {
 			taFormaPago = new JTextArea();
 			taFormaPago.setMaximumSize(new Dimension(100, 100));
 			taFormaPago.setLineWrap(true);
+			taFormaPago.setPreferredSize(new Dimension(320, 16));
 			taFormaPago.setText("");
 		}
 		return taFormaPago;
@@ -2091,6 +2124,7 @@ public class PanelPresupuesto extends JPanel {
 	private JScrollPane getScrollFormaPago() {
 		if (scrollFormaPago == null) {
 			scrollFormaPago = new JScrollPane();
+			scrollFormaPago.setPreferredSize(new Dimension(323, 19));
 			scrollFormaPago.setViewportView(getTaFormaPago());
 		}
 		return scrollFormaPago;
@@ -2104,6 +2138,7 @@ public class PanelPresupuesto extends JPanel {
 	private JScrollPane getScrollExplicativo() {
 		if (scrollExplicativo == null) {
 			scrollExplicativo = new JScrollPane();
+			scrollExplicativo.setPreferredSize(new Dimension(323, 19));
 			scrollExplicativo.setViewportView(getTaExplicativo());
 		}
 		return scrollExplicativo;
@@ -2115,6 +2150,85 @@ public class PanelPresupuesto extends JPanel {
 	    java.sql.Date fecha = new java.sql.Date(date.getTime());
 		lblFecha.setText(formateadorFecha.format(fecha));
 		
+	}
+
+	/**
+	 * This method initializes cbTotalManual	
+	 * 	
+	 * @return javax.swing.JCheckBox	
+	 */
+	private JCheckBox getCbTotalManual() {
+		if (cbTotalManual == null) {
+			cbTotalManual = new JCheckBox();
+			cbTotalManual.addChangeListener(new javax.swing.event.ChangeListener() {
+				public void stateChanged(javax.swing.event.ChangeEvent e) {
+					if(cbTotalManual.isSelected()){
+						
+						tfTotalManual.setEnabled(true);
+						
+						actualizarValores();
+						
+					}else{
+						//tfTotalManual.setText("0");
+						tfTotalManual.setEnabled(false);
+						actualizarValores();
+					}
+				}
+			});
+		}
+		return cbTotalManual;
+	}
+
+	/**
+	 * This method initializes tfTotalManual	
+	 * 	
+	 * @return javax.swing.JTextField	
+	 */
+	private JTextField getTfTotalManual() {
+		if (tfTotalManual == null) {
+			tfTotalManual = new JTextField();
+			tfTotalManual.setPreferredSize(new Dimension(80, 20));
+			tfTotalManual.setMinimumSize(new Dimension(80, 20));
+			tfTotalManual.setEnabled(false);
+			tfTotalManual.addFocusListener(new java.awt.event.FocusAdapter() {   
+				public void focusGained(java.awt.event.FocusEvent e) {    
+					if(tfTotalManual.isEnabled() && tfTotalManual.isEditable()){
+						tfTotalManual.setText("");
+					}
+				}
+				public void focusLost(java.awt.event.FocusEvent e) {
+					if(tfTotalManual.isEnabled()){
+						
+						if(tfTotalManual.getText().equals("") && tfTotalManual.isEditable()){
+							tfTotalManual.setText("0");
+						}else{
+							//actualizo los valores
+							actualizarValores();
+						}
+					}
+				}
+			});
+			tfTotalManual.addActionListener(new java.awt.event.ActionListener() {
+				public void actionPerformed(java.awt.event.ActionEvent e) {
+					if(tfTotalManual.getText().equals("")){
+						tfTotalManual.setText("0");
+					}else{
+						//actualizo los valores
+						actualizarValores();
+					}
+				}
+			});
+		}
+		return tfTotalManual;
+	}
+
+	public boolean getIsTotalmanual() {
+		
+		return cbTotalManual.isSelected();
+	}
+	
+	public int getTotalManual(){
+		return Integer.parseInt(tfTotalManual.getText());
 	}
 
 	

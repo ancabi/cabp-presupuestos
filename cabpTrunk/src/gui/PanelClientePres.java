@@ -56,7 +56,7 @@ public class PanelClientePres extends JPanel {
 	 * @return void
 	 */
 	private void initialize() {
-		this.setSize(747, 488);
+		this.setSize(1343, 657);
 		this.setLayout(new BorderLayout());
 		this.add(getTreePresupuestos(), BorderLayout.WEST);
 		this.add(getPanelPresupuesto(), BorderLayout.CENTER);
@@ -100,7 +100,7 @@ public class PanelClientePres extends JPanel {
 							
 							}catch(NumberFormatException e1){
 								id=-1;
-								
+
 								limpiarCampos();
 							}catch(NullPointerException e1){
 								//no se porque salta esta excepcion

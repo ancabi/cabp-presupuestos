@@ -145,11 +145,14 @@ public class DialogoAddFactura extends JDialog {
 					String textoExplicativo=((PanelPresupuesto) panelPresupuesto).getTextoExplicativo();
 				    java.util.Date date = new Date();
 				    java.sql.Date fecha = new java.sql.Date(date.getTime());
+				    boolean isTotalManual= ((PanelPresupuesto) panelPresupuesto).getIsTotalmanual();
+				    int totalManual=((PanelPresupuesto) panelPresupuesto).getTotalManual();
 					
 					Vector<Vector> lineas=((PanelPresupuesto) panelPresupuesto).getLineas();
 					
 					Facturas f= new Facturas(ganancia, restaurante, pasaje, combustible, otros, hotel, kilometros, nViajes, 
-							precioGasolina, isGanancia, isCanarias, porcentaje, totalIva, totalSinIva, transporte, textoLinea, textoFormaPago, textoExplicativo, fecha, idCliente, idDistribuidor);
+							precioGasolina, isGanancia, isCanarias, porcentaje, totalIva, totalSinIva, transporte, textoLinea, 
+							textoFormaPago, textoExplicativo, fecha, isTotalManual, totalManual, idCliente, idDistribuidor);
 					
 					f.addBD();
 					
@@ -239,6 +242,9 @@ public class DialogoAddFactura extends JDialog {
 	public void setIsPresupuesto(boolean b) {
 		
 		((PanelPresupuesto) panelPresupuesto).setIsPresupuesto(b);
+		
+		//le pongo la fecha al label
+		((PanelPresupuesto) panelPresupuesto).setLblFecha();
 		
 	}
 
