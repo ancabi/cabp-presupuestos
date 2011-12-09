@@ -1911,6 +1911,9 @@ public class PanelPresupuesto extends JPanel {
 						
 						if(isPresupuesto){
 							
+							//esto es para el nombre del fichero
+							tipo="presupuesto";
+							
 							param.put("concepto", taTexto.getText());
 							param.put("precioSinIva", lblTotalSinIva.getText());
 							param.put("id", id);
@@ -1919,11 +1922,14 @@ public class PanelPresupuesto extends JPanel {
 							param.put("provincia", c.getProvincia());
 							param.put("telefono", c.getTelefono());
 							param.put("IVA", lblIva.getText());
+							param.put("fecha", lblFecha.getText());
+							param.put("anio", lblFecha.getText().substring(6)); 
+							param.put("direccion", c.getDireccion());
+							param.put("dni", c.getDni());
+							param.put("tipo", "Presupuesto ");
+							param.put("textoExplicativo", taExplicativo.getText());
+							param.put("textoFormaPago", taFormaPago.getText());
 							param.put("total", lblTotalConIva.getText());
-							
-							//esto es para el nombre del fichero
-							tipo="presupuesto";
-							
 							
 						}else{
 							
@@ -1935,6 +1941,13 @@ public class PanelPresupuesto extends JPanel {
 							param.put("provincia", c.getProvincia());
 							param.put("telefono", c.getTelefono());
 							param.put("IVA", lblIva.getText());
+							param.put("fecha", lblFecha.getText());
+							param.put("anio", lblFecha.getText().substring(5)); 
+							param.put("direccion", c.getDireccion());
+							param.put("dni", c.getDni());
+							param.put("tipo", "Factura ");
+							param.put("textoExplicativo", taExplicativo.getText());
+							param.put("textoFormaPago", taFormaPago.getText());
 							param.put("total", lblTotalConIva.getText());
 							
 							//esto es para el nombre del fichero
@@ -1966,7 +1979,8 @@ public class PanelPresupuesto extends JPanel {
 					
 						
 					} catch (Exception e1) {
-						JOptionPane.showMessageDialog(null, e1.getMessage());
+						//JOptionPane.showMessageDialog(null, e1.getMessage());
+						e1.printStackTrace();
 					}
 					
 				}
