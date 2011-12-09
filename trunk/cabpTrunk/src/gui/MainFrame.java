@@ -683,6 +683,9 @@ public class MainFrame extends JFrame {
 				            if(fichero!=null){
 				            	fichero.close();
 				            }
+				            
+				            JOptionPane.showMessageDialog(null, "El IVA fue cambiado, reinicie el programa para que los cambios tengan efecto","Cambio de IVA", JOptionPane.INFORMATION_MESSAGE, null);
+				            
 						}
 						
 					} catch (FileNotFoundException e1) {

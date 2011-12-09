@@ -2248,7 +2248,11 @@ public class PanelPresupuesto extends JPanel {
 	}
 	
 	public int getTotalManual(){
-		return Integer.parseInt(tfTotalManual.getText());
+		try{
+			return Integer.parseInt(tfTotalManual.getText());
+		}catch(NumberFormatException e1){
+			return 0;
+		}
 	}
 
 	
