@@ -281,6 +281,7 @@ public class PanelPdf extends JPanel {
 			modelo.setHeader(head);
 			
 			tabla = new JTable(modelo);
+			tabla.setAutoCreateRowSorter(true);
 			tabla.addMouseListener(new java.awt.event.MouseAdapter() {
 				public void mouseClicked(java.awt.event.MouseEvent e) {
 					if (e.getClickCount() >= 2){

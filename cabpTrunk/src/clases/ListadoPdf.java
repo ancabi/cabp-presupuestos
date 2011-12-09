@@ -35,7 +35,7 @@ public class ListadoPdf {
 		
 		try {
 			
-			psPdf=dbConnect.prepareStatement("SELECT pdf, lastModified FROM pdf WHERE idCliente=?");
+			psPdf=dbConnect.prepareStatement("SELECT pdf, lastModified FROM pdf WHERE idCliente=? ORDER BY lastModified DESC");
 			
 			psAgregarPdf=dbConnect.prepareStatement("INSERT INTO pdf(idCliente, pdf, lastModified) VALUES(?,?,?)");
 			

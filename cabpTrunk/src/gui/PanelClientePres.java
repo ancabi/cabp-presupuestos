@@ -288,13 +288,14 @@ public class PanelClientePres extends JPanel {
 						
 						presupuestos.convertir(p);
 						
-						presupuestos.removeElement(p);
-						
-						cargarPresupuestos();
+						//no se debe borrar un presup al pasarlo a factura
+						//presupuestos.removeElement(p);
+						//
+						//cargarPresupuestos();
 						
 						((PanelClienteFactura) tabCliente.getPanelClienteFactura()).cargarFacturas();
 						
-						((PanelPresupuesto) panelPresupuesto).limpiarCampos();
+						//((PanelPresupuesto) panelPresupuesto).limpiarCampos();
 						
 						JOptionPane.showMessageDialog(null, "El presupuesto se ha convertido satisfactoriamente", "Conversion", JOptionPane.INFORMATION_MESSAGE);
 					

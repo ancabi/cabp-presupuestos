@@ -35,7 +35,7 @@ public class ListadoImagenes {
 		
 		try {
 			
-			psImagenes=dbConnect.prepareStatement("SELECT imagen, lastModified FROM imagenes WHERE idCliente=?");
+			psImagenes=dbConnect.prepareStatement("SELECT imagen, lastModified FROM imagenes WHERE idCliente=? ORDER BY lastModified DESC");
 			
 			psAgregarImagen=dbConnect.prepareStatement("INSERT INTO imagenes(idCliente, imagen, lastModified) VALUES(?,?,?)");
 			
