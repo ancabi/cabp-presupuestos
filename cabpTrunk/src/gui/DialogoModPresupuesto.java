@@ -227,7 +227,11 @@ public class DialogoModPresupuesto extends JDialog {
 							idProducto=(Integer) temp.get(0);
 							nomProducto=(String) temp.get(1);
 							precio=(Double) temp.get(2);
-							cantidad=Integer.parseInt(temp.get(3).toString());
+							try{
+								cantidad=Integer.parseInt(temp.get(3).toString());
+							}catch(NumberFormatException e1){
+								cantidad=0;
+							}
 							
 							
 							presupuestoActual.addLineaPresupuesto(idProducto, nomProducto, precio, cantidad);
