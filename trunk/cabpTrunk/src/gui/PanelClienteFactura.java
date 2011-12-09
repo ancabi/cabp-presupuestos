@@ -10,6 +10,7 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
 
+import clases.Cliente;
 import clases.ListadoFacturas;
 import clases.Facturas;
 import clases.Presupuestos;
@@ -30,6 +31,7 @@ public class PanelClienteFactura extends JPanel {
 	private DefaultTreeModel modelo;
 	private int id;
 	private DialogoModPresupuesto dialogoModPresupuesto;
+	private Cliente c;
 	
 	/**
 	 * This is the default constructor
@@ -113,6 +115,8 @@ public class PanelClienteFactura extends JPanel {
 							dialogoModPresupuesto.setFactura(f);
 							//cargo los productos del distribuidor asignado
 							dialogoModPresupuesto.cargarProductos();
+							//le paso el cliente
+							dialogoModPresupuesto.setIdCliente(c);
 							//lo pongo visible
 							dialogoModPresupuesto.setVisible(true);
 							//si acepto
@@ -152,11 +156,15 @@ public class PanelClienteFactura extends JPanel {
 		return panelPresupuesto;
 	}
 	
-	public void setIdCliente(int idCliente){
+	public void setIdCliente(Cliente c){
 		
-		facturas.setIdCliente(idCliente);
+		facturas.setIdCliente(c.getIdCliente());
 		//cargo las facturas del cliente que acabo de traer
 		facturas.cargarFacturas();
+		
+		this.c=c;
+		
+		((PanelPresupuesto) panelPresupuesto).setCliente(c);
 		
 		cargarTree();
 		

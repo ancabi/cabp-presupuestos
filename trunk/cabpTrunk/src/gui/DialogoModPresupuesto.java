@@ -13,6 +13,7 @@ import java.util.Vector;
 import javax.swing.JDialog;
 
 
+import clases.Cliente;
 import clases.Facturas;
 import clases.ListadoProductos;
 import clases.Presupuestos;
@@ -30,9 +31,10 @@ public class DialogoModPresupuesto extends JDialog {
 	private int idCliente;
 	private int valorPulsado=0;
 	private Presupuestos presupuestoActual;  //  @jve:decl-index=0:
-	private ListadoProductos listadoProductos;
-	private Facturas facturaActual;  
+	private ListadoProductos listadoProductos;  //  @jve:decl-index=0:
+	private Facturas facturaActual;  //  @jve:decl-index=0:
 	private boolean isFactura=false;
+	private Cliente c;
 
 	/**
 	 * @param panelClientePres
@@ -283,8 +285,12 @@ public class DialogoModPresupuesto extends JDialog {
 	/**
 	 * @param idCliente the idCliente to set
 	 */
-	public void setIdCliente(int idCliente) {
-		this.idCliente = idCliente;
+	public void setIdCliente(Cliente c) {
+		this.idCliente = c.getIdCliente();
+		
+		this.c=c;
+		
+		((PanelPresupuesto) panelPresupuesto).setCliente(c);
 	}
 
 	public void cargarProductos(){

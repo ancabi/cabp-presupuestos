@@ -67,6 +67,7 @@ public class PanelPdf extends JPanel {
 	private ListadoPdf listado;  //  @jve:decl-index=0:
 	private JFileChooser fc;
 	private SimpleDateFormat formateador = new SimpleDateFormat("dd/MM/yyyy H:mm");
+	private RandomAccessFile raf;
 	/**
 	 * This is the default constructor
 	 */
@@ -217,6 +218,12 @@ public class PanelPdf extends JPanel {
 
 					
 					if(index>=0){
+						if(index>0){
+							previsualizarPdf(index-1);
+						}else{
+							previsualizarPdf(1);
+						}
+						
 						//lo borro de la BD
 						listado.removeElementAt(index);
 						//traigo el objeto Imagen
@@ -225,9 +232,7 @@ public class PanelPdf extends JPanel {
 						File f=new File(clienteActual.getIdCliente()+clienteActual.getNomSinEspacios()+clienteActual.getApelSinEspacios()+"/"+p.getName());
 						//lo borro
 						f.delete();
-						
-						//lblPrev.setIcon(null);
-						
+	
 						cargarPdf();
 						
 					}
@@ -320,8 +325,6 @@ public class PanelPdf extends JPanel {
 							}
 						}
 						
-						
-						
 					}else{
 						//traigo la seleccion
 						int index=tabla.getSelectedRow();
@@ -329,30 +332,8 @@ public class PanelPdf extends JPanel {
 						index=tabla.convertRowIndexToModel(index);
 							
 						
-						//traigo el objeto Imagen
-						Pdf p=listado.getPdf(index);
-							
-						//Consigo el objeto file
-						File f=new File(clienteActual.getIdCliente()+clienteActual.getNomSinEspacios()+clienteActual.getApelSinEspacios()+"/"+p.getName());
-							
-						try {
-							RandomAccessFile raf = new RandomAccessFile(f, "r");
-							
-							FileChannel channel = raf.getChannel();
-							
-							ByteBuffer buf = channel.map(FileChannel.MapMode.READ_ONLY, 0, channel.size());
-							
-							PDFFile pdffile = new PDFFile(buf);
-							
-							PDFPage page = pdffile.getPage(0);
-							
-							((PagePanel) panelPrev).showPage(page);
-							
-						} catch (FileNotFoundException e1) {
-							JOptionPane.showMessageDialog(null, e1.getMessage());
-						} catch (IOException e2) {
-							JOptionPane.showMessageDialog(null, e2.getMessage());
-						}
+						previsualizarPdf(index);
+						
 				}
 				}
 			});
@@ -421,4 +402,37 @@ public class PanelPdf extends JPanel {
 		return null;
 	}
 
+	private void previsualizarPdf(int index){
+		
+		//traigo el objeto Imagen
+		Pdf p=listado.getPdf(index);
+			
+		//Consigo el objeto file
+		File f=new File(clienteActual.getIdCliente()+clienteActual.getNomSinEspacios()+clienteActual.getApelSinEspacios()+"/"+p.getName());
+			
+		try {
+			
+			if(raf!=null){
+				raf.close();
+			}
+			
+			raf = new RandomAccessFile(f, "r");
+			
+			FileChannel channel = raf.getChannel();
+			
+			ByteBuffer buf = channel.map(FileChannel.MapMode.READ_ONLY, 0, channel.size());
+			
+			PDFFile pdffile = new PDFFile(buf);
+			
+			PDFPage page = pdffile.getPage(0);
+			
+			((PagePanel) panelPrev).showPage(page);
+
+			
+		} catch (FileNotFoundException e1) {
+			JOptionPane.showMessageDialog(null, e1.getMessage());
+		} catch (IOException e2) {
+			JOptionPane.showMessageDialog(null, e2.getMessage());
+		}
+	}
 }  //  @jve:decl-index=0:visual-constraint="10,10"

@@ -105,9 +105,9 @@ public class TabCliente extends JTabbedPane {
 		//pongo agregar a false
 		((PanelDatosClientes) panelDatos).setAgregar();
 		
-		((PanelClientePres) panelClientePres).setIdCliente(c.getIdCliente());
+		((PanelClientePres) panelClientePres).setIdCliente(c);
 		
-		((PanelClienteFactura) panelClienteFactura).setIdCliente(c.getIdCliente());
+		((PanelClienteFactura) panelClienteFactura).setIdCliente(c);
 		
 		((PanelImagenes) panelImg).setCliente(c);
 		
