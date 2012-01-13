@@ -146,6 +146,10 @@ public class PanelPresupuesto extends JPanel {
 	private JButton btnPrint = null;
 	private int id;
 	private Cliente c;
+	private double valorA;
+	private double valorB;
+	private double valorC;
+	private double valorAux;
 	private JPanel panelCuadrados = null;
 	private JPanel panelTextos = null;
 	private JTextArea taFormaPago = null;
@@ -161,6 +165,7 @@ public class PanelPresupuesto extends JPanel {
 	private JScrollPane scrollExplicativo = null;
 	private JCheckBox cbTotalManual = null;
 	private JTextField tfTotalManual = null;
+	private JButton btnCalculoAux = null;
 	/**
 	 * This is the default constructor
 	 */
@@ -1682,6 +1687,7 @@ public class PanelPresupuesto extends JPanel {
 			panelHerramientas = new JPanel();
 			panelHerramientas.setLayout(new FlowLayout());
 			panelHerramientas.add(getBtnPrint(), null);
+			panelHerramientas.add(getBtnCalculoAux(), null);
 			panelHerramientas.add(getBtnBorrar(), null);
 		}
 		return panelHerramientas;
@@ -2267,6 +2273,41 @@ public class PanelPresupuesto extends JPanel {
 		}catch(NumberFormatException e1){
 			return 0;
 		}
+	}
+
+	/**
+	 * This method initializes btnCalculoAux	
+	 * 	
+	 * @return javax.swing.JButton	
+	 */
+	private JButton getBtnCalculoAux() {
+		if (btnCalculoAux == null) {
+			btnCalculoAux = new JButton();
+			btnCalculoAux.setIcon(new ImageIcon(getClass().getResource("/img/math.png")));
+			btnCalculoAux.addActionListener(new java.awt.event.ActionListener() {
+				public void actionPerformed(java.awt.event.ActionEvent e) {
+					
+					DialogoPitagoras dialogoPitagoras=new DialogoPitagoras(null);
+					
+					dialogoPitagoras.setVisible(true);
+					
+					if(dialogoPitagoras.getValorPulsado()==dialogoPitagoras.VALOR_ACEPTAR){
+						
+						valorA=dialogoPitagoras.getValorA();
+						
+						valorB=dialogoPitagoras.getValorB();
+						
+						valorC=dialogoPitagoras.getValorC();
+						
+						valorAux=dialogoPitagoras.getValorAux();
+						
+						
+					}
+					
+				}
+			});
+		}
+		return btnCalculoAux;
 	}
 
 	
