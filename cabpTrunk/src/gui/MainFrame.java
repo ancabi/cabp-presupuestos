@@ -287,7 +287,7 @@ public class MainFrame extends JFrame {
 	 * 	
 	 * @return javax.swing.JPanel	
 	 */
-	JPanel getPanelCliente() {
+	public JPanel getPanelCliente() {
 		if (panelCliente == null) {
 			panelCliente = new PanelCliente(this);
 			panelCliente.setName("panelCliente");

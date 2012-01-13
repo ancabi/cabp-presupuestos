@@ -75,6 +75,7 @@ public class DialogoPitagoras extends JDialog {
 		this.setContentPane(getJContentPane());
 		this.setModal(true);
 		this.setTitle("Calculo auxiliar");
+		this.setLocationRelativeTo(null);
 	}
 
 	/**
@@ -549,6 +550,17 @@ public class DialogoPitagoras extends JDialog {
 		lblTotalC.setText("0");
 		lblTotalMetros.setText("0");
 		lblTotalPlataforma.setText("0");
+		
+	}
+
+	public void setLayer(String panel) {
+		
+		//obetener el layout
+		CardLayout card=(CardLayout) panelCard.getLayout();
+		//si es el panel cliente, tiene que recargar la tabla
+		
+		//metodo next
+		card.show(getPanelCard(), panel);
 		
 	}
 	
