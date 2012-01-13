@@ -39,7 +39,9 @@ import java.util.Vector;
 import javax.swing.JCheckBox;
 
 import clases.Cliente;
+import clases.Distribuidor;
 import clases.Facturas;
+import clases.ListadoDistribuidores;
 import clases.ListadoLineaFactura;
 import clases.ListadoLineaPresup;
 import clases.ListadoPdf;
@@ -150,6 +152,8 @@ public class PanelPresupuesto extends JPanel {
 	private double valorB;
 	private double valorC;
 	private double valorAux;
+	private ListadoDistribuidores listado;
+	private Distribuidor d;
 	private JPanel panelCuadrados = null;
 	private JPanel panelTextos = null;
 	private JTextArea taFormaPago = null;
@@ -166,6 +170,7 @@ public class PanelPresupuesto extends JPanel {
 	private JCheckBox cbTotalManual = null;
 	private JTextField tfTotalManual = null;
 	private JButton btnCalculoAux = null;
+	private DialogoPitagoras dialogoPitagoras;
 	/**
 	 * This is the default constructor
 	 */
@@ -1775,8 +1780,23 @@ public class PanelPresupuesto extends JPanel {
 		lblFecha.setText(formateadorFecha.format(p.getFecha()));
 		
 		btnPrint.setEnabled(true);
+
+		//no se si será ineficiente pero seguro que si
+		listado.cargarDistribuidores();
+		d=listado.getDistribuidor(p.getIdDistribuidor());
 		
-		
+		if(d.getNombre()=="Stepper"){
+			
+			dialogoPitagoras=getDialogoPitagoras();
+			
+			dialogoPitagoras.setLayer("panelStepper");
+			
+		}else{
+
+			dialogoPitagoras=getDialogoPitagoras();
+			
+			dialogoPitagoras.setLayer("panelPitagoras");
+		}
 		
 		actualizarValores();
 		actualizarGasolina();
@@ -1878,6 +1898,23 @@ public class PanelPresupuesto extends JPanel {
 		lblFecha.setText(formateadorFecha.format(f.getFecha()));
 		
 		btnPrint.setEnabled(true);
+		
+		//no se si será ineficiente pero seguro que si
+		listado.cargarDistribuidores();
+		d=listado.getDistribuidor(f.getIdDistribuidor());
+		
+		if(d.getNombre()=="Stepper"){
+			
+			dialogoPitagoras=getDialogoPitagoras();
+			
+			dialogoPitagoras.setLayer("panelStepper");
+			
+		}else{
+
+			dialogoPitagoras=getDialogoPitagoras();
+			
+			dialogoPitagoras.setLayer("panelPitagoras");
+		}
 		
 		actualizarValores();
 		actualizarGasolina();
@@ -2287,7 +2324,7 @@ public class PanelPresupuesto extends JPanel {
 			btnCalculoAux.addActionListener(new java.awt.event.ActionListener() {
 				public void actionPerformed(java.awt.event.ActionEvent e) {
 					
-					DialogoPitagoras dialogoPitagoras=new DialogoPitagoras(null);
+					dialogoPitagoras=getDialogoPitagoras();
 					
 					dialogoPitagoras.setVisible(true);
 					
@@ -2310,6 +2347,11 @@ public class PanelPresupuesto extends JPanel {
 		return btnCalculoAux;
 	}
 
-	
+	private DialogoPitagoras getDialogoPitagoras() {
+		if (dialogoPitagoras == null) {
+			dialogoPitagoras = new DialogoPitagoras(null);
+		}
+		return dialogoPitagoras;
+	}
 
 }  //  @jve:decl-index=0:visual-constraint="10,10" 
