@@ -17,6 +17,7 @@ import javax.swing.ImageIcon;
 import javax.swing.BorderFactory;
 import java.awt.Color;
 import java.text.DecimalFormat;
+import java.awt.Font;
 
 public class DialogoPitagoras extends JDialog {
 
@@ -56,6 +57,15 @@ public class DialogoPitagoras extends JDialog {
 	private double valorC=0;
 	private double valorAux=0;
 	private DecimalFormat formateador = new DecimalFormat ("#####.##");  //  @jve:decl-index=0:
+	private JPanel panelStepper = null;
+	private JTextField tfValorAStepper = null;
+	private JTextField ValorOStepper = null;
+	private JTextField tfValorVStepper = null;
+	private JLabel lblValorVStepper = null;
+	private JLabel lblValorAStepper = null;
+	private JLabel lblValorOStepper = null;
+	private JLabel lblValorDStepper = null;
+	private JLabel lblTotalStepper = null;
 
 	/**
 	 * @param owner
@@ -103,6 +113,7 @@ public class DialogoPitagoras extends JDialog {
 			panelCard = new JPanel();
 			panelCard.setLayout(new CardLayout());
 			panelCard.add(getPanelPitagoras(), getPanelPitagoras().getName());
+			panelCard.add(getPanelStepper(), getPanelStepper().getName());
 		}
 		return panelCard;
 	}
@@ -482,21 +493,26 @@ public class DialogoPitagoras extends JDialog {
 	
 	private void calcularValores(){
 		
-		valorA=Double.parseDouble(tfMedidaA.getText())*Double.parseDouble(tfCantidadA.getText());
-		valorB=Double.parseDouble(tfMedidaB.getText())*Double.parseDouble(tfCantidadB.getText());
+		valorA=Double.parseDouble(tfMedidaA.getText());
+		valorB=Double.parseDouble(tfMedidaB.getText());
+		valorC=Double.parseDouble(tfCantidadA.getText());
 		
-		lblTotalA.setText(formateador.format(valorA));
-		lblTotalB.setText(formateador.format(valorB));
+		double tempA=Double.parseDouble(tfMedidaA.getText())*Double.parseDouble(tfCantidadA.getText());
+		double tempB=Double.parseDouble(tfMedidaB.getText())*Double.parseDouble(tfCantidadB.getText());
 		
-		valorC=(valorA*valorA)+(valorB*valorB);
-		valorC=Math.sqrt(valorC);
-		lblTotalC.setText(formateador.format(valorC));
+		lblTotalA.setText(formateador.format(tempA));
+		lblTotalB.setText(formateador.format(tempB));
 		
-		double metros=valorC/100;
+		double tempC=(tempA*tempA)+(tempB*tempB);
+		tempC=Math.sqrt(tempC);
+		lblTotalC.setText(formateador.format(tempC));
+		
+		double metros=tempC/100;
 		lblTotalMetros.setText(formateador.format(metros));
 		
-		valorAux=metros+Double.parseDouble(tfSumarPlataforma.getText());
-		lblTotalPlataforma.setText(formateador.format(valorAux));
+		valorAux=Double.parseDouble(tfSumarPlataforma.getText());
+		double tempAux=metros+Double.parseDouble(tfSumarPlataforma.getText());
+		lblTotalPlataforma.setText(formateador.format(tempAux));
 		
 	}
 
@@ -563,7 +579,171 @@ public class DialogoPitagoras extends JDialog {
 		card.show(getPanelCard(), panel);
 		
 	}
+
+	/**
+	 * This method initializes panelStepper	
+	 * 	
+	 * @return javax.swing.JPanel	
+	 */
+	private JPanel getPanelStepper() {
+		if (panelStepper == null) {
+			GridBagConstraints gridBagConstraints28 = new GridBagConstraints();
+			gridBagConstraints28.gridx = 0;
+			gridBagConstraints28.insets = new Insets(3, 10, 3, 5);
+			gridBagConstraints28.gridy = 3;
+			lblTotalStepper = new JLabel();
+			lblTotalStepper.setText("0");
+			lblTotalStepper.setFont(new Font("Dialog", Font.BOLD, 14));
+			lblTotalStepper.setForeground(Color.red);
+			GridBagConstraints gridBagConstraints27 = new GridBagConstraints();
+			gridBagConstraints27.gridx = 1;
+			gridBagConstraints27.insets = new Insets(3, 10, 3, 5);
+			gridBagConstraints27.gridy = 3;
+			lblValorDStepper = new JLabel();
+			lblValorDStepper.setText("Valor D, debe ser menor a 20mm");
+			lblValorDStepper.setFont(new Font("Dialog", Font.BOLD, 14));
+			lblValorDStepper.setForeground(Color.red);
+			GridBagConstraints gridBagConstraints26 = new GridBagConstraints();
+			gridBagConstraints26.gridx = 1;
+			gridBagConstraints26.insets = new Insets(3, 10, 3, 5);
+			gridBagConstraints26.gridy = 2;
+			lblValorOStepper = new JLabel();
+			lblValorOStepper.setText("Valor O");
+			GridBagConstraints gridBagConstraints25 = new GridBagConstraints();
+			gridBagConstraints25.gridx = 1;
+			gridBagConstraints25.insets = new Insets(3, 10, 3, 5);
+			gridBagConstraints25.gridy = 1;
+			lblValorAStepper = new JLabel();
+			lblValorAStepper.setText("Valor A");
+			GridBagConstraints gridBagConstraints24 = new GridBagConstraints();
+			gridBagConstraints24.gridx = 1;
+			gridBagConstraints24.insets = new Insets(3, 10, 3, 5);
+			gridBagConstraints24.gridy = 0;
+			lblValorVStepper = new JLabel();
+			lblValorVStepper.setText("Valor V");
+			GridBagConstraints gridBagConstraints21 = new GridBagConstraints();
+			gridBagConstraints21.fill = GridBagConstraints.VERTICAL;
+			gridBagConstraints21.gridy = 0;
+			gridBagConstraints21.weightx = 1.0;
+			gridBagConstraints21.insets = new Insets(3, 10, 3, 5);
+			gridBagConstraints21.gridx = 0;
+			GridBagConstraints gridBagConstraints23 = new GridBagConstraints();
+			gridBagConstraints23.fill = GridBagConstraints.VERTICAL;
+			gridBagConstraints23.gridy = 2;
+			gridBagConstraints23.weightx = 1.0;
+			gridBagConstraints23.insets = new Insets(3, 10, 3, 5);
+			gridBagConstraints23.gridx = 0;
+			GridBagConstraints gridBagConstraints22 = new GridBagConstraints();
+			gridBagConstraints22.fill = GridBagConstraints.VERTICAL;
+			gridBagConstraints22.gridy = 1;
+			gridBagConstraints22.weightx = 1.0;
+			gridBagConstraints22.insets = new Insets(3, 10, 3, 5);
+			gridBagConstraints22.gridx = 0;
+			panelStepper = new JPanel();
+			panelStepper.setLayout(new GridBagLayout());
+			panelStepper.setName("panelStepper");
+			panelStepper.add(getTfValorAStepper(), gridBagConstraints22);
+			panelStepper.add(getValorOStepper(), gridBagConstraints23);
+			panelStepper.add(getTfValorVStepper(), gridBagConstraints21);
+			panelStepper.add(lblValorVStepper, gridBagConstraints24);
+			panelStepper.add(lblValorAStepper, gridBagConstraints25);
+			panelStepper.add(lblValorOStepper, gridBagConstraints26);
+			panelStepper.add(lblValorDStepper, gridBagConstraints27);
+			panelStepper.add(lblTotalStepper, gridBagConstraints28);
+		}
+		return panelStepper;
+	}
+
+	/**
+	 * This method initializes tfValorAStepper	
+	 * 	
+	 * @return javax.swing.JTextField	
+	 */
+	private JTextField getTfValorAStepper() {
+		if (tfValorAStepper == null) {
+			tfValorAStepper = new JTextField();
+			tfValorAStepper.setPreferredSize(new Dimension(80, 20));
+			tfValorAStepper.setText("0");
+			tfValorAStepper.setMinimumSize(new Dimension(80, 20));
+			tfValorAStepper.addActionListener(new java.awt.event.ActionListener() {
+				public void actionPerformed(java.awt.event.ActionEvent e) {
+					actualizarValoresStepper();
+				}
+			});
+			tfValorAStepper.addFocusListener(new java.awt.event.FocusAdapter() {
+				public void focusLost(java.awt.event.FocusEvent e) {
+					actualizarValoresStepper();
+				}
+			});
+		}
+		return tfValorAStepper;
+	}
+
+	/**
+	 * This method initializes ValorOStepper	
+	 * 	
+	 * @return javax.swing.JTextField	
+	 */
+	private JTextField getValorOStepper() {
+		if (ValorOStepper == null) {
+			ValorOStepper = new JTextField();
+			ValorOStepper.setPreferredSize(new Dimension(80, 20));
+			ValorOStepper.setText("0");
+			ValorOStepper.setMinimumSize(new Dimension(80, 20));
+			ValorOStepper.addActionListener(new java.awt.event.ActionListener() {
+				public void actionPerformed(java.awt.event.ActionEvent e) {
+					actualizarValoresStepper();
+				}
+			});
+			ValorOStepper.addFocusListener(new java.awt.event.FocusAdapter() {
+				public void focusLost(java.awt.event.FocusEvent e) {
+					actualizarValoresStepper();
+				}
+			});
+		}
+		return ValorOStepper;
+	}
+
+	/**
+	 * This method initializes tfValorVStepper	
+	 * 	
+	 * @return javax.swing.JTextField	
+	 */
+	private JTextField getTfValorVStepper() {
+		if (tfValorVStepper == null) {
+			tfValorVStepper = new JTextField();
+			tfValorVStepper.setPreferredSize(new Dimension(80, 20));
+			tfValorVStepper.setText("0");
+			tfValorVStepper.setMinimumSize(new Dimension(80, 20));
+			tfValorVStepper.addActionListener(new java.awt.event.ActionListener() {
+				public void actionPerformed(java.awt.event.ActionEvent e) {
+					actualizarValoresStepper();
+				}
+			});
+			tfValorVStepper.addFocusListener(new java.awt.event.FocusAdapter() {
+				public void focusLost(java.awt.event.FocusEvent e) {
+					actualizarValoresStepper();
+				}
+			});
+		}
+		return tfValorVStepper;
+	}
 	
-	
+	private void actualizarValoresStepper(){
+		
+		valorA=Double.parseDouble(tfValorVStepper.getText());
+		valorB=Double.parseDouble(tfValorAStepper.getText());
+		valorC=Double.parseDouble(ValorOStepper.getText());
+		
+		double temp=valorA-valorB;
+		temp=temp*temp;
+		
+		temp=temp+(valorC*valorC);
+		
+		valorAux=Math.sqrt(temp);
+		
+		lblTotalStepper.setText(formateador.format(valorAux));
+		
+	}
 
 }  //  @jve:decl-index=0:visual-constraint="10,10"

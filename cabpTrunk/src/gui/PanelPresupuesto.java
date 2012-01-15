@@ -148,10 +148,11 @@ public class PanelPresupuesto extends JPanel {
 	private JButton btnPrint = null;
 	private int id;
 	private Cliente c;
-	private double valorA;
-	private double valorB;
-	private double valorC;
-	private double valorAux;
+	private double valorA=0;
+	private double valorB=0;
+	private double valorC=0;
+	private double valorAux=0;
+	private boolean stepper=false;
 	private ListadoDistribuidores listado;
 	private Distribuidor d;
 	private JPanel panelCuadrados = null;
@@ -1734,7 +1735,11 @@ public class PanelPresupuesto extends JPanel {
 		
 		Vector data=new Vector();
 		
-		setIsPresupuesto(true);
+		//no se si será ineficiente pero seguro que si
+		listado.cargarDistribuidores();
+		d=listado.getDistribuidor(p.getIdDistribuidor());
+		
+		setIsPresupuesto(true, d.getNombre());
 		
 		ListadoLineaPresup lineas=p.getListadoLineaPresup();
 		
@@ -1780,23 +1785,6 @@ public class PanelPresupuesto extends JPanel {
 		lblFecha.setText(formateadorFecha.format(p.getFecha()));
 		
 		btnPrint.setEnabled(true);
-
-		//no se si será ineficiente pero seguro que si
-		listado.cargarDistribuidores();
-		d=listado.getDistribuidor(p.getIdDistribuidor());
-		
-		if(d.getNombre()=="Stepper"){
-			
-			dialogoPitagoras=getDialogoPitagoras();
-			
-			dialogoPitagoras.setLayer("panelStepper");
-			
-		}else{
-
-			dialogoPitagoras=getDialogoPitagoras();
-			
-			dialogoPitagoras.setLayer("panelPitagoras");
-		}
 		
 		actualizarValores();
 		actualizarGasolina();
@@ -1835,7 +1823,7 @@ public class PanelPresupuesto extends JPanel {
 	/**
 	 * @param presupuesto the presupuesto to set
 	 */
-	public void setIsPresupuesto(boolean isPresupuesto) {
+	public void setIsPresupuesto(boolean isPresupuesto, String nombre) {
 		this.isPresupuesto = isPresupuesto;
 		
 		if(isPresupuesto){
@@ -1844,7 +1832,24 @@ public class PanelPresupuesto extends JPanel {
 		}else{
 			lblTitulo.setText("Factura");
 			scrollTexto.setBorder(BorderFactory.createTitledBorder(null, "Texto que va en la factura", TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, new Font("Dialog", Font.BOLD, 12), new Color(51, 51, 51)));
+			
+		}
+		
+		if(nombre.equalsIgnoreCase("Stepper")){
+			
+			dialogoPitagoras=getDialogoPitagoras();
+			
+			dialogoPitagoras.setLayer("panelStepper");
+			
+			stepper=true;
+			
+		}else{
 
+			dialogoPitagoras=getDialogoPitagoras();
+
+			dialogoPitagoras.setLayer("panelPitagoras");
+			
+			stepper=false;
 		}
 		
 	}
@@ -1853,7 +1858,11 @@ public class PanelPresupuesto extends JPanel {
 		
 		Vector data=new Vector();
 		
-		setIsPresupuesto(false);
+		//no se si será ineficiente pero seguro que si
+		listado.cargarDistribuidores();
+		d=listado.getDistribuidor(f.getIdDistribuidor());
+		
+		setIsPresupuesto(false, d.getNombre());
 		
 		ListadoLineaFactura lineas=f.getListadoLineaFactura();
 		
@@ -1899,22 +1908,9 @@ public class PanelPresupuesto extends JPanel {
 		
 		btnPrint.setEnabled(true);
 		
-		//no se si será ineficiente pero seguro que si
-		listado.cargarDistribuidores();
-		d=listado.getDistribuidor(f.getIdDistribuidor());
 		
-		if(d.getNombre()=="Stepper"){
-			
-			dialogoPitagoras=getDialogoPitagoras();
-			
-			dialogoPitagoras.setLayer("panelStepper");
-			
-		}else{
-
-			dialogoPitagoras=getDialogoPitagoras();
-			
-			dialogoPitagoras.setLayer("panelPitagoras");
-		}
+		
+		
 		
 		actualizarValores();
 		actualizarGasolina();
@@ -2353,5 +2349,43 @@ public class PanelPresupuesto extends JPanel {
 		}
 		return dialogoPitagoras;
 	}
+
+	/**
+	 * @return the valorA
+	 */
+	public double getValorA() {
+		return valorA;
+	}
+
+	/**
+	 * @return the valorB
+	 */
+	public double getValorB() {
+		return valorB;
+	}
+
+	/**
+	 * @return the valorC
+	 */
+	public double getValorC() {
+		return valorC;
+	}
+
+	/**
+	 * @return the valorAux
+	 */
+	public double getValorAux() {
+		return valorAux;
+	}
+
+	/**
+	 * @return the stepper
+	 */
+	public boolean isStepper() {
+		return stepper;
+	}
+	
+	
+	
 
 }  //  @jve:decl-index=0:visual-constraint="10,10" 

@@ -156,7 +156,7 @@ public class PanelClientePres extends JPanel {
 		if (panelPresupuesto == null) {
 			panelPresupuesto = new PanelPresupuesto();
 			
-			((PanelPresupuesto) panelPresupuesto).setIsPresupuesto(true);
+			((PanelPresupuesto) panelPresupuesto).setIsPresupuesto(true, null);
 			
 			((PanelPresupuesto) panelPresupuesto).editableCampos(false);
 		}
