@@ -148,7 +148,7 @@ public class PanelClienteFactura extends JPanel {
 		if (panelPresupuesto == null) {
 			panelPresupuesto = new PanelPresupuesto();
 			
-			((PanelPresupuesto) panelPresupuesto).setIsPresupuesto(false);
+			((PanelPresupuesto) panelPresupuesto).setIsPresupuesto(false, null);
 			
 			((PanelPresupuesto) panelPresupuesto).editableCampos(false);
 			

@@ -46,6 +46,7 @@ public class DialogoSeleccionDistribuidor extends JDialog {
 	private int valorPulsado=0;
 	private DefaultComboBoxModel modeloCB;
 	private int idDistribuidor;
+	private String nombre;
 	/**
 	 * @param owner
 	 */
@@ -180,9 +181,12 @@ public class DialogoSeleccionDistribuidor extends JDialog {
 						
 						String temp=(String) cbProveedor.getSelectedItem();
 						
-						temp=temp.substring(0, temp.indexOf(' '));
+						String temp1=temp.substring(0, temp.indexOf(' '));
 						
-						idDistribuidor=Integer.parseInt(temp);
+						idDistribuidor=Integer.parseInt(temp1);
+						
+						nombre=temp.substring(temp.indexOf(' ')+1);
+
 					}else{
 						try {
 							throw new Exception("Debe seleccionar un proveedor");
@@ -262,6 +266,11 @@ public class DialogoSeleccionDistribuidor extends JDialog {
 	public int getIdDistribuidor() {
 		
 		return idDistribuidor;
+	}
+
+	public String getNombre() {
+		
+		return nombre;
 	}
 
 }  //  @jve:decl-index=0:visual-constraint="435,96"

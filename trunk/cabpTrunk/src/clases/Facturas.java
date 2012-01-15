@@ -45,6 +45,11 @@ private Connection dbConnect=Conectar.getConnection();
 	private boolean isTotalManual;
 	private int totalManual;
 	private int idCliente;
+	private double valorA;
+	private double valorB;
+	private double valorC;
+	private double valorAux;
+	private boolean stepper;
 	private int idDistribuidor;
 	
 	/**
@@ -71,6 +76,11 @@ private Connection dbConnect=Conectar.getConnection();
 	 * @param isTotalManual
 	 * @param totalManual
 	 * @param idCliente
+	 * @param valorA
+	 * @param valorB
+	 * @param valorC
+	 * @param valorAux
+	 * @param stepper
 	 * @param idDistribuidor
 	 */
 	public Facturas(int idFactura, int ganancia, int restaurante,
@@ -78,11 +88,11 @@ private Connection dbConnect=Conectar.getConnection();
 			int nViajes, double precioGasolina, boolean isGanancia, boolean isCanarias,
 			int porcentaje, double totalConIva, double totalSinIva,
 			int transporte, String textoLinea, String textoFormaPago, String textoExplicativo, Date fecha, boolean isTotalManual, int totalManual,
-			int idCliente, int idDistribuidor) {
+			int idCliente, double valorA, double valorB, double valorC, double valorAux, boolean stepper, int idDistribuidor) {
 		
 		this(ganancia, restaurante, pasaje, combustible, otros, hotel, kilometros, nViajes, precioGasolina, isGanancia, isCanarias,
 				porcentaje, totalConIva, totalSinIva, transporte, textoLinea, textoFormaPago, textoExplicativo
-				, fecha, isTotalManual, totalManual, idCliente, idDistribuidor);
+				, fecha, isTotalManual, totalManual, idCliente, valorA, valorB, valorC, valorAux, stepper, idDistribuidor);
 		
 		this.idFactura = idFactura;
 		listadoLineaFactura.setIdFactura(idFactura);
@@ -113,6 +123,11 @@ private Connection dbConnect=Conectar.getConnection();
 	 * @param isTotalManual
 	 * @param totalManual
 	 * @param idCliente
+	 * @param valorA
+	 * @param valorB
+	 * @param valorC
+	 * @param valorAux
+	 * @param stepper
 	 * @param idDistribuidor
 	 */
 	public Facturas(int ganancia, int restaurante,
@@ -120,7 +135,8 @@ private Connection dbConnect=Conectar.getConnection();
 			int nViajes, double precioGasolina, boolean isGanancia, boolean isCanarias,
 			int porcentaje, double totalConIva, double totalSinIva,
 			int transporte, String textoLinea, String textoFormaPago, String textoExplicativo,
-			Date fecha, boolean isTotalManual, int totalManual, int idCliente, int idDistribuidor) {
+			Date fecha, boolean isTotalManual, int totalManual, int idCliente, double valorA, 
+			double valorB, double valorC, double valorAux, boolean stepper, int idDistribuidor) {
 		
 		this.ganancia = ganancia;
 		this.restaurante = restaurante;
@@ -144,6 +160,11 @@ private Connection dbConnect=Conectar.getConnection();
 		this.isTotalManual = isTotalManual;
 		this.totalManual = totalManual;
 		this.idCliente = idCliente;
+		this.valorA = valorA;
+		this.valorB = valorB;
+		this.valorC = valorC;
+		this.valorAux = valorAux;
+		this.stepper = stepper;
 		this.idDistribuidor=idDistribuidor;
 		
 		listadoLineaFactura = new ListadoLineaFactura();
@@ -157,7 +178,8 @@ private Connection dbConnect=Conectar.getConnection();
 			PreparedStatement ps=dbConnect.prepareStatement("INSERT INTO facturas(ganancia, restaurante, pasaje, combustible, otros, " +
 					"hotel, kilometros, isGanancia, isCanarias, porcentaje, totalConIva, transporte, textoLinea, textoFormaPago, textoExplicativo" +
 					", idCliente, totViajes, precioGasolina, " +
-					"totalSinIva, fecha, isTotalManual, totalManual, idDistribuidor) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
+					"totalSinIva, fecha, isTotalManual, totalManual, valorA, valorB, valorC, valorAux, stepper, idDistribuidor) " +
+					"VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
 			
 			ps.setInt(1, ganancia);
 			ps.setInt(2, restaurante);
@@ -181,7 +203,12 @@ private Connection dbConnect=Conectar.getConnection();
 			ps.setDate(20, fecha);
 			ps.setBoolean(21, isTotalManual);
 			ps.setInt(22, totalManual);
-			ps.setInt(23, idDistribuidor);
+			ps.setDouble(23, valorA);
+			ps.setDouble(24, valorB);
+			ps.setDouble(25, valorC);
+			ps.setDouble(26, valorAux);
+			ps.setBoolean(27, stepper);
+			ps.setInt(28, idDistribuidor);
 			
 			ps.executeUpdate();
 			
@@ -585,6 +612,76 @@ private Connection dbConnect=Conectar.getConnection();
 		
 		listadoLineaFactura.addLinea(new LineaFactura(idFactura, idProducto, nomProducto, precio, cantidad));
 		
+	}
+
+	/**
+	 * @return the valorA
+	 */
+	public double getValorA() {
+		return valorA;
+	}
+
+	/**
+	 * @param valorA the valorA to set
+	 */
+	public void setValorA(double valorA) {
+		this.valorA = valorA;
+	}
+
+	/**
+	 * @return the valorB
+	 */
+	public double getValorB() {
+		return valorB;
+	}
+
+	/**
+	 * @param valorB the valorB to set
+	 */
+	public void setValorB(double valorB) {
+		this.valorB = valorB;
+	}
+
+	/**
+	 * @return the valorC
+	 */
+	public double getValorC() {
+		return valorC;
+	}
+
+	/**
+	 * @param valorC the valorC to set
+	 */
+	public void setValorC(double valorC) {
+		this.valorC = valorC;
+	}
+
+	/**
+	 * @return the valorAux
+	 */
+	public double getValorAux() {
+		return valorAux;
+	}
+
+	/**
+	 * @param valorAux the valorAux to set
+	 */
+	public void setValorAux(double valorAux) {
+		this.valorAux = valorAux;
+	}
+
+	/**
+	 * @return the stepper
+	 */
+	public boolean isStepper() {
+		return stepper;
+	}
+
+	/**
+	 * @param stepper the stepper to set
+	 */
+	public void setStepper(boolean stepper) {
+		this.stepper = stepper;
 	}
 	
 	

@@ -422,6 +422,7 @@ public class MainFrame extends JFrame {
 		if(dialogoSeleccionDistribuidor.getValorPulsado()==DialogoSeleccionDistribuidor.VALOR_ACEPTAR){
 
 			int idDistribuidor=dialogoSeleccionDistribuidor.getIdDistribuidor();
+			String nombre=dialogoSeleccionDistribuidor.getNombre();
 
 			//traigo el listado de productos del proveedor elegido
 			listadoProductos=getListatoProductos(idDistribuidor);
@@ -440,7 +441,7 @@ public class MainFrame extends JFrame {
 				
 			dialogoAddPresupuesto.cargarProductos(listadoProductos);
 			
-			dialogoAddPresupuesto.setIsPresupuesto(true);
+			dialogoAddPresupuesto.setIsPresupuesto(true, nombre);
 			
 				
 			dialogoAddPresupuesto.setVisible(true);
@@ -480,6 +481,7 @@ public class MainFrame extends JFrame {
 		if(dialogoSeleccionDistribuidor.getValorPulsado()==DialogoSeleccionDistribuidor.VALOR_ACEPTAR){
 
 			int idDistribuidor=dialogoSeleccionDistribuidor.getIdDistribuidor();
+			String nombre=dialogoSeleccionDistribuidor.getNombre();
 				
 			//traigo el listado de productos del proveedor elegido
 			listadoProductos=getListatoProductos(idDistribuidor);
@@ -498,7 +500,7 @@ public class MainFrame extends JFrame {
 				
 			dialogoAddFactura.cargarProductos(listadoProductos);
 			
-			dialogoAddFactura.setIsPresupuesto(false);
+			dialogoAddFactura.setIsPresupuesto(false, nombre);
 				
 			dialogoAddFactura.setVisible(true);
 		}

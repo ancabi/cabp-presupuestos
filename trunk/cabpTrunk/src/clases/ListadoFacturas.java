@@ -42,7 +42,8 @@ public class ListadoFacturas {
 			
 			psActualizarFactura=dbConnect.prepareStatement("UPDATE facturas SET ganancia=?, combustible=?, pasaje=?, restaurante=?, otros=?, hotel=?, kilometros=?, totViajes=?," +
 					"precioGasolina=?, isGanancia=?, isCanarias=?, porcentaje=?, totalConIva=?, totalSinIva=?, transporte=?, textoLinea=?, " +
-					"textoFormaPago=?, textoExplicativo=?, fecha=?, isTotalManual=?, totalManual=? WHERE idFactura=?");
+					"textoFormaPago=?, textoExplicativo=?, fecha=?, isTotalManual=?, valorA, valorB, valorC, valorAux, stepper, " +
+					"totalManual=? WHERE idFactura=?");
 			
 		} catch (SQLException e) {
 			JOptionPane.showMessageDialog(null, e.getMessage());
@@ -83,12 +84,17 @@ public class ListadoFacturas {
 				double totalSinIva=rs.getDouble("totalSinIva");
 				boolean isTotalManual= rs.getBoolean("isTotalManual");
 				int totalManual = rs.getInt("totalManual");
+				double valorA=rs.getDouble("valorA");
+				double valorB=rs.getDouble("valorB");
+				double valorC=rs.getDouble("valorC");
+				double valorAux=rs.getDouble("valorAux");
+				boolean stepper=rs.getBoolean("stepper");
 				int idDistribuidor=rs.getInt("idDistribuidor");
 				
 				//creo la factura y lo guardo en el vector
 				facturas.add(new Facturas(idFactura, ganancia, restaurante, pasaje, combustible, otros, hotel, kilometros, totViajes, precioGasolina, 
 						isGanancia, isCanarias, porcentaje, totalConIva, totalSinIva, transporte, textoLinea, textoFormaPago, textoExplicativo, fecha,
-						isTotalManual, totalManual, idCliente, idDistribuidor));
+						isTotalManual,  totalManual, idCliente, valorA, valorB, valorC, valorAux, stepper, idDistribuidor));
 				//traigo el ultimo indice introducido
 				int index=facturas.size()-1;
 				//cargo las lineas
@@ -165,8 +171,13 @@ public class ListadoFacturas {
 			psActualizarFactura.setString(18, f.getTextoExplicativo());
 			psActualizarFactura.setDate(19, f.getFecha());
 			psActualizarFactura.setBoolean(20, f.isTotalManual());
-			psActualizarFactura.setInt(21, f.getTotalManual());
-			psActualizarFactura.setInt(22, id);
+			psActualizarFactura.setDouble(21, f.getValorA());
+			psActualizarFactura.setDouble(22, f.getValorB());
+			psActualizarFactura.setDouble(23, f.getValorC());
+			psActualizarFactura.setDouble(24, f.getValorAux());
+			psActualizarFactura.setBoolean(25, f.isStepper());
+			psActualizarFactura.setInt(26, f.getTotalManual());
+			psActualizarFactura.setInt(27, id);
 		
 			psActualizarFactura.executeUpdate();
 			
