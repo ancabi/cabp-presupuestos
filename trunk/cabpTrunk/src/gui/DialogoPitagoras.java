@@ -746,4 +746,66 @@ public class DialogoPitagoras extends JDialog {
 		
 	}
 
+	/**
+	 * @param valorA the valorA to set
+	 */
+	public void setValorA(double valorA) {
+		this.valorA = valorA;
+	}
+
+	/**
+	 * @param valorB the valorB to set
+	 */
+	public void setValorB(double valorB) {
+		this.valorB = valorB;
+	}
+
+	/**
+	 * @param valorC the valorC to set
+	 */
+	public void setValorC(double valorC) {
+		this.valorC = valorC;
+	}
+
+	/**
+	 * @param valorAux the valorAux to set
+	 */
+	public void setValorAux(double valorAux) {
+		this.valorAux = valorAux;
+	}
+	
+	public void ponerValores(){
+		
+		tfMedidaA.setText(""+valorA);
+		tfMedidaB.setText(""+valorB);
+		tfCantidadA.setText(""+valorC);
+		tfCantidadB.setText(""+valorC);
+		tfSumarPlataforma.setText(""+valorAux);
+		
+		calcularValores();
+		
+	}
+	
+	public void ponerValoresStepper(){
+		
+		tfValorVStepper.setText(""+valorA);
+		tfValorAStepper.setText(""+valorB);
+		ValorOStepper.setText(""+valorC);
+		lblTotalStepper.setText(formateador.format(valorAux));
+		
+	}
+
+	public void setEditable(boolean b) {
+		
+		tfCantidadA.setEditable(b);
+		tfMedidaA.setEditable(b);
+		tfMedidaB.setEditable(b);
+		tfSumarPlataforma.setEditable(b);
+		tfValorAStepper.setEditable(b);
+		tfValorVStepper.setEditable(b);
+		ValorOStepper.setEditable(b);
+		
+	}
+	
+
 }  //  @jve:decl-index=0:visual-constraint="10,10"

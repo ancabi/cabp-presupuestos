@@ -153,7 +153,7 @@ public class PanelPresupuesto extends JPanel {
 	private double valorC=0;
 	private double valorAux=0;
 	private boolean stepper=false;
-	private ListadoDistribuidores listado;
+	private ListadoDistribuidores listado=new ListadoDistribuidores();
 	private Distribuidor d;
 	private JPanel panelCuadrados = null;
 	private JPanel panelTextos = null;
@@ -201,11 +201,11 @@ public class PanelPresupuesto extends JPanel {
 			IVA=Double.parseDouble(br.readLine())/100.0;
 			
 		}catch(FileNotFoundException e){
-			JOptionPane.showMessageDialog(null, e.getMessage());
+			JOptionPane.showMessageDialog(null, e.getMessage()+"PanelPresupuesto");
 		} catch (NumberFormatException e) {
-			JOptionPane.showMessageDialog(null, e.getMessage());
+			JOptionPane.showMessageDialog(null, e.getMessage()+"PanelPresupuesto");
 		} catch (IOException e) {
-			JOptionPane.showMessageDialog(null, e.getMessage());
+			JOptionPane.showMessageDialog(null, e.getMessage()+"PanelPresupuesto");
 		}
 	}
 
@@ -324,7 +324,7 @@ public class PanelPresupuesto extends JPanel {
 						}
 						
 					} catch (Exception e1) {
-						JOptionPane.showMessageDialog(null, e1.getMessage());
+						JOptionPane.showMessageDialog(null, e1.getMessage()+"PanelPresupuesto");
 					}
 						
 				}
@@ -1721,7 +1721,7 @@ public class PanelPresupuesto extends JPanel {
 						try {
 							throw new Exception("Debe seleccionar una fila para borrar");
 						} catch (Exception e1) {
-							JOptionPane.showMessageDialog(null, e1.getMessage());
+							JOptionPane.showMessageDialog(null, e1.getMessage()+"PanelPresupuesto");
 						}
 					}
 					
@@ -1737,7 +1737,7 @@ public class PanelPresupuesto extends JPanel {
 		
 		//no se si será ineficiente pero seguro que si
 		listado.cargarDistribuidores();
-		d=listado.getDistribuidor(p.getIdDistribuidor());
+		d=listado.getDistribuidor(p.getIdDistribuidor()-1);
 		
 		setIsPresupuesto(true, d.getNombre());
 		
@@ -1776,6 +1776,18 @@ public class PanelPresupuesto extends JPanel {
 		id=p.getIdPresupuesto();
 		p.getIdCliente();
 		
+		dialogoPitagoras.setValorA(p.getValorA());
+		dialogoPitagoras.setValorB(p.getValorB());
+		dialogoPitagoras.setValorC(p.getValorC());
+		dialogoPitagoras.setValorAux(p.getValorAux());
+		
+		if(stepper){
+			dialogoPitagoras.ponerValoresStepper();
+		}else{
+			dialogoPitagoras.ponerValores();
+		}
+		
+		
 		cbGanancia.setSelected(p.isGanancia());
 		
 		cbCanarias.setSelected(p.isCanarias());
@@ -1811,6 +1823,8 @@ public class PanelPresupuesto extends JPanel {
 		taExplicativo.setEditable(b);
 		taFormaPago.setEditable(b);
 		tfTotalManual.setEditable(b);
+		
+		dialogoPitagoras.setEditable(b);
 		
 		//estos son distintos
 		cbGanancia.setEnabled(b);
@@ -1860,7 +1874,7 @@ public class PanelPresupuesto extends JPanel {
 		
 		//no se si será ineficiente pero seguro que si
 		listado.cargarDistribuidores();
-		d=listado.getDistribuidor(f.getIdDistribuidor());
+		d=listado.getDistribuidor(f.getIdDistribuidor()-1);
 		
 		setIsPresupuesto(false, d.getNombre());
 		
@@ -1897,6 +1911,17 @@ public class PanelPresupuesto extends JPanel {
 		taExplicativo.setText(f.getTextoExplicativo());
 		tfTotalManual.setText(""+f.getTotalManual());
 		id=f.getIdFactura();
+		
+		dialogoPitagoras.setValorA(f.getValorA());
+		dialogoPitagoras.setValorB(f.getValorB());
+		dialogoPitagoras.setValorC(f.getValorC());
+		dialogoPitagoras.setValorAux(f.getValorAux());
+		
+		if(stepper){
+			dialogoPitagoras.ponerValoresStepper();
+		}else{
+			dialogoPitagoras.ponerValores();
+		}
 		
 		cbGanancia.setSelected(f.isGanancia());
 		
@@ -2018,8 +2043,8 @@ public class PanelPresupuesto extends JPanel {
 					
 						
 					} catch (Exception e1) {
-						//JOptionPane.showMessageDialog(null, e1.getMessage());
-						e1.printStackTrace();
+						JOptionPane.showMessageDialog(null, e1.getMessage()+"PanelPresupuesto");
+						
 					}
 					
 				}

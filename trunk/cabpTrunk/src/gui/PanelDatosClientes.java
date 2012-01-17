@@ -351,7 +351,7 @@ public class PanelDatosClientes extends JPanel {
 								
 								
 							} catch (Exception e1) {
-								JOptionPane.showMessageDialog(null, e1.getMessage());
+								JOptionPane.showMessageDialog(null, e1.getMessage()+"PanelDatosClientes");
 							}
 									
 						}catch (NumberFormatException e1) {
@@ -365,7 +365,7 @@ public class PanelDatosClientes extends JPanel {
 						try {
 							throw new Exception("Debe rellenar el campo");
 						} catch (Exception e1) {
-							JOptionPane.showMessageDialog(null, e1.getMessage());
+							JOptionPane.showMessageDialog(null, e1.getMessage()+"panelDatosClientes");
 						}
 					}
 					
@@ -402,7 +402,7 @@ public class PanelDatosClientes extends JPanel {
 						try {
 							throw new Exception("Debe seleccionar un telefono");
 						} catch (Exception e1) {
-							JOptionPane.showMessageDialog(null, e1.getMessage());
+							JOptionPane.showMessageDialog(null, e1.getMessage()+"panelDatosClientes");
 						}
 					}
 					
@@ -487,7 +487,7 @@ public class PanelDatosClientes extends JPanel {
 						try {
 							throw new Exception("Debe rellenar el campo");
 						} catch (Exception e1) {
-							JOptionPane.showMessageDialog(null, e1.getMessage());
+							JOptionPane.showMessageDialog(null, e1.getMessage()+"panelDatosClientes");
 						}
 					}
 					
@@ -524,7 +524,7 @@ public class PanelDatosClientes extends JPanel {
 						try {
 							throw new Exception("Debe seleccionar un E-mail");
 						} catch (Exception e1) {
-							JOptionPane.showMessageDialog(null, e1.getMessage());
+							JOptionPane.showMessageDialog(null, e1.getMessage()+"panelDatosClientes");
 						}
 					}
 				}

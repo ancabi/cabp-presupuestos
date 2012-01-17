@@ -11,11 +11,14 @@ import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
 
 import clases.Cliente;
+import clases.Distribuidor;
+import clases.ListadoDistribuidores;
 import clases.ListadoFacturas;
 import clases.Facturas;
 import clases.Presupuestos;
 
 import java.awt.Dimension;
+import java.util.Vector;
 
 /**
  * @author ancabi
@@ -26,12 +29,13 @@ public class PanelClienteFactura extends JPanel {
 	private static final long serialVersionUID = 1L;
 	private JTree treeFacturas = null;
 	private JPanel panelPresupuesto = null;
-	private ListadoFacturas facturas=new ListadoFacturas();  //  @jve:decl-index=0:
+	private ListadoFacturas facturas=new ListadoFacturas();
 	private DefaultMutableTreeNode root;  //  @jve:decl-index=0:
 	private DefaultTreeModel modelo;
 	private int id;
 	private DialogoModPresupuesto dialogoModPresupuesto;
 	private Cliente c;
+	private ListadoDistribuidores distribuidores=new ListadoDistribuidores();
 	
 	/**
 	 * This is the default constructor
@@ -51,6 +55,8 @@ public class PanelClienteFactura extends JPanel {
 		this.setLayout(new BorderLayout());
 		this.add(getTreeFacturas(), BorderLayout.WEST);
 		this.add(getPanelPresupuesto(), BorderLayout.CENTER);
+		
+		distribuidores.cargarDistribuidores();
 	}
 
 	/**
@@ -148,7 +154,7 @@ public class PanelClienteFactura extends JPanel {
 		if (panelPresupuesto == null) {
 			panelPresupuesto = new PanelPresupuesto();
 			
-			((PanelPresupuesto) panelPresupuesto).setIsPresupuesto(false, null);
+			((PanelPresupuesto) panelPresupuesto).setIsPresupuesto(false, "");
 			
 			((PanelPresupuesto) panelPresupuesto).editableCampos(false);
 			
@@ -180,13 +186,24 @@ public class PanelClienteFactura extends JPanel {
 	private void cargarTree(){
 		
 		root=new DefaultMutableTreeNode("Facturas");
-		DefaultMutableTreeNode bison = new DefaultMutableTreeNode("Bison");
-		DefaultMutableTreeNode acorn = new DefaultMutableTreeNode("Acorn");
+
+		Distribuidor d;
+		
+		Vector<DefaultMutableTreeNode> nombreDis=new Vector<DefaultMutableTreeNode>();
+		
 		modelo=new DefaultTreeModel(root);
 		treeFacturas.setModel(modelo);
-		
-		root.add(bison);
-		root.add(acorn);
+
+		for(int x=0; x<distribuidores.getSize(); x++){
+			
+			
+			d=distribuidores.getDistribuidor(x);
+			
+			nombreDis.add(new DefaultMutableTreeNode(d.getNombre()));
+			
+			root.add(nombreDis.get(x));
+			
+		}
 		
 		for(int x=0; x<facturas.getSize(); x++){
 
@@ -194,22 +211,16 @@ public class PanelClienteFactura extends JPanel {
 			
 			if(temp!=null){
 				
-				if(temp.getIdDistribuidor()==1){
-				
-					String titulo="Factura Nº "+temp.getIdFactura();
-				
-					makeNode(titulo, bison);
+				for(int j=0; j<distribuidores.getSize(); j++){
 					
-				}else if(temp.getIdDistribuidor()==2){
+					if(temp.getIdDistribuidor()==distribuidores.getDistribuidor(j).getIdDistribuidor()){
+						
+						String titulo="Presupuesto Nº "+temp.getIdFactura();
+						
+						makeNode(titulo, nombreDis.get(j));
+						
+					}
 					
-					String titulo="Factura Nº "+temp.getIdFactura();
-					
-					makeNode(titulo, acorn);
-				}else{
-					
-					String titulo="Factura Nº "+temp.getIdFactura();
-					
-					makeNode(titulo, root);
 				}
 			}
 			
@@ -218,14 +229,6 @@ public class PanelClienteFactura extends JPanel {
 		if(root.getChildCount()==0){
 			makeNode("No hay facturas", root);
 		}
-		
-		/*if(bison.getChildCount()==0){
-			makeNode("No hay facturas", bison);
-		}
-		
-		if(acorn.getChildCount()==0){
-			makeNode("No hay facturas", acorn);
-		}*/
 		
 		treeFacturas.expandRow(0);
 		

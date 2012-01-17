@@ -5,6 +5,8 @@ package gui;
 
 
 
+
+
 import javax.swing.JPanel;
 
 import java.awt.BorderLayout;
@@ -14,6 +16,8 @@ import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
 
 import clases.Cliente;
+import clases.Distribuidor;
+import clases.ListadoDistribuidores;
 import clases.ListadoPresupuestos;
 import clases.Presupuestos;
 import java.awt.Dimension;
@@ -23,6 +27,7 @@ import javax.swing.JOptionPane;
 
 
 import java.awt.FlowLayout;
+import java.util.Vector;
 
 /**
  * @author ancabi
@@ -42,6 +47,7 @@ public class PanelClientePres extends JPanel {
 	private TabCliente tabCliente=null;
 	private DialogoModPresupuesto dialogoModPresupuesto;
 	private Cliente c;  //  @jve:decl-index=0:
+	private ListadoDistribuidores distribuidores=new ListadoDistribuidores();  //  @jve:decl-index=0:
 	/**
 	 * This is the default constructor
 	 */
@@ -63,6 +69,8 @@ public class PanelClientePres extends JPanel {
 		this.add(getTreePresupuestos(), BorderLayout.WEST);
 		this.add(getPanelPresupuesto(), BorderLayout.CENTER);
 		this.add(getPanelHerramientas(), BorderLayout.NORTH);
+		
+		distribuidores.cargarDistribuidores();
 	}
 
 	/**
@@ -156,7 +164,7 @@ public class PanelClientePres extends JPanel {
 		if (panelPresupuesto == null) {
 			panelPresupuesto = new PanelPresupuesto();
 			
-			((PanelPresupuesto) panelPresupuesto).setIsPresupuesto(true, null);
+			((PanelPresupuesto) panelPresupuesto).setIsPresupuesto(true, "");
 			
 			((PanelPresupuesto) panelPresupuesto).editableCampos(false);
 		}
@@ -191,13 +199,25 @@ public class PanelClientePres extends JPanel {
 	private void cargarTree(){
 		
 		root=new DefaultMutableTreeNode("Presupuestos");
-		DefaultMutableTreeNode bison = new DefaultMutableTreeNode("Bison");
-		DefaultMutableTreeNode acorn = new DefaultMutableTreeNode("Acorn");
+		
+		Distribuidor d;
+		
+		Vector<DefaultMutableTreeNode> nombreDis=new Vector<DefaultMutableTreeNode>();
+		
+		for(int x=0; x<distribuidores.getSize(); x++){
+			
+			
+			d=distribuidores.getDistribuidor(x);
+			
+			nombreDis.add(new DefaultMutableTreeNode(d.getNombre()));
+			
+			root.add(nombreDis.get(x));
+			
+		}
+		
 		modelo=new DefaultTreeModel(root);
 		treePresupuestos.setModel(modelo);
-		
-		root.add(bison);
-		root.add(acorn);
+
 		
 		for(int x=0; x<presupuestos.getSize(); x++){
 
@@ -205,23 +225,18 @@ public class PanelClientePres extends JPanel {
 			
 			if(temp!=null){
 				
-				if(temp.getIdDistribuidor()==1){
-				
-					String titulo="Presupuesto Nº "+temp.getIdPresupuesto();
-				
-					makeNode(titulo, bison);
+				for(int j=0; j<distribuidores.getSize(); j++){
 					
-				}else if(temp.getIdDistribuidor()==2){
+					if(temp.getIdDistribuidor()==distribuidores.getDistribuidor(j).getIdDistribuidor()){
+						
+						String titulo="Presupuesto Nº "+temp.getIdPresupuesto();
+						
+						makeNode(titulo, nombreDis.get(j));
+						
+					}
 					
-					String titulo="Presupuesto Nº "+temp.getIdPresupuesto();
-					
-					makeNode(titulo, acorn);
-				}else{
-					
-					String titulo="Presupuesto Nº "+temp.getIdPresupuesto();
-					
-					makeNode(titulo, root);
 				}
+				
 			}
 			
 		}
@@ -229,14 +244,7 @@ public class PanelClientePres extends JPanel {
 		if(root.getChildCount()==0){
 			makeNode("No hay presupuestos", root);
 		}
-		
-		/*if(bison.getChildCount()==0){
-			makeNode("No hay presupuestos", bison);
-		}
-		
-		if(acorn.getChildCount()==0){
-			makeNode("No hay presupuestos", acorn);
-		}*/
+
 		
 		treePresupuestos.expandRow(0);
 		
@@ -312,7 +320,7 @@ public class PanelClientePres extends JPanel {
 						try {
 							throw new Exception("Debe seleccionar un presupuesto");
 						} catch (Exception e1) {
-							JOptionPane.showMessageDialog(null, e1.getMessage());
+							JOptionPane.showMessageDialog(null, e1.getMessage()+"panelClientePres");
 						}
 					}
 			
