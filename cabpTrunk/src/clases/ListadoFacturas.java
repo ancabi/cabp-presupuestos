@@ -40,13 +40,14 @@ public class ListadoFacturas {
 		try {
 			psFacturas=dbConnect.prepareStatement("SELECT * FROM facturas WHERE idCliente=?");
 			
-			psActualizarFactura=dbConnect.prepareStatement("UPDATE facturas SET ganancia=?, combustible=?, pasaje=?, restaurante=?, otros=?, hotel=?, kilometros=?, totViajes=?," +
-					"precioGasolina=?, isGanancia=?, isCanarias=?, porcentaje=?, totalConIva=?, totalSinIva=?, transporte=?, textoLinea=?, " +
-					"textoFormaPago=?, textoExplicativo=?, fecha=?, isTotalManual=?, valorA, valorB, valorC, valorAux, stepper, " +
-					"totalManual=? WHERE idFactura=?");
+			psActualizarFactura=dbConnect.prepareStatement("UPDATE facturas SET ganancia=?, combustible=?, " +
+					"pasaje=?, restaurante=?, otros=?, hotel=?, kilometros=?, totViajes=?, precioGasolina=?, " +
+					"isGanancia=?, isCanarias=?, porcentaje=?, totalConIva=?, totalSinIva=?, transporte=?, " +
+					"textoLinea=?, textoFormaPago=?, textoExplicativo=?, fecha=?, isTotalManual=?, valorA=?, " +
+					"valorB=?, valorC=?, valorAux=?, stepper=?, totalManual=? WHERE idFactura=?");
 			
 		} catch (SQLException e) {
-			JOptionPane.showMessageDialog(null, e.getMessage());
+			JOptionPane.showMessageDialog(null, e.getMessage()+"ListadoFacturas1");
 		}
 	}
 
@@ -103,7 +104,7 @@ public class ListadoFacturas {
 			}
 			
 		} catch (SQLException e) {
-			JOptionPane.showMessageDialog(null, e.getMessage());
+			JOptionPane.showMessageDialog(null, e.getMessage()+"ListadoFacturas2");
 		}
 		
 	}
@@ -182,7 +183,7 @@ public class ListadoFacturas {
 			psActualizarFactura.executeUpdate();
 			
 		} catch (SQLException e) {
-			JOptionPane.showMessageDialog(null, e.getMessage());
+			JOptionPane.showMessageDialog(null, e.getMessage()+"ListadoFacturas3");
 		}
 		
 	}

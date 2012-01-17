@@ -151,6 +151,10 @@ public class DialogoModPresupuesto extends JDialog {
 					String textoExplicativo=((PanelPresupuesto) panelPresupuesto).getTextoExplicativo();
 					boolean isTotalManual=((PanelPresupuesto) panelPresupuesto).getIsTotalmanual();
 					int totalManual=((PanelPresupuesto) panelPresupuesto).getTotalManual();
+					double valorA=((PanelPresupuesto) panelPresupuesto).getValorA();
+					double valorB=((PanelPresupuesto) panelPresupuesto).getValorB();
+					double valorC=((PanelPresupuesto) panelPresupuesto).getValorC();
+					double valorAux=((PanelPresupuesto) panelPresupuesto).getValorAux();
 					
 					
 					Vector<Vector> lineas=((PanelPresupuesto) panelPresupuesto).getLineas();
@@ -179,6 +183,10 @@ public class DialogoModPresupuesto extends JDialog {
 					    facturaActual.setFecha(fecha);
 					    facturaActual.setTotalManual(isTotalManual);
 					    facturaActual.setTotalManual(totalManual);
+					    facturaActual.setValorA(valorA);
+					    facturaActual.setValorB(valorB);
+					    facturaActual.setValorC(valorC);
+					    facturaActual.setValorAux(valorAux);
 						
 						facturaActual.removeAllLineas();
 						
@@ -219,6 +227,10 @@ public class DialogoModPresupuesto extends JDialog {
 					    presupuestoActual.setFecha(fecha);
 					    presupuestoActual.setTotalManual(isTotalManual);
 					    presupuestoActual.setTotalManual(totalManual);
+					    presupuestoActual.setValorA(valorA);
+					    presupuestoActual.setValorB(valorB);
+					    presupuestoActual.setValorC(valorC);
+					    presupuestoActual.setValorAux(valorAux);
 						
 						presupuestoActual.removeAllLineas();
 						

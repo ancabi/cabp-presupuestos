@@ -254,7 +254,7 @@ public class PanelCliente extends JPanel {
 							try {
 								throw new Exception("No hubo coincidencias en la busqueda");
 							} catch (Exception e1) {
-								JOptionPane.showMessageDialog(null, e1.getMessage());
+								JOptionPane.showMessageDialog(null, e1.getMessage()+"panelCliente");
 							}
 						}else{
 							modelo.setData(datos);
