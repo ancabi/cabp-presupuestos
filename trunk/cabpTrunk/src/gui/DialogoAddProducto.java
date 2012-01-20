@@ -58,7 +58,10 @@ public class DialogoAddProducto extends JDialog {
 		this.setTitle("Agregar producto");
 		this.setContentPane(getJContentPane());
 		this.setModal(true);
-		this.addWindowListener(new java.awt.event.WindowAdapter() {
+		this.addWindowListener(new java.awt.event.WindowAdapter() {   
+			public void windowActivated(java.awt.event.WindowEvent e) {    
+				tfNombre.requestFocus();
+			}
 			public void windowClosing(java.awt.event.WindowEvent e) {
 				valorPulsado=VALOR_CANCELAR;
 				

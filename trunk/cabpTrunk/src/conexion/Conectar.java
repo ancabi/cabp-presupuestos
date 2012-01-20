@@ -16,7 +16,7 @@ import javax.swing.JOptionPane;
  */
 public class Conectar {
 	
-	private static String bd="cabp2011.sqlite";
+	private static String bd="cabp2012.sqlite";
 	private static Connection dbConnect;
 
 	
