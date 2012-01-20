@@ -280,6 +280,10 @@ public class PanelProductos extends JPanel {
 			}
 			
 			modelo.setData(data);
+		}else{
+			Vector<Vector> data=new Vector<Vector>();
+			
+			modelo.setData(data);
 		}
 		
 		
