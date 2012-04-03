@@ -238,7 +238,11 @@ public class Cliente {
 	 */
 	public String getTelefono() {
 		
-		return telefonos.getTelefono(0).getTelefono();
+		try{
+			return telefonos.getTelefono(0).getTelefono();
+		}catch(IndexOutOfBoundsException e1){
+			return "";
+		}
 
 	}
 

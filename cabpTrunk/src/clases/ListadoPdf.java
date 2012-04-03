@@ -86,7 +86,7 @@ public class ListadoPdf {
 			pdfs.add(new Pdf(idCliente, pdf));
 			
 		} catch (SQLException e) {
-			JOptionPane.showMessageDialog(null, "No pueden haber 2 pdf con el mismo nombre");
+			//JOptionPane.showMessageDialog(null, "No pueden haber 2 pdf con el mismo nombre");
 		}
 		
 	}
