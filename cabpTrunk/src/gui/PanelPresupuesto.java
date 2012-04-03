@@ -107,13 +107,13 @@ public class PanelPresupuesto extends JPanel {
 	private JLabel lblSubTotal = null;
 	private JLabel lblTotalSinImp = null;
 	private JLabel lblTituloIva = null;
-	private JLabel lblIva = null;
+	private JLabel lblIva = null;  //  @jve:decl-index=0:
 	private JLabel lblTituloImpGan = null;
 	private JLabel lblImpGan = null;
 	private JLabel sinIva = null;
-	private JLabel lblTotalSinIva = null;
+	private JLabel lblTotalSinIva = null;  //  @jve:decl-index=0:
 	private JLabel totalConIva = null;
-	private JLabel lblTotalConIva = null;
+	private JLabel lblTotalConIva = null;  //  @jve:decl-index=0:
 	private JCheckBox cbGanancia = null;
 	private JPanel panelPorcentaje = null;
 	private JTextField tfPorcentaje1 = null;
@@ -136,18 +136,19 @@ public class PanelPresupuesto extends JPanel {
 	private boolean isCanarias;
 	private int transporte;
 	private JScrollPane scrollTexto = null;
-	private JTextArea taTexto = null;
+	private JTextArea taTexto = null;  //  @jve:decl-index=0:
 	private int kilometros=0;
 	private int nViajes=0;
 	private double precioGasolina=0.0;
 	private double totalSinIva;
 	private DecimalFormat formateador = new DecimalFormat ("#####.##");  //  @jve:decl-index=0:
+	private DecimalFormat formateadorImpresion = new DecimalFormat ("##,###.##");  //  @jve:decl-index=0:
 	private JPanel panelHerramientas = null;
-	private JButton btnBorrar = null;
+	private JButton btnBorrar = null;  //  @jve:decl-index=0:
 	private boolean isPresupuesto=true;
 	private JButton btnPrint = null;
 	private int id;
-	private Cliente c;
+	private Cliente c;  //  @jve:decl-index=0:
 	private double valorA=0;
 	private double valorB=0;
 	private double valorC=0;
@@ -170,7 +171,7 @@ public class PanelPresupuesto extends JPanel {
 	private JScrollPane scrollExplicativo = null;
 	private JCheckBox cbTotalManual = null;
 	private JTextField tfTotalManual = null;
-	private JButton btnCalculoAux = null;
+	private JButton btnCalculoAux = null;  //  @jve:decl-index=0:
 	private DialogoPitagoras dialogoPitagoras;
 	/**
 	 * This is the default constructor
@@ -207,6 +208,10 @@ public class PanelPresupuesto extends JPanel {
 		} catch (IOException e) {
 			JOptionPane.showMessageDialog(null, e.getMessage()+"PanelPresupuesto");
 		}
+		
+		//obligo a que se use como minimo 2 decimales
+		formateadorImpresion.setMinimumFractionDigits(2);
+		
 	}
 
 	/**
@@ -1443,6 +1448,7 @@ public class PanelPresupuesto extends JPanel {
 	}
 	
 	private void actualizarValores(){
+		
 		try{
 			double totalNeto=0;
 			double totalSinImp=0;
@@ -1471,12 +1477,12 @@ public class PanelPresupuesto extends JPanel {
 			}
 			
 			//lo muestro en el label
-			lblImpGan.setText(formateador.format(impuestoGanancia)+" €");
+			lblImpGan.setText(formateadorImpresion.format(impuestoGanancia)+" €");
 			//guardo el transporte
 			transporte=Integer.parseInt(tfTransporte.getText());
 			
 			//asigno el total de gastos al label
-			lblTotalGastos.setText(totalGastos+" €");
+			lblTotalGastos.setText(formateadorImpresion.format(totalGastos)+" €");
 			
 			
 			if(!cbTotalManual.isSelected()){
@@ -1492,18 +1498,18 @@ public class PanelPresupuesto extends JPanel {
 				totalNeto=Integer.parseInt(tfTotalManual.getText());
 			}
 			
-			lblPrecioNeto.setText(formateador.format(totalNeto)+" €");
+			lblPrecioNeto.setText(formateadorImpresion.format(totalNeto)+" €");
 			
 			//guardo el total sin impuestos
 			totalSinImp=totalNeto+totalGastos+ganancia+transporte;
 			
 			//asigno el total sin impuestos
-			lblTotalSinImp.setText(formateador.format(totalSinImp)+" €");
+			lblTotalSinImp.setText(formateadorImpresion.format(totalSinImp)+" €");
 
 			//calculo el total sin iva
 			totalSinIva=totalSinImp+impuestoGanancia;
 			//lo muestro en el label
-			lblTotalSinIva.setText(formateador.format(totalSinIva)+" €");
+			lblTotalSinIva.setText(formateadorImpresion.format(totalSinIva)+" €");
 			
 			//calculo el iva
 			if(!isCanarias){
@@ -1512,12 +1518,12 @@ public class PanelPresupuesto extends JPanel {
 				iva=totalSinIva*IVA;
 			}
 			//lo muestro en el label
-			lblIva.setText(formateador.format(iva)+" €");
+			lblIva.setText(formateadorImpresion.format(iva)+" €");
 			
 			//calculo el total con iva
 			totalIva=iva+totalSinIva;
 			//lo muestro en el label
-			lblTotalConIva.setText(formateador.format(totalIva)+" €");
+			lblTotalConIva.setText(formateadorImpresion.format(totalIva)+" €");
 			
 			actualizarPorcentajes();
 			
@@ -1535,10 +1541,10 @@ public class PanelPresupuesto extends JPanel {
 		
 		tfPorcentaje2.setText(""+porcentaje2);
 		
-		lblPorcentaje1.setText(formateador.format((porcentaje1/100.0)*totalIva)+" €");
-		lblPorcentaje2.setText(formateador.format((porcentaje2/100.0)*totalIva)+" €");
+		lblPorcentaje1.setText(formateadorImpresion.format((porcentaje1/100.0)*totalIva)+" €");
+		lblPorcentaje2.setText(formateadorImpresion.format((porcentaje2/100.0)*totalIva)+" €");
 		
-		totalPorcentaje.setText(formateador.format(totalIva)+" €");
+		totalPorcentaje.setText(formateadorImpresion.format(totalIva)+" €");
 		
 		
 	}
@@ -1709,6 +1715,11 @@ public class PanelPresupuesto extends JPanel {
 			btnBorrar = new JButton();
 			btnBorrar.setIcon(new ImageIcon(getClass().getResource("/img/delete.png")));
 			btnBorrar.setEnabled(false);
+			btnBorrar.addActionListener(new java.awt.event.ActionListener() {
+				public void actionPerformed(java.awt.event.ActionEvent e) {
+					System.out.println("actionPerformed()"); // TODO Auto-generated Event stub actionPerformed()
+				}
+			});
 			btnBorrar.addActionListener(new java.awt.event.ActionListener() {
 				public void actionPerformed(java.awt.event.ActionEvent e) {
 					
@@ -1973,23 +1984,31 @@ public class PanelPresupuesto extends JPanel {
 							
 						}
 						
+						String concepto=""+taTexto.getText();
+						String nombre=""+c.getNombre()+" "+c.getApellidos();
+						String ciudad=""+c.getCiudad();
+						String provincia=""+c.getProvincia();
+						String direccion=""+c.getDireccion();
+						String dni=""+c.getDni();
+						
+						
 						if(isPresupuesto){
 							
 							//esto es para el nombre del fichero
 							tipo="presupuesto";
 							
-							param.put("concepto", taTexto.getText());
+							param.put("concepto", concepto);
 							param.put("precioSinIva", lblTotalSinIva.getText());
 							param.put("id", id);
-							param.put("nombre", c.getNombre()+" "+c.getApellidos());
-							param.put("ciudad", c.getCiudad());
-							param.put("provincia", c.getProvincia());
+							param.put("nombre", nombre);
+							param.put("ciudad", ciudad);
+							param.put("provincia", provincia);
 							param.put("telefono", c.getTelefono());
 							param.put("IVA", lblIva.getText());
 							param.put("fecha", lblFecha.getText());
 							param.put("anio", lblFecha.getText().substring(6)); 
-							param.put("direccion", c.getDireccion());
-							param.put("dni", c.getDni());
+							param.put("direccion", direccion);
+							param.put("dni", dni);
 							param.put("tipo", "Presupuesto ");
 							param.put("textoExplicativo", taExplicativo.getText());
 							param.put("textoFormaPago", taFormaPago.getText());
@@ -1997,18 +2016,18 @@ public class PanelPresupuesto extends JPanel {
 							
 						}else{
 							
-							param.put("concepto", taTexto.getText());
+							param.put("concepto", concepto);
 							param.put("precioSinIva", lblTotalSinIva.getText());
 							param.put("id", id);
-							param.put("nombre", c.getNombre()+" "+c.getApellidos());
-							param.put("ciudad", c.getCiudad());
-							param.put("provincia", c.getProvincia());
+							param.put("nombre", nombre);
+							param.put("ciudad", ciudad);
+							param.put("provincia", provincia);
 							param.put("telefono", c.getTelefono());
 							param.put("IVA", lblIva.getText());
 							param.put("fecha", lblFecha.getText());
-							param.put("anio", lblFecha.getText().substring(5)); 
-							param.put("direccion", c.getDireccion());
-							param.put("dni", c.getDni());
+							param.put("anio", lblFecha.getText().substring(6)); 
+							param.put("direccion", direccion);
+							param.put("dni", dni);
 							param.put("tipo", "Factura ");
 							param.put("textoExplicativo", taExplicativo.getText());
 							param.put("textoFormaPago", taFormaPago.getText());
@@ -2056,7 +2075,7 @@ public class PanelPresupuesto extends JPanel {
 	public void setCliente(Cliente c){
 
 		this.c=c;
-		
+
 	}
 
 	public void setLastId(int lastId) {
@@ -2342,6 +2361,11 @@ public class PanelPresupuesto extends JPanel {
 		if (btnCalculoAux == null) {
 			btnCalculoAux = new JButton();
 			btnCalculoAux.setIcon(new ImageIcon(getClass().getResource("/img/math.png")));
+			btnCalculoAux.addActionListener(new java.awt.event.ActionListener() {
+				public void actionPerformed(java.awt.event.ActionEvent e) {
+					System.out.println("actionPerformed()"); // TODO Auto-generated Event stub actionPerformed()
+				}
+			});
 			btnCalculoAux.addActionListener(new java.awt.event.ActionListener() {
 				public void actionPerformed(java.awt.event.ActionEvent e) {
 					

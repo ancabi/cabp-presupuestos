@@ -215,7 +215,7 @@ public class PanelClienteFactura extends JPanel {
 					
 					if(temp.getIdDistribuidor()==distribuidores.getDistribuidor(j).getIdDistribuidor()){
 						
-						String titulo="Presupuesto Nº "+temp.getIdFactura();
+						String titulo="Factura Nº "+temp.getIdFactura();
 						
 						makeNode(titulo, nombreDis.get(j));
 						
