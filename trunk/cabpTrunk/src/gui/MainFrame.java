@@ -462,7 +462,7 @@ public class MainFrame extends JFrame {
 		if(dialogoSeleccionCliente.getValorPulsado()== DialogoSeleccionCliente.VALOR_ACEPTAR){
 			
 			int idCliente=dialogoSeleccionCliente.getIdCliente();
-		
+
 			nuevaFactura(listadoClientes.getCliente(idCliente-1));
 			
 			

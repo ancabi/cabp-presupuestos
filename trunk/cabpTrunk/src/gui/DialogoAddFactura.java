@@ -226,6 +226,7 @@ public class DialogoAddFactura extends JDialog {
 		
 		
 		this.idCliente = c.getIdCliente();
+
 	}
 
 	public void cargarProductos(ListadoProductos listado){
