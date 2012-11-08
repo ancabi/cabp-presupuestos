@@ -33,7 +33,7 @@ public class ListadoClientes {
 	public ListadoClientes(){
 		
 		try {
-			psClientes = dbConnect.prepareStatement("SELECT * FROM clientes");
+			psClientes = dbConnect.prepareStatement("SELECT * FROM clientes ORDER BY idCliente DESC");
 			
 			psClientesTel=dbConnect.prepareStatement("SELECT telefono FROM telefonos WHERE idCliente=? ORDER BY rowid");
 			

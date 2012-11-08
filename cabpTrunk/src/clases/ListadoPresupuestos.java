@@ -178,7 +178,11 @@ public class ListadoPresupuestos {
 		String textoLinea=p.getTextoLinea();
 		String textoFormaPago=p.getTextoFormaPago();
 		String textoExplicativo=p.getTextoExplicativo();
-		Date fecha=p.getFecha();
+		
+		java.util.Date date = new java.util.Date();
+	    java.sql.Date fecha = new java.sql.Date(date.getTime());
+		
+		//Date fecha=p.getFecha(); Debe ser la fecha del dia en que se convierte
 		boolean isTotalManual=p.isTotalManual();
 		int totalManual=p.getTotalManual();
 		double valorA=p.getValorA();

@@ -166,6 +166,7 @@ public class DialogoSeleccionCliente extends JDialog {
 			btnAceptar.addActionListener(new java.awt.event.ActionListener() {
 				public void actionPerformed(java.awt.event.ActionEvent e) {
 					
+					int conversion;
 					
 					if(cbCliente.getSelectedIndex()>0){
 						setVisible(false);
@@ -174,7 +175,13 @@ public class DialogoSeleccionCliente extends JDialog {
 						
 						String temp=(String) modeloCB.getSelectedItem();
 						
-						temp=temp.substring(0, 1);
+						temp=temp.substring(0, 2);
+						
+						try{
+							conversion=Integer.parseInt(temp);
+						}catch (NumberFormatException e1) {
+							temp=temp.substring(0, 1);
+						}
 						
 						idCliente=Integer.parseInt(temp);
 					}else{
