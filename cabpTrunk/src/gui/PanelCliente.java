@@ -42,6 +42,7 @@ public class PanelCliente extends JPanel {
 	private DialogoModCliente dialogoModCliente;
 	private DialogoBuscarCliente dialogoBuscarCliente;
 	private JButton btnVolver = null;
+	
 	/**
 	 * This is the default constructor
 	 */

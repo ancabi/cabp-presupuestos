@@ -28,6 +28,8 @@ import conexion.Conectar;
 
 import java.awt.Insets;
 import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.Color;
 import java.io.BufferedReader;
 import java.io.File;
@@ -38,6 +40,8 @@ import java.io.IOException;
 import java.io.PrintWriter;
 
 import javax.swing.BorderFactory;
+
+
 
 
 public class MainFrame extends JFrame {
@@ -53,7 +57,9 @@ public class MainFrame extends JFrame {
 	private JPanel panelVacio = null;
 	private JPanel panelCliente = null;
 	private Connection dbConnect;  //  @jve:decl-index=0:
+	private JPanel panelVerFacturas;
 	private JButton btnPresupuesto = null;
+	private JButton btnVerFacturas;
 	private ListadoClientes listadoClientes= null;  //  @jve:decl-index=0:
 	private DialogoSeleccionCliente dialogoSeleccionCliente;
 	private ListadoProductos listadoProductos = null;  //  @jve:decl-index=0:
@@ -219,6 +225,7 @@ public class MainFrame extends JFrame {
 			jJToolBarBar.add(getBtnFactura());
 			jJToolBarBar.add(getBtnProductos());
 			jJToolBarBar.add(getBtnDistribuidor());
+			jJToolBarBar.add(getBtnVerFacturas());
 		}
 		return jJToolBarBar;
 	}
@@ -264,6 +271,7 @@ public class MainFrame extends JFrame {
 			panelCard.add(getPanelCliente(), getPanelCliente().getName());
 			panelCard.add(getPanelProductos(), getPanelProductos().getName());
 			panelCard.add(getPanelDistribuidor(), getPanelDistribuidor().getName());
+			panelCard.add(getPanelVerFacturas(), getPanelVerFacturas().getName());
 		}
 		return panelCard;
 	}
@@ -319,7 +327,7 @@ public class MainFrame extends JFrame {
 			btnPresupuesto = new JButton();
 			btnPresupuesto.setIcon(new ImageIcon(getClass().getResource("/img/presupuesto2.png")));
 			btnPresupuesto.setMargin(new Insets(20, 34, 2, 34));
-			btnPresupuesto.setToolTipText("Añadir presupuesto");
+			btnPresupuesto.setToolTipText("AÃ±adir presupuesto");
 			btnPresupuesto.setBorder(BorderFactory.createEmptyBorder(0, 5, 0, 5));
 			btnPresupuesto.addActionListener(new java.awt.event.ActionListener() {
 				public void actionPerformed(java.awt.event.ActionEvent e) {
@@ -526,7 +534,7 @@ public class MainFrame extends JFrame {
 		if (btnFactura == null) {
 			btnFactura = new JButton();
 			btnFactura.setBorder(BorderFactory.createEmptyBorder(0, 5, 0, 5));
-			btnFactura.setToolTipText("Añadir factura");
+			btnFactura.setToolTipText("Aï¿½adir factura");
 			btnFactura.setIcon(new ImageIcon(getClass().getResource("/img/factura.png")));
 			btnFactura.addActionListener(new java.awt.event.ActionListener() {   
 				public void actionPerformed(java.awt.event.ActionEvent e) {    
@@ -703,9 +711,28 @@ public class MainFrame extends JFrame {
 		return itemIva;
 	}
 	
-	
+	private JButton getBtnVerFacturas() {
+		if(btnVerFacturas == null) {
+			btnVerFacturas = new JButton();
+			btnVerFacturas.setIcon(new ImageIcon(getClass().getClassLoader().getResource("img/verFacturas.png")));
+			btnVerFacturas.setBorder(BorderFactory.createEmptyBorder(0, 5, 0, 5));
+			btnVerFacturas.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent evt) {
+					
+					cambiarCapa("panelVerFacturas");
+				}
+			});
 
+		}
+		return btnVerFacturas;
+	}
 	
-
+	private JPanel getPanelVerFacturas() {
+		if(panelVerFacturas == null) {
+			panelVerFacturas = new PanelVerFacturas(this);
+			panelVerFacturas.setName("panelVerFacturas");
+		}
+		return panelVerFacturas;
+	}
 
 }  //  @jve:decl-index=0:visual-constraint="10,10"
