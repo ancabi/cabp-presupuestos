@@ -25,6 +25,7 @@ public class ListadoFacturas {
 	private int idCliente;
 	private PreparedStatement psFacturas=null;
 	private PreparedStatement psActualizarFactura;
+	private PreparedStatement psTodasFacturas;
 	
 	public ListadoFacturas(int idCliente){
 		
@@ -39,6 +40,8 @@ public class ListadoFacturas {
 		
 		try {
 			psFacturas=dbConnect.prepareStatement("SELECT * FROM facturas WHERE idCliente=?");
+			
+			psTodasFacturas=dbConnect.prepareStatement("SELECT * FROM facturas");
 			
 			psActualizarFactura=dbConnect.prepareStatement("UPDATE facturas SET ganancia=?, combustible=?, " +
 					"pasaje=?, restaurante=?, otros=?, hotel=?, kilometros=?, totViajes=?, precioGasolina=?, " +
@@ -108,6 +111,63 @@ public class ListadoFacturas {
 		}
 		
 	}
+	
+	public void cargarTodasFacturas(){
+		//vacio el vector
+		facturas.removeAllElements();
+		
+		try {
+			//ejecuto la consulta
+			ResultSet rs=psTodasFacturas.executeQuery();
+			
+			while(rs.next()){
+				//guardo los datos
+				int idFactura=rs.getInt("idFactura");
+				int ganancia=rs.getInt("ganancia");
+				int restaurante=rs.getInt("restaurante");
+				int pasaje=rs.getInt("pasaje");
+				int combustible=rs.getInt("combustible");
+				int otros=rs.getInt("otros");
+				int hotel=rs.getInt("hotel");
+				int kilometros=rs.getInt("kilometros");
+				boolean isGanancia=rs.getBoolean("isGanancia");
+				boolean isCanarias=rs.getBoolean("isCanarias");
+				int porcentaje=rs.getInt("porcentaje");
+				double totalConIva=rs.getDouble("totalConIva");
+				int transporte=rs.getInt("transporte");
+				String textoLinea=rs.getString("textoLinea");
+				String textoFormaPago=rs.getString("textoFormaPago");
+				String textoExplicativo=rs.getString("textoExplicativo");
+				Date fecha=rs.getDate("fecha");
+				int totViajes=rs.getInt("totViajes");
+				double precioGasolina=rs.getDouble("precioGasolina");
+				double totalSinIva=rs.getDouble("totalSinIva");
+				boolean isTotalManual= rs.getBoolean("isTotalManual");
+				int totalManual = rs.getInt("totalManual");
+				double valorA=rs.getDouble("valorA");
+				double valorB=rs.getDouble("valorB");
+				double valorC=rs.getDouble("valorC");
+				double valorAux=rs.getDouble("valorAux");
+				boolean stepper=rs.getBoolean("stepper");
+				int idDistribuidor=rs.getInt("idDistribuidor");
+				idCliente=rs.getInt("idCliente");
+				
+				//creo la factura y lo guardo en el vector
+				facturas.add(new Facturas(idFactura, ganancia, restaurante, pasaje, combustible, otros, hotel, kilometros, totViajes, precioGasolina, 
+						isGanancia, isCanarias, porcentaje, totalConIva, totalSinIva, transporte, textoLinea, textoFormaPago, textoExplicativo, fecha,
+						isTotalManual,  totalManual, idCliente, valorA, valorB, valorC, valorAux, stepper, idDistribuidor));
+				//traigo el ultimo indice introducido
+				int index=facturas.size()-1;
+				//cargo las lineas
+				facturas.get(index).cargarLineas();
+				
+			}
+			
+		} catch (SQLException e) {
+			JOptionPane.showMessageDialog(null, e.getMessage()+"ListadoFacturas2");
+		}
+		
+	}
 
 	public void setIdCliente(int idCliente) {
 		this.idCliente = idCliente;
@@ -127,6 +187,10 @@ public class ListadoFacturas {
 		return facturas.get(index);
 
 		
+	}
+	
+	public Vector<Facturas> getFacturas(){
+		return facturas;
 	}
 	
 	public int getSize(){
