@@ -45,7 +45,7 @@ public class DialogoAddFactura extends JDialog {
 	 */
 	private void initialize() {
 		this.setSize(1172, 743);
-		this.setResizable(false);
+		this.setResizable(true);
 		this.setTitle("Agregar Factura");
 		this.setMinimumSize(new Dimension(775, 441));
 		this.setContentPane(getJContentPane());
