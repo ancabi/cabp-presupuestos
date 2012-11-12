@@ -410,9 +410,9 @@ public class MainFrame extends JFrame {
 		
 		if(dialogoSeleccionCliente.getValorPulsado()== DialogoSeleccionCliente.VALOR_ACEPTAR){
 			
-			int idCliente=dialogoSeleccionCliente.getIdCliente()-1;
+			int idCliente=dialogoSeleccionCliente.getIdCliente();
 
-			nuevoPresupuesto(listadoClientes.getCliente(idCliente));
+			nuevoPresupuesto(listadoClientes.getClientePorId(idCliente));
 			
 			
 		}
@@ -471,7 +471,7 @@ public class MainFrame extends JFrame {
 			
 			int idCliente=dialogoSeleccionCliente.getIdCliente();
 
-			nuevaFactura(listadoClientes.getCliente(idCliente-1));
+			nuevaFactura(listadoClientes.getClientePorId(idCliente));
 			
 			
 		}
@@ -718,6 +718,9 @@ public class MainFrame extends JFrame {
 			btnVerFacturas.setBorder(BorderFactory.createEmptyBorder(0, 5, 0, 5));
 			btnVerFacturas.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent evt) {
+					
+					panelVerFacturas=getPanelVerFacturas();
+					((PanelVerFacturas) panelVerFacturas).cargarListados();
 					
 					cambiarCapa("panelVerFacturas");
 				}

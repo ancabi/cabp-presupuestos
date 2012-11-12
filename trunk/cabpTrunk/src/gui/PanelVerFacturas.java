@@ -23,20 +23,10 @@ import javax.swing.ListSelectionModel;
 
 import clases.Cliente;
 import clases.Facturas;
+import clases.ListadoClientes;
 import clases.ListadoFacturas;
 
-/**
-* This code was edited or generated using CloudGarden's Jigloo
-* SWT/Swing GUI Builder, which is free for non-commercial
-* use. If Jigloo is being used commercially (ie, by a corporation,
-* company or business for any purpose whatever) then you
-* should purchase a license for each developer using Jigloo.
-* Please visit www.cloudgarden.com for details.
-* Use of Jigloo implies acceptance of these licensing terms.
-* A COMMERCIAL LICENSE HAS NOT BEEN PURCHASED FOR
-* THIS MACHINE, SO JIGLOO OR THIS CODE CANNOT BE USED
-* LEGALLY FOR ANY CORPORATE OR COMMERCIAL PURPOSE.
-*/
+
 public class PanelVerFacturas extends javax.swing.JPanel {
 	private JPanel panelFactura;
 	private JScrollPane panelFactCliente;
@@ -45,7 +35,7 @@ public class PanelVerFacturas extends javax.swing.JPanel {
 	private JList listaFactClientes;
 	private DefaultListModel<String> modeloLista;
 	private JFrame mainFrame=null;
-	private Vector<Cliente> clientes=new Vector<Cliente>();
+	private ListadoClientes clientes;
 	private Vector<Facturas> facturas=null;
 	/**
 	* Auto-generated main method to display this 
@@ -63,7 +53,7 @@ public class PanelVerFacturas extends javax.swing.JPanel {
 		super();
 		initGUI();
 		this.mainFrame=mainFrame;
-		clientes=((MainFrame) mainFrame).getListadoClientes().getClientes();
+		
 		
 	}
 	
@@ -76,22 +66,9 @@ public class PanelVerFacturas extends javax.swing.JPanel {
 				scrollListaFactClientes = new JScrollPane();
 				this.add(scrollListaFactClientes, BorderLayout.WEST);
 				{
-					ListadoFacturas listadoFacturas=new ListadoFacturas();
-					listadoFacturas.cargarTodasFacturas();
-					facturas=listadoFacturas.getFacturas();
+					
 					modeloLista=new DefaultListModel<String>();
-					ListIterator<Facturas> i=facturas.listIterator();
-					System.out.println(facturas.size());
-					Facturas f;
-					Cliente c;
-					String factCliente;
-					while(i.hasNext()){
-						f=i.next();
-						factCliente=""+f.getIdFactura();
-						
-						modeloLista.addElement(factCliente);
-						
-					}
+					
 					listaFactCliente = new JList();
 					scrollListaFactClientes.setViewportView(listaFactCliente);
 					listaFactCliente.setModel(modeloLista);
@@ -110,6 +87,27 @@ public class PanelVerFacturas extends javax.swing.JPanel {
 			
 		} catch (Exception e) {
 			e.printStackTrace();
+		}
+	}
+	
+	public void cargarListados(){
+		clientes=((MainFrame) mainFrame).getListadoClientes();
+		
+		ListadoFacturas listadoFacturas=new ListadoFacturas();
+		listadoFacturas.cargarTodasFacturas();
+		facturas=listadoFacturas.getFacturas();
+		
+		ListIterator<Facturas> i=facturas.listIterator();
+		Facturas f;
+		Cliente c;
+		String factCliente;
+		while(i.hasNext()){
+			f=i.next();
+			c=clientes.getClientePorId(f.getIdCliente());
+			factCliente=""+f.getIdFactura()+" "+c.getNombre()+" "+c.getApellidos();
+			
+			modeloLista.addElement(factCliente);
+			
 		}
 	}
 

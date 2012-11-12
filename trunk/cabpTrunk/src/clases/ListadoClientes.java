@@ -7,6 +7,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ListIterator;
 import java.util.Vector;
 
 import javax.swing.JOptionPane;
@@ -443,6 +444,20 @@ public class ListadoClientes {
 		}
 		
 		return 0;
+	}
+	
+	public Cliente getClientePorId(int id){
+		
+		ListIterator i=clientes.listIterator();
+		
+		while(i.hasNext()){
+			Cliente c=(Cliente) i.next();
+			
+			if(c.getIdCliente()==id){
+				return c;
+			}
+		}
+		return null;
 	}
 
 }
