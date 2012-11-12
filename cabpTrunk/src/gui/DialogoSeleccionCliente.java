@@ -176,7 +176,7 @@ public class DialogoSeleccionCliente extends JDialog {
 						String temp=(String) modeloCB.getSelectedItem();
 						
 						temp=temp.substring(0, 2);
-						
+
 						try{
 							conversion=Integer.parseInt(temp);
 						}catch (NumberFormatException e1) {
