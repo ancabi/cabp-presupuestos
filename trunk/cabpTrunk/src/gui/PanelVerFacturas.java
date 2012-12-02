@@ -75,7 +75,19 @@ public class PanelVerFacturas extends javax.swing.JPanel {
 					listaFactCliente.setPreferredSize(new java.awt.Dimension(167, 445));
 					listaFactCliente.addMouseListener(new MouseAdapter() {
 						public void mouseClicked(MouseEvent evt) {
-							listaFactCliente.getSelectedIndex();
+							
+							
+							int id;							
+							
+							id=listaFactCliente.getSelectedIndex();
+							Facturas f=facturas.get(id);
+							Cliente c=clientes.getClientePorId(f.getIdCliente());
+							
+							((PanelPresupuesto) panelFactura).setFactura(f);
+							((PanelPresupuesto) panelFactura).setCliente(c);
+							
+							
+							
 						}
 					});
 				}
@@ -91,6 +103,12 @@ public class PanelVerFacturas extends javax.swing.JPanel {
 	}
 	
 	public void cargarListados(){
+		
+		modeloLista.clear();
+		((PanelPresupuesto) panelFactura).editableCampos(false);
+		((PanelPresupuesto) panelFactura).limpiarCampos();
+		((PanelPresupuesto) panelFactura).editableCampos(false);
+		
 		clientes=((MainFrame) mainFrame).getListadoClientes();
 		
 		ListadoFacturas listadoFacturas=new ListadoFacturas();
