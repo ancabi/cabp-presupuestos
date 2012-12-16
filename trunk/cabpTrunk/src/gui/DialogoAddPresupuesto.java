@@ -14,6 +14,7 @@ import javax.swing.JButton;
 
 
 import clases.Cliente;
+import clases.IVA;
 import clases.ListadoProductos;
 import clases.Presupuestos;
 
@@ -163,11 +164,12 @@ public class DialogoAddPresupuesto extends JDialog {
 				    double valorC=((PanelPresupuesto) panelPresupuesto).getValorC();
 				    double valorAux=((PanelPresupuesto) panelPresupuesto).getValorAux();
 				    boolean stepper=((PanelPresupuesto) panelPresupuesto).isStepper();
+				    double iva=IVA.getIVA();
 				    
 					Vector<Vector> lineas=((PanelPresupuesto) panelPresupuesto).getLineas();
 					
 					Presupuestos p= new Presupuestos(ganancia, restaurante, pasaje, combustible, otros, hotel, kilometros, nViajes, 
-							precioGasolina, isGanancia, isCanarias, porcentaje, totalIva, totalSinIva, transporte, textoLinea, 
+							precioGasolina, isGanancia, isCanarias, porcentaje, totalIva, totalSinIva, iva, transporte, textoLinea, 
 							textoFormaPago, textoExplicativo, fecha, isTotalManual, totalManual, idCliente, valorA, valorB, valorC, 
 							valorAux, stepper, idDistribuidor);
 					

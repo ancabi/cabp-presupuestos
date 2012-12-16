@@ -49,7 +49,7 @@ public class ListadoPresupuestos {
 			psBorrarLineas=dbConnect.prepareStatement("DELETE FROM lineaPresupuesto WHERE idPresupuesto=?");
 			
 			psActualizarPresupuesto=dbConnect.prepareStatement("UPDATE presupuestos SET ganancia=?, combustible=?, pasaje=?, restaurante=?, otros=?, hotel=?, kilometros=?, totViajes=?," +
-					"precioGasolina=?, isGanancia=?, isCanarias=?, porcentaje=?, totalConIva=?, totalSinIva=?, transporte=?, textoLinea=?, " +
+					"precioGasolina=?, isGanancia=?, isCanarias=?, porcentaje=?, totalConIva=?, totalSinIva=?, iva=?, transporte=?, textoLinea=?, " +
 					"textoFormaPago=?, textoExplicativo=?, fecha=?, isTotalManual=?, valorA=?, valorB=?, valorC=?, valorAux=?, stepper=?, " +
 					"totalManual=? WHERE idPresupuesto=?");
 			
@@ -93,6 +93,7 @@ public class ListadoPresupuestos {
 				int totViajes=rs.getInt("totViajes");
 				double precioGasolina=rs.getDouble("precioGasolina");
 				double totalSinIva=rs.getDouble("totalSinIva");
+				double iva=rs.getDouble("iva");
 				double valorA=rs.getDouble("valorA");
 				double valorB=rs.getDouble("valorB");
 				double valorC=rs.getDouble("valorC");
@@ -102,7 +103,7 @@ public class ListadoPresupuestos {
 				
 				//creo el presupuesto y lo guardo en el vector
 				presupuestos.add(new Presupuestos(idPresupuesto, ganancia, restaurante, pasaje, combustible, otros, hotel, kilometros, totViajes, precioGasolina, 
-						isGanancia, isCanarias, porcentaje, totalConIva, totalSinIva, transporte, textoLinea, textoFormaPago, textoExplicativo, fecha, isTotalManual, totalManual,
+						isGanancia, isCanarias, porcentaje, totalConIva, totalSinIva, iva, transporte, textoLinea, textoFormaPago, textoExplicativo, fecha, isTotalManual, totalManual,
 						idCliente, valorA, valorB, valorC, valorAux, stepper, idDistribuidor));
 				//traigo el ultimo indice introducido
 				int index=presupuestos.size()-1;
@@ -174,6 +175,7 @@ public class ListadoPresupuestos {
 		int porcentaje=p.getPorcentaje();
 		double totalConIva=p.getTotalConIva();
 		double totalSinIva=p.getTotalSinIva();
+		double iva=p.getIVA();
 		int transporte=p.getTransporte();
 		String textoLinea=p.getTextoLinea();
 		String textoFormaPago=p.getTextoFormaPago();
@@ -194,7 +196,7 @@ public class ListadoPresupuestos {
 		
 		
 		Facturas f=new Facturas(ganancia, restaurante, pasaje, combustible, otros, hotel, kilometros, nViajes, precioGasolina, 
-				isGanancia, isCanarias, porcentaje, totalConIva, totalSinIva, transporte, textoLinea, textoFormaPago, textoExplicativo, fecha, 
+				isGanancia, isCanarias, porcentaje, totalConIva, totalSinIva, iva, transporte, textoLinea, textoFormaPago, textoExplicativo, fecha, 
 				isTotalManual, totalManual,	idCliente, valorA, valorB, valorC, valorAux, stepper, idDistribuidor);
 		
 		f.addBD();
@@ -256,19 +258,20 @@ public class ListadoPresupuestos {
 			psActualizarPresupuesto.setInt(12, p.getPorcentaje());
 			psActualizarPresupuesto.setDouble(13, p.getTotalConIva());
 			psActualizarPresupuesto.setDouble(14, p.getTotalSinIva());
-			psActualizarPresupuesto.setInt(15, p.getTransporte());
-			psActualizarPresupuesto.setString(16, p.getTextoLinea());
-			psActualizarPresupuesto.setString(17, p.getTextoFormaPago());
-			psActualizarPresupuesto.setString(18, p.getTextoExplicativo());
-			psActualizarPresupuesto.setDate(19, p.getFecha());
-			psActualizarPresupuesto.setBoolean(20, p.isTotalManual());
-			psActualizarPresupuesto.setDouble(21, p.getValorA());
-			psActualizarPresupuesto.setDouble(22, p.getValorB());
-			psActualizarPresupuesto.setDouble(23, p.getValorC());
-			psActualizarPresupuesto.setDouble(24, p.getValorAux());
-			psActualizarPresupuesto.setBoolean(25, p.isStepper());
-			psActualizarPresupuesto.setInt(26, p.getTotalManual());
-			psActualizarPresupuesto.setInt(27, id);
+			psActualizarPresupuesto.setDouble(15, p.getIVA());
+			psActualizarPresupuesto.setInt(16, p.getTransporte());
+			psActualizarPresupuesto.setString(17, p.getTextoLinea());
+			psActualizarPresupuesto.setString(18, p.getTextoFormaPago());
+			psActualizarPresupuesto.setString(19, p.getTextoExplicativo());
+			psActualizarPresupuesto.setDate(20, p.getFecha());
+			psActualizarPresupuesto.setBoolean(21, p.isTotalManual());
+			psActualizarPresupuesto.setDouble(22, p.getValorA());
+			psActualizarPresupuesto.setDouble(23, p.getValorB());
+			psActualizarPresupuesto.setDouble(24, p.getValorC());
+			psActualizarPresupuesto.setDouble(25, p.getValorAux());
+			psActualizarPresupuesto.setBoolean(26, p.isStepper());
+			psActualizarPresupuesto.setInt(27, p.getTotalManual());
+			psActualizarPresupuesto.setInt(28, id);
 		
 			psActualizarPresupuesto.executeUpdate();
 			

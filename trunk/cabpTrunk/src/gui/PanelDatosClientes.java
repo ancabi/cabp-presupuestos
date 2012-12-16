@@ -37,6 +37,19 @@ import clases.ListadoEmails;
 import clases.ListadoTelefonos;
 import clases.Telefonos;
 
+
+/**
+* This code was edited or generated using CloudGarden's Jigloo
+* SWT/Swing GUI Builder, which is free for non-commercial
+* use. If Jigloo is being used commercially (ie, by a corporation,
+* company or business for any purpose whatever) then you
+* should purchase a license for each developer using Jigloo.
+* Please visit www.cloudgarden.com for details.
+* Use of Jigloo implies acceptance of these licensing terms.
+* A COMMERCIAL LICENSE HAS NOT BEEN PURCHASED FOR
+* THIS MACHINE, SO JIGLOO OR THIS CODE CANNOT BE USED
+* LEGALLY FOR ANY CORPORATE OR COMMERCIAL PURPOSE.
+*/
 public class PanelDatosClientes extends JPanel {
 
 	private static final long serialVersionUID = 1L;
@@ -115,7 +128,7 @@ public class PanelDatosClientes extends JPanel {
 		this.setSize(920, 617);
 		this.setLayout(new BorderLayout());
 		this.setMinimumSize(new Dimension(70, 20));
-		this.setPreferredSize(new Dimension(110, 20));
+		this.setPreferredSize(new java.awt.Dimension(985, 454));
 		this.add(getPanelContenedor(), BorderLayout.CENTER);
 		this.add(getPanelTitulo(), BorderLayout.NORTH);
 	}
@@ -128,8 +141,8 @@ public class PanelDatosClientes extends JPanel {
 	private JTextField getTfDni() {
 		if (tfDni == null) {
 			tfDni = new JTextField();
-			tfDni.setMinimumSize(new Dimension(110, 20));
-			tfDni.setPreferredSize(new Dimension(110, 20));
+			tfDni.setMinimumSize(new java.awt.Dimension(310, 20));
+			tfDni.setPreferredSize(new java.awt.Dimension(500, 20));
 		}
 		return tfDni;
 	}
@@ -142,8 +155,8 @@ public class PanelDatosClientes extends JPanel {
 	private JTextField getTfNombre() {
 		if (tfNombre == null) {
 			tfNombre = new JTextField();
-			tfNombre.setMinimumSize(new Dimension(110, 20));
-			tfNombre.setPreferredSize(new Dimension(110, 20));
+			tfNombre.setMinimumSize(new java.awt.Dimension(310, 20));
+			tfNombre.setPreferredSize(new java.awt.Dimension(500, 20));
 		}
 		return tfNombre;
 	}
@@ -156,8 +169,8 @@ public class PanelDatosClientes extends JPanel {
 	private JTextField getTfApellidos() {
 		if (tfApellidos == null) {
 			tfApellidos = new JTextField();
-			tfApellidos.setMinimumSize(new Dimension(110, 20));
-			tfApellidos.setPreferredSize(new Dimension(110, 20));
+			tfApellidos.setMinimumSize(new java.awt.Dimension(310, 20));
+			tfApellidos.setPreferredSize(new java.awt.Dimension(500, 20));
 		}
 		return tfApellidos;
 	}
@@ -170,8 +183,8 @@ public class PanelDatosClientes extends JPanel {
 	private JTextField getTfDireccion() {
 		if (tfDireccion == null) {
 			tfDireccion = new JTextField();
-			tfDireccion.setMinimumSize(new Dimension(110, 20));
-			tfDireccion.setPreferredSize(new Dimension(110, 20));
+			tfDireccion.setMinimumSize(new java.awt.Dimension(310, 20));
+			tfDireccion.setPreferredSize(new java.awt.Dimension(500, 20));
 		}
 		return tfDireccion;
 	}
@@ -184,8 +197,8 @@ public class PanelDatosClientes extends JPanel {
 	private JTextField getTfCiudad() {
 		if (tfCiudad == null) {
 			tfCiudad = new JTextField();
-			tfCiudad.setPreferredSize(new Dimension(110, 20));
-			tfCiudad.setMinimumSize(new Dimension(110, 20));
+			tfCiudad.setPreferredSize(new java.awt.Dimension(500, 20));
+			tfCiudad.setMinimumSize(new java.awt.Dimension(310, 20));
 		}
 		return tfCiudad;
 	}
@@ -198,8 +211,8 @@ public class PanelDatosClientes extends JPanel {
 	private JTextField getTfEmpresa() {
 		if (tfEmpresa == null) {
 			tfEmpresa = new JTextField();
-			tfEmpresa.setPreferredSize(new Dimension(110, 20));
-			tfEmpresa.setMinimumSize(new Dimension(110, 20));
+			tfEmpresa.setPreferredSize(new java.awt.Dimension(500, 20));
+			tfEmpresa.setMinimumSize(new java.awt.Dimension(310, 20));
 		}
 		return tfEmpresa;
 	}
@@ -800,8 +813,8 @@ public class PanelDatosClientes extends JPanel {
 	private JTextField getTfProvincia() {
 		if (tfProvincia == null) {
 			tfProvincia = new JTextField();
-			tfProvincia.setPreferredSize(new Dimension(110, 20));
-			tfProvincia.setMinimumSize(new Dimension(110, 20));
+			tfProvincia.setPreferredSize(new java.awt.Dimension(500, 20));
+			tfProvincia.setMinimumSize(new java.awt.Dimension(310, 20));
 		}
 		return tfProvincia;
 	}

@@ -27,6 +27,19 @@ import clases.ListadoClientes;
 import clases.ListadoFacturas;
 
 
+
+/**
+* This code was edited or generated using CloudGarden's Jigloo
+* SWT/Swing GUI Builder, which is free for non-commercial
+* use. If Jigloo is being used commercially (ie, by a corporation,
+* company or business for any purpose whatever) then you
+* should purchase a license for each developer using Jigloo.
+* Please visit www.cloudgarden.com for details.
+* Use of Jigloo implies acceptance of these licensing terms.
+* A COMMERCIAL LICENSE HAS NOT BEEN PURCHASED FOR
+* THIS MACHINE, SO JIGLOO OR THIS CODE CANNOT BE USED
+* LEGALLY FOR ANY CORPORATE OR COMMERCIAL PURPOSE.
+*/
 public class PanelVerFacturas extends javax.swing.JPanel {
 	private JPanel panelFactura;
 	private JScrollPane panelFactCliente;
@@ -36,6 +49,7 @@ public class PanelVerFacturas extends javax.swing.JPanel {
 	private DefaultListModel<String> modeloLista;
 	private JFrame mainFrame=null;
 	private ListadoClientes clientes;
+	private JScrollPane scrollPresupuesto;
 	private Vector<Facturas> facturas=null;
 	/**
 	* Auto-generated main method to display this 
@@ -93,10 +107,18 @@ public class PanelVerFacturas extends javax.swing.JPanel {
 				}
 			}
 			{
-				panelFactura = new PanelPresupuesto();
-				this.add(panelFactura, BorderLayout.CENTER);
+				scrollPresupuesto = new JScrollPane();
+				this.add(scrollPresupuesto, BorderLayout.CENTER);
+				{
+					panelFactura = new PanelPresupuesto();
+					scrollPresupuesto.setViewportView(panelFactura);
+					panelFactura.setPreferredSize(new java.awt.Dimension(1148, 606));
+					panelFactura.setSize(1148, 606);
+					panelFactura.setMinimumSize(new java.awt.Dimension(1148, 606));
+					panelFactura.setMaximumSize(new java.awt.Dimension(1148, 606));
+				}
 			}
-			
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
