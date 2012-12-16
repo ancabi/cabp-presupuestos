@@ -41,6 +41,7 @@ import javax.swing.JCheckBox;
 import clases.Cliente;
 import clases.Distribuidor;
 import clases.Facturas;
+import clases.IVA;
 import clases.ListadoDistribuidores;
 import clases.ListadoLineaFactura;
 import clases.ListadoLineaPresup;
@@ -59,6 +60,19 @@ import javax.swing.JButton;
 import javax.swing.ImageIcon;
 import javax.swing.BoxLayout;
 
+
+/**
+* This code was edited or generated using CloudGarden's Jigloo
+* SWT/Swing GUI Builder, which is free for non-commercial
+* use. If Jigloo is being used commercially (ie, by a corporation,
+* company or business for any purpose whatever) then you
+* should purchase a license for each developer using Jigloo.
+* Please visit www.cloudgarden.com for details.
+* Use of Jigloo implies acceptance of these licensing terms.
+* A COMMERCIAL LICENSE HAS NOT BEEN PURCHASED FOR
+* THIS MACHINE, SO JIGLOO OR THIS CODE CANNOT BE USED
+* LEGALLY FOR ANY CORPORATE OR COMMERCIAL PURPOSE.
+*/
 /**
  * @author ancabi
  *
@@ -66,7 +80,7 @@ import javax.swing.BoxLayout;
 public class PanelPresupuesto extends JPanel {
 
 	private static final long serialVersionUID = 1L;
-	private double IVA;
+	private double iva;
 	private final double IMPUESTOgANANCIA=0.2;
 	private JPanel panelTitulo = null;
 	private JPanel panelDatos = null;
@@ -173,6 +187,9 @@ public class PanelPresupuesto extends JPanel {
 	private JTextField tfTotalManual = null;
 	private JButton btnCalculoAux = null;  //  @jve:decl-index=0:
 	private DialogoPitagoras dialogoPitagoras;
+	private double ivaGuardado;
+	private boolean ivaCargado=false;
+	
 	/**
 	 * This is the default constructor
 	 */
@@ -189,6 +206,8 @@ public class PanelPresupuesto extends JPanel {
 	private void initialize() {
 		this.setSize(1148, 606);
 		this.setLayout(new BorderLayout());
+		this.setMinimumSize(new java.awt.Dimension(1148, 606));
+		this.setPreferredSize(new java.awt.Dimension(1148, 606));
 		this.add(getPanelTitulo(), BorderLayout.NORTH);
 		this.add(getPanelDatos(), BorderLayout.CENTER);
 		this.add(getScrollTexto(), BorderLayout.SOUTH);
@@ -196,10 +215,8 @@ public class PanelPresupuesto extends JPanel {
 		
 		try{
 			
-			File archivo = new File("iva.cabp");
-			FileReader fr = new FileReader(archivo);
-			BufferedReader br = new BufferedReader(fr);
-			IVA=Double.parseDouble(br.readLine())/100.0;
+			IVA.readIVA();
+			iva=IVA.getIVA();
 			
 		}catch(FileNotFoundException e){
 			JOptionPane.showMessageDialog(null, e.getMessage()+"PanelPresupuesto");
@@ -1452,7 +1469,7 @@ public class PanelPresupuesto extends JPanel {
 		try{
 			double totalNeto=0;
 			double totalSinImp=0;
-			double iva=0;
+			double ivaCalculado=0;
 			isGanancia=cbGanancia.isSelected();
 			isCanarias=cbCanarias.isSelected();
 			double impuestoGanancia=0;
@@ -1515,10 +1532,15 @@ public class PanelPresupuesto extends JPanel {
 			if(!isCanarias){
 				iva=0;
 			}else{
-				iva=totalSinIva*IVA;
+				if(ivaCargado){
+					ivaCalculado=totalSinIva*ivaGuardado;
+				}else{
+					ivaCalculado=totalSinIva*iva;
+				}
+				
 			}
 			//lo muestro en el label
-			lblIva.setText(formateadorImpresion.format(iva)+" �");
+			lblIva.setText(formateadorImpresion.format(ivaCalculado)+" �");
 			
 			//calculo el total con iva
 			totalIva=iva+totalSinIva;
@@ -1615,6 +1637,8 @@ public class PanelPresupuesto extends JPanel {
 		cbTotalManual.setSelected(false);
 		
 		//btnPrint.setEnabled(false);
+		
+		ivaCargado=false;
 		
 		lblFecha.setText("");
 		
@@ -1746,7 +1770,7 @@ public class PanelPresupuesto extends JPanel {
 		
 		Vector data=new Vector();
 		
-		//no se si ser� ineficiente pero seguro que si
+		//no se si sera ineficiente pero seguro que si
 		listado.cargarDistribuidores();
 		d=listado.getDistribuidor(p.getIdDistribuidor()-1);
 		
@@ -1786,6 +1810,9 @@ public class PanelPresupuesto extends JPanel {
 		tfTotalManual.setText(""+p.getTotalManual());
 		id=p.getIdPresupuesto();
 		p.getIdCliente();
+		
+		ivaGuardado=p.getIVA();
+		ivaCargado=true;
 		
 		dialogoPitagoras.setValorA(p.getValorA());
 		dialogoPitagoras.setValorB(p.getValorB());
@@ -1923,6 +1950,9 @@ public class PanelPresupuesto extends JPanel {
 		tfTotalManual.setText(""+f.getTotalManual());
 		id=f.getIdFactura();
 		
+		ivaGuardado=f.getIVA();
+		ivaCargado=true;
+		
 		dialogoPitagoras.setValorA(f.getValorA());
 		dialogoPitagoras.setValorB(f.getValorB());
 		dialogoPitagoras.setValorC(f.getValorC());
@@ -2014,6 +2044,12 @@ public class PanelPresupuesto extends JPanel {
 							param.put("textoFormaPago", taFormaPago.getText());
 							param.put("total", lblTotalConIva.getText());
 							
+							if(ivaCargado){
+								param.put("ivaPorcentaje", ivaGuardado);
+							}else{
+								param.put("ivaPorcentaje", iva);
+							}
+							
 						}else{
 							
 							param.put("concepto", concepto);
@@ -2032,6 +2068,12 @@ public class PanelPresupuesto extends JPanel {
 							param.put("textoExplicativo", taExplicativo.getText());
 							param.put("textoFormaPago", taFormaPago.getText());
 							param.put("total", lblTotalConIva.getText());
+							
+							if(ivaCargado){
+								param.put("ivaPorcentaje", ivaGuardado);
+							}else{
+								param.put("ivaPorcentaje", iva);
+							}
 							
 							//esto es para el nombre del fichero
 							tipo="factura";
@@ -2433,6 +2475,14 @@ public class PanelPresupuesto extends JPanel {
 	public boolean isStepper() {
 		return stepper;
 	}
+	
+	/**
+	 * @return the ivaCargado
+	 */
+	public boolean isIvaCargado() {
+		return ivaCargado;
+	}
+	
 	
 	
 	

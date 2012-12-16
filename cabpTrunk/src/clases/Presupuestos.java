@@ -36,6 +36,7 @@ public class Presupuestos {
 	private int porcentaje;
 	private double totalConIva;
 	private double totalSinIva;
+	private double iva;
 	private int transporte;
 	private String textoLinea;
 	private String textoFormaPago;
@@ -67,6 +68,7 @@ public class Presupuestos {
 	 * @param porcentaje
 	 * @param totalConIva
 	 * @param totalSinIva
+	 * @param iva
 	 * @param transporte
 	 * @param textoLinea
 	 * @param textoFormaPago
@@ -85,12 +87,12 @@ public class Presupuestos {
 	public Presupuestos(int idPresupuesto, int ganancia, int restaurante,
 			int pasaje, int combustible, int otros, int hotel, int kilometros,
 			int nViajes, double precioGasolina, boolean isGanancia, boolean isCanarias,
-			int porcentaje, double totalConIva, double totalSinIva,
+			int porcentaje, double totalConIva, double totalSinIva, double iva,
 			int transporte, String textoLinea, String textoFormaPago, String textoExplicativo, Date fecha, boolean isTotalManual, int totalManual,
 			int idCliente, double valorA, double valorB, double valorC, double valorAux, boolean stepper, int idDistribuidor) {
 		
 		this(ganancia, restaurante, pasaje, combustible, otros, hotel, kilometros, nViajes, precioGasolina, isGanancia, isCanarias,
-				porcentaje, totalConIva, totalSinIva, transporte, textoLinea, textoFormaPago, textoExplicativo,
+				porcentaje, totalConIva, totalSinIva, iva, transporte, textoLinea, textoFormaPago, textoExplicativo,
 				fecha, isTotalManual, totalManual, idCliente, valorA, valorB, valorC, valorAux, stepper, idDistribuidor);
 		
 		this.idPresupuesto = idPresupuesto;
@@ -114,6 +116,7 @@ public class Presupuestos {
 	 * @param porcentaje
 	 * @param totalConIva
 	 * @param totalSinIva
+	 * @param iva
 	 * @param transporte
 	 * @param textoLinea
 	 * @param textoFormaPago
@@ -132,7 +135,7 @@ public class Presupuestos {
 	public Presupuestos(int ganancia, int restaurante,
 			int pasaje, int combustible, int otros, int hotel, int kilometros,
 			int nViajes, double precioGasolina, boolean isGanancia, boolean isCanarias,
-			int porcentaje, double totalConIva, double totalSinIva,
+			int porcentaje, double totalConIva, double totalSinIva, double iva,
 			int transporte, String textoLinea, String textoFormaPago, String textoExplicativo, Date fecha, boolean isTotalManual, int totalManual,
 			int idCliente, double valorA, double valorB, double valorC, double valorAux, boolean stepper, int idDistribuidor) {
 		
@@ -150,6 +153,7 @@ public class Presupuestos {
 		this.porcentaje = porcentaje;
 		this.totalConIva = totalConIva;
 		this.totalSinIva = totalSinIva;
+		this.iva=iva;
 		this.transporte = transporte;
 		this.textoLinea = textoLinea;
 		this.textoFormaPago = textoFormaPago;
@@ -176,8 +180,8 @@ public class Presupuestos {
 			PreparedStatement ps=dbConnect.prepareStatement("INSERT INTO presupuestos(ganancia, restaurante, pasaje, combustible, otros, " +
 					"hotel, kilometros, isGanancia, isCanarias, porcentaje, totalConIva, transporte, textoLinea, textoFormaPago, textoExplicativo, fecha" +
 					", idCliente, totViajes, precioGasolina, " +
-					"totalSinIva, isTotalManual, totalManual, valorA, valorB, valorC, valorAux, stepper, idDistribuidor) " +
-					"VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
+					"totalSinIva, iva, isTotalManual, totalManual, valorA, valorB, valorC, valorAux, stepper, idDistribuidor) " +
+					"VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
 			
 			ps.setInt(1, ganancia);
 			ps.setInt(2, restaurante);
@@ -199,14 +203,15 @@ public class Presupuestos {
 			ps.setInt(18, nViajes);
 			ps.setDouble(19, precioGasolina);
 			ps.setDouble(20, totalSinIva);
-			ps.setBoolean(21, isTotalManual);
-			ps.setInt(22, totalManual);
-			ps.setDouble(23, valorA);
-			ps.setDouble(24, valorB);
-			ps.setDouble(25, valorC);
-			ps.setDouble(26, valorAux);
-			ps.setBoolean(27, stepper);
-			ps.setInt(28, idDistribuidor);
+			ps.setDouble(21, iva);
+			ps.setBoolean(22, isTotalManual);
+			ps.setInt(23, totalManual);
+			ps.setDouble(24, valorA);
+			ps.setDouble(25, valorB);
+			ps.setDouble(26, valorC);
+			ps.setDouble(27, valorAux);
+			ps.setBoolean(28, stepper);
+			ps.setInt(29, idDistribuidor);
 			
 			ps.executeUpdate();
 			
@@ -683,7 +688,9 @@ public class Presupuestos {
 		this.textoLinea = textoLinea;
 	}
 
-	
+	public double getIVA(){
+		return iva;
+	}
 	
 	
 	

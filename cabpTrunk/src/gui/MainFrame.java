@@ -20,6 +20,7 @@ import javax.swing.ImageIcon;
 
 
 import clases.Cliente;
+import clases.IVA;
 import clases.ListadoClientes;
 import clases.ListadoDistribuidores;
 import clases.ListadoProductos;
@@ -44,6 +45,19 @@ import javax.swing.BorderFactory;
 
 
 
+
+/**
+* This code was edited or generated using CloudGarden's Jigloo
+* SWT/Swing GUI Builder, which is free for non-commercial
+* use. If Jigloo is being used commercially (ie, by a corporation,
+* company or business for any purpose whatever) then you
+* should purchase a license for each developer using Jigloo.
+* Please visit www.cloudgarden.com for details.
+* Use of Jigloo implies acceptance of these licensing terms.
+* A COMMERCIAL LICENSE HAS NOT BEEN PURCHASED FOR
+* THIS MACHINE, SO JIGLOO OR THIS CODE CANNOT BE USED
+* LEGALLY FOR ANY CORPORATE OR COMMERCIAL PURPOSE.
+*/
 public class MainFrame extends JFrame {
 
 	private static final long serialVersionUID = 1L;
@@ -90,7 +104,7 @@ public class MainFrame extends JFrame {
 	 */
 	private void initialize() {
 		
-		this.setSize(925, 629);
+		this.setSize(1260, 768);
 		this.setForeground(Color.black);
 		this.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/img/cabpTrans.png")));
 		this.setJMenuBar(getJJMenuBar());
@@ -694,8 +708,7 @@ public class MainFrame extends JFrame {
 				            	fichero.close();
 				            }
 				            
-				            JOptionPane.showMessageDialog(null, "El IVA fue cambiado, reinicie el programa para que los cambios tengan efecto","Cambio de IVA", JOptionPane.INFORMATION_MESSAGE, null);
-				            
+				            IVA.readIVA();
 						}
 						
 					} catch (FileNotFoundException e1) {
