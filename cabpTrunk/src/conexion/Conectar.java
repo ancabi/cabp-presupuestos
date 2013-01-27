@@ -15,8 +15,7 @@ import javax.swing.JOptionPane;
  *
  */
 public class Conectar {
-	
-	private static String bd="cabp2012.sqlite";
+
 	private static Connection dbConnect;
 
 	
@@ -26,7 +25,7 @@ public class Conectar {
 	 * @throws ClassNotFoundException
 	 * @throws SQLException
 	 */
-	public static void makeConnection() throws ClassNotFoundException, SQLException{
+	public static void makeConnection(String bd) throws ClassNotFoundException, SQLException{
 		
 			File base=new File(bd);
 			

@@ -1,8 +1,11 @@
 package gui;
 
 import java.awt.BorderLayout;
+
+import javax.swing.JFileChooser;
 import javax.swing.JPanel;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JMenuBar;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
@@ -10,6 +13,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JToolBar;
 import javax.swing.JButton;
 import java.awt.GridBagLayout;
+import java.awt.GridLayout;
 import java.awt.CardLayout;
 import java.sql.Connection;
 
@@ -32,8 +36,10 @@ import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.Color;
+import java.awt.GridBagConstraints;
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileFilter;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -41,8 +47,10 @@ import java.io.IOException;
 import java.io.PrintWriter;
 
 import javax.swing.BorderFactory;
+import javax.swing.BoxLayout;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
-
+import filtos.FiltroImagenes;
 
 
 
@@ -71,6 +79,10 @@ public class MainFrame extends JFrame {
 	private JPanel panelVacio = null;
 	private JPanel panelCliente = null;
 	private Connection dbConnect;  //  @jve:decl-index=0:
+	private JPanel panelDatos;
+	private JLabel lblIva;
+	private JLabel lblBd;
+	private JMenuItem menuItemBd;
 	private JPanel panelVerFacturas;
 	private JButton btnPresupuesto = null;
 	private JButton btnVerFacturas;
@@ -88,6 +100,7 @@ public class MainFrame extends JFrame {
 	private JPanel panelDistribuidor = null;
 	private JMenu menuConfiguracion = null;
 	private JMenuItem itemIva = null;
+	private String bd;
 
 	/**
 	 * This is the default constructor
@@ -110,11 +123,21 @@ public class MainFrame extends JFrame {
 		this.setJMenuBar(getJJMenuBar());
 			
 		try {
+			
+			File archivo = new File("bd.cabp");
+			FileReader fr = new FileReader(archivo);
+			BufferedReader br = new BufferedReader(fr);
+			bd=br.readLine();
+			
 			//conecto con la BD
-			Conectar.makeConnection();
+			Conectar.makeConnection(bd);
+			
+			
 		} catch (ClassNotFoundException e1) {
 			JOptionPane.showMessageDialog(null, e1.getMessage());
 		} catch (SQLException e1) {
+			JOptionPane.showMessageDialog(null, e1.getMessage());
+		} catch (IOException e1) {
 			JOptionPane.showMessageDialog(null, e1.getMessage());
 		}
 
@@ -298,8 +321,14 @@ public class MainFrame extends JFrame {
 	private JPanel getPanelVacio() {
 		if (panelVacio == null) {
 			panelVacio = new JPanel();
-			panelVacio.setLayout(new GridBagLayout());
+			BorderLayout panelVacioLayout = new BorderLayout();
+			panelVacio.setLayout(panelVacioLayout);
 			panelVacio.setName("panelVacio");
+			panelVacio.add(getPanelDatos(), BorderLayout.SOUTH);
+
+			lblBd.setText(lblBd.getText() + bd);
+
+			
 		}
 		return panelVacio;
 	}
@@ -548,7 +577,7 @@ public class MainFrame extends JFrame {
 		if (btnFactura == null) {
 			btnFactura = new JButton();
 			btnFactura.setBorder(BorderFactory.createEmptyBorder(0, 5, 0, 5));
-			btnFactura.setToolTipText("A�adir factura");
+			btnFactura.setToolTipText("Añadir factura");
 			btnFactura.setIcon(new ImageIcon(getClass().getResource("/img/factura.png")));
 			btnFactura.addActionListener(new java.awt.event.ActionListener() {   
 				public void actionPerformed(java.awt.event.ActionEvent e) {    
@@ -670,6 +699,7 @@ public class MainFrame extends JFrame {
 			menuConfiguracion = new JMenu();
 			menuConfiguracion.setText("Opciones");
 			menuConfiguracion.add(getItemIva());
+			menuConfiguracion.add(getMenuItemBd());
 		}
 		return menuConfiguracion;
 	}
@@ -749,6 +779,104 @@ public class MainFrame extends JFrame {
 			panelVerFacturas.setName("panelVerFacturas");
 		}
 		return panelVerFacturas;
+	}
+	
+	private JMenuItem getMenuItemBd() {
+		if(menuItemBd == null) {
+			menuItemBd = new JMenuItem();
+			menuItemBd.setText("Seleccionar base de datos");
+			menuItemBd.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent evt) {
+					
+					File bd=getFile();
+					
+					if(bd!=null){
+					
+						FileWriter fichero=null;
+						try {
+							
+							fichero = new FileWriter("bd.cabp");
+							
+							PrintWriter pw = new PrintWriter(fichero);
+				            
+				            pw.println(bd.getName());
+				            
+				            
+				            if(fichero!=null){
+				            	fichero.close();
+				            }
+							
+							JOptionPane.showMessageDialog(null, "Reinicie el programa para actualizar los cambios");
+							
+						
+						} catch (IOException e) {
+							JOptionPane.showMessageDialog(null, e.getMessage());
+						} 
+					}
+						
+					}
+			});
+		}
+		return menuItemBd;
+	}
+	
+	private File getFile(){
+		
+		String curDir = System.getProperty("user.dir");
+		
+		JFileChooser fc=new JFileChooser(curDir);
+		
+		FileNameExtensionFilter ff=new FileNameExtensionFilter("*.sqlite", "sqlite");
+		
+		fc.setFileFilter(ff);
+		
+		fc.setMultiSelectionEnabled(false);
+		
+		int result=fc.showSaveDialog(null);
+
+		if(result==JFileChooser.APPROVE_OPTION){
+			
+			return fc.getSelectedFile();
+			
+		}
+		
+		return null;
+	}
+	
+	private JLabel getLblBd() {
+		if(lblBd == null) {
+			lblBd = new JLabel();
+			lblBd.setText("Version de base de datos: ");
+		}
+		return lblBd;
+	}
+	
+	private JLabel getLblIva() {
+		if(lblIva == null) {
+			lblIva = new JLabel();
+			try {
+				IVA.readIVA();
+			} catch (NumberFormatException e) {
+				JOptionPane.showMessageDialog(null, e.getMessage());
+			} catch (IOException e) {
+				JOptionPane.showMessageDialog(null, e.getMessage());
+			}
+			lblIva.setText("IVA: "+IVA.getIVA()*100+"%");
+			
+			
+		}
+		return lblIva;
+	}
+	
+	private JPanel getPanelDatos() {
+		if(panelDatos == null) {
+			panelDatos = new JPanel();
+			BoxLayout panelDatosLayout = new BoxLayout(panelDatos, javax.swing.BoxLayout.Y_AXIS);
+			panelDatos.setLayout(panelDatosLayout);
+			panelDatos.add(getLblBd());
+			panelDatos.add(getLblIva());
+		}
+		return panelDatos;
 	}
 
 }  //  @jve:decl-index=0:visual-constraint="10,10"
