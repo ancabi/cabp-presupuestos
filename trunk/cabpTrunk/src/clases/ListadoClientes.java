@@ -66,6 +66,8 @@ public class ListadoClientes {
 	
 	public void cargarClientes(){
 		
+		clientes.clear();
+		
 		ResultSet rs;
 		ResultSet rsSec;
 		
@@ -458,6 +460,10 @@ public class ListadoClientes {
 			}
 		}
 		return null;
+	}
+	
+	public void reconectar(){
+		dbConnect=Conectar.getConnection();
 	}
 
 }
