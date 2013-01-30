@@ -1985,122 +1985,126 @@ public class PanelPresupuesto extends JPanel {
 			btnPrint.addActionListener(new java.awt.event.ActionListener() {
 				public void actionPerformed(java.awt.event.ActionEvent e) {
 					
-					try {
-						
-						if(taTexto.getText().isEmpty()){
-							throw new Exception("Debe escribir algo en el campo");
-						}
-						
-						HashMap<String, Object> param = new HashMap<String, Object>();
-						String tipo;
-						
-						File carpeta=new File(c.getIdCliente()+c.getNomSinEspacios()+c.getApelSinEspacios());
-						//si la carpeta del usuario no existe
-						if(!carpeta.exists()){
-							//la creo
-							carpeta.mkdir();
-							carpeta.setExecutable(true);
-							
-						}
-						
-						String concepto=""+taTexto.getText();
-						String nombre=""+c.getNombre()+" "+c.getApellidos();
-						String ciudad=""+c.getCiudad();
-						String provincia=""+c.getProvincia();
-						String direccion=""+c.getDireccion();
-						String dni=""+c.getDni();
-						
-						
-						if(isPresupuesto){
-							
-							//esto es para el nombre del fichero
-							tipo="presupuesto";
-							
-							param.put("concepto", concepto);
-							param.put("precioSinIva", lblTotalSinIva.getText());
-							param.put("id", id);
-							param.put("nombre", nombre);
-							param.put("ciudad", ciudad);
-							param.put("provincia", provincia);
-							param.put("telefono", c.getTelefono());
-							param.put("IVA", lblIva.getText());
-							param.put("fecha", lblFecha.getText());
-							param.put("anio", lblFecha.getText().substring(6)); 
-							param.put("direccion", direccion);
-							param.put("dni", dni);
-							param.put("tipo", "Presupuesto ");
-							param.put("textoExplicativo", taExplicativo.getText());
-							param.put("textoFormaPago", taFormaPago.getText());
-							param.put("total", lblTotalConIva.getText());
-							
-							if(ivaCargado){
-								param.put("ivaPorcentaje", ivaGuardado);
-							}else{
-								param.put("ivaPorcentaje", iva);
-							}
-							
-						}else{
-							
-							param.put("concepto", concepto);
-							param.put("precioSinIva", lblTotalSinIva.getText());
-							param.put("id", id);
-							param.put("nombre", nombre);
-							param.put("ciudad", ciudad);
-							param.put("provincia", provincia);
-							param.put("telefono", c.getTelefono());
-							param.put("IVA", lblIva.getText());
-							param.put("fecha", lblFecha.getText());
-							param.put("anio", lblFecha.getText().substring(6)); 
-							param.put("direccion", direccion);
-							param.put("dni", dni);
-							param.put("tipo", "Factura ");
-							param.put("textoExplicativo", taExplicativo.getText());
-							param.put("textoFormaPago", taFormaPago.getText());
-							param.put("total", lblTotalConIva.getText());
-							
-							if(ivaCargado){
-								param.put("ivaPorcentaje", ivaGuardado);
-							}else{
-								param.put("ivaPorcentaje", iva);
-							}
-							
-							//esto es para el nombre del fichero
-							tipo="factura";
-							
-						}
-						
-						//esto es para mostrar el pdf antes de guardarlo
-						//DialogoViewer viewer=new DialogoViewer();
-						//viewer.run("src/reportes/facturaCABP.jrxml", param);
-						//viewer.setVisible(true);
-						
-						/*if(!new File("facturaCABP.jasper").exists()){
-							JasperReport report = JasperCompileManager.compileReport("facturaCABP.jrxml");
-						}*/
-						
-						JasperPrint print= JasperFillManager.fillReport("facturaCABP.jasper", param, new JREmptyDataSource());
-						
-						JasperExportManager.exportReportToPdfFile(print, carpeta.toString()+"/"+tipo+id+".pdf");
-						
-						//agrego el pdf a la base de datos del cliente
-						ListadoPdf listadoPdf=new ListadoPdf(c.getIdCliente());//creo el listado donde agregar el pdf
-						File pdf=new File(carpeta.toString()+"/"+tipo+id+".pdf");//creo el objeto file para pasarselo a la clase
-						
-						listadoPdf.addPdf(pdf, pdf.lastModified());//lo agrego
-
-
-						JOptionPane.showMessageDialog(null, "Pdf generado con exito", "Informacion", JOptionPane.INFORMATION_MESSAGE);
-					
-						
-					} catch (Exception e1) {
-						JOptionPane.showMessageDialog(null, e1.getMessage()+"PanelPresupuesto");
-						
-					}
+					generarPdf();
 					
 				}
 			});
 		}
 		return btnPrint;
+	}
+	
+	public void generarPdf(){
+		try {
+			
+			if(taTexto.getText().isEmpty()){
+				throw new Exception("Debe escribir algo en el campo");
+			}
+			
+			HashMap<String, Object> param = new HashMap<String, Object>();
+			String tipo;
+			
+			File carpeta=new File(c.getIdCliente()+c.getNomSinEspacios()+c.getApelSinEspacios());
+			//si la carpeta del usuario no existe
+			if(!carpeta.exists()){
+				//la creo
+				carpeta.mkdir();
+				carpeta.setExecutable(true);
+				
+			}
+			
+			String concepto=""+taTexto.getText();
+			String nombre=""+c.getNombre()+" "+c.getApellidos();
+			String ciudad=""+c.getCiudad();
+			String provincia=""+c.getProvincia();
+			String direccion=""+c.getDireccion();
+			String dni=""+c.getDni();
+			
+			
+			if(isPresupuesto){
+				
+				//esto es para el nombre del fichero
+				tipo="presupuesto";
+				
+				param.put("concepto", concepto);
+				param.put("precioSinIva", lblTotalSinIva.getText());
+				param.put("id", id);
+				param.put("nombre", nombre);
+				param.put("ciudad", ciudad);
+				param.put("provincia", provincia);
+				param.put("telefono", c.getTelefono());
+				param.put("IVA", lblIva.getText());
+				param.put("fecha", lblFecha.getText());
+				param.put("anio", lblFecha.getText().substring(6)); 
+				param.put("direccion", direccion);
+				param.put("dni", dni);
+				param.put("tipo", "Presupuesto ");
+				param.put("textoExplicativo", taExplicativo.getText());
+				param.put("textoFormaPago", taFormaPago.getText());
+				param.put("total", lblTotalConIva.getText());
+				
+				if(ivaCargado){
+					param.put("ivaPorcentaje", ivaGuardado);
+				}else{
+					param.put("ivaPorcentaje", iva);
+				}
+				
+			}else{
+				
+				param.put("concepto", concepto);
+				param.put("precioSinIva", lblTotalSinIva.getText());
+				param.put("id", id);
+				param.put("nombre", nombre);
+				param.put("ciudad", ciudad);
+				param.put("provincia", provincia);
+				param.put("telefono", c.getTelefono());
+				param.put("IVA", lblIva.getText());
+				param.put("fecha", lblFecha.getText());
+				param.put("anio", lblFecha.getText().substring(6)); 
+				param.put("direccion", direccion);
+				param.put("dni", dni);
+				param.put("tipo", "Factura ");
+				param.put("textoExplicativo", taExplicativo.getText());
+				param.put("textoFormaPago", taFormaPago.getText());
+				param.put("total", lblTotalConIva.getText());
+				
+				if(ivaCargado){
+					param.put("ivaPorcentaje", ivaGuardado);
+				}else{
+					param.put("ivaPorcentaje", iva);
+				}
+				
+				//esto es para el nombre del fichero
+				tipo="factura";
+				
+			}
+			
+			//esto es para mostrar el pdf antes de guardarlo
+			//DialogoViewer viewer=new DialogoViewer();
+			//viewer.run("src/reportes/facturaCABP.jrxml", param);
+			//viewer.setVisible(true);
+			
+			/*if(!new File("facturaCABP.jasper").exists()){
+				JasperReport report = JasperCompileManager.compileReport("facturaCABP.jrxml");
+			}*/
+			
+			JasperPrint print= JasperFillManager.fillReport("facturaCABP.jasper", param, new JREmptyDataSource());
+			
+			JasperExportManager.exportReportToPdfFile(print, carpeta.toString()+"/"+tipo+id+".pdf");
+			
+			//agrego el pdf a la base de datos del cliente
+			ListadoPdf listadoPdf=new ListadoPdf(c.getIdCliente());//creo el listado donde agregar el pdf
+			File pdf=new File(carpeta.toString()+"/"+tipo+id+".pdf");//creo el objeto file para pasarselo a la clase
+			
+			listadoPdf.addPdf(pdf, pdf.lastModified());//lo agrego
+
+
+			JOptionPane.showMessageDialog(null, "Pdf generado con exito", "Informacion", JOptionPane.INFORMATION_MESSAGE);
+		
+			
+		} catch (Exception e1) {
+			JOptionPane.showMessageDialog(null, e1.getMessage()+"PanelPresupuesto");
+			
+		}
 	}
 	
 	public void setCliente(Cliente c){
