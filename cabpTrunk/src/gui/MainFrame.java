@@ -101,6 +101,7 @@ public class MainFrame extends JFrame {
 	private JMenu menuConfiguracion = null;
 	private JMenuItem itemIva = null;
 	private String bd;
+	private JFrame mainFrame=this;
 
 	/**
 	 * This is the default constructor
@@ -808,7 +809,6 @@ public class MainFrame extends JFrame {
 							
 							JOptionPane.showMessageDialog(null, "Reinicie el programa para actualizar los cambios");
 							
-						
 						} catch (IOException e) {
 							JOptionPane.showMessageDialog(null, e.getMessage());
 						} 
@@ -819,6 +819,8 @@ public class MainFrame extends JFrame {
 		}
 		return menuItemBd;
 	}
+	
+	
 	
 	private File getFile(){
 		

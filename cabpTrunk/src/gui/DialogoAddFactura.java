@@ -1,6 +1,7 @@
 package gui;
 
 import javax.swing.JButton;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 import java.awt.FlowLayout;
@@ -117,6 +118,11 @@ public class DialogoAddFactura extends JDialog {
 			btnAceptar.addActionListener(new java.awt.event.ActionListener() {
 				public void actionPerformed(java.awt.event.ActionEvent e) {
 					
+					int pdf=JOptionPane.showConfirmDialog(null, "¿Desea generar un pdf con esta factura?", "Generar PDF", JOptionPane.YES_NO_OPTION);
+					
+					if(pdf==0){
+						((PanelPresupuesto) panelPresupuesto).generarPdf();
+					}
 					
 					valorPulsado=VALOR_ACEPTAR;
 					
