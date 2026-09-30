@@ -44,16 +44,18 @@ export interface Totales {
   reparto: [number, number];
 }
 
-const aCentimos = (euros: number): number => Math.round((Number(euros) || 0) * 100);
+/** Redondeo simétrico (-0,5 -> -1), para que un abono sea el espejo exacto de su factura. */
+const redondear0 = (x: number): number => (x < 0 ? -Math.round(-x) : Math.round(x));
+const aCentimos = (euros: number): number => redondear0((Number(euros) || 0) * 100);
 const aEuros = (centimos: number): number => centimos / 100;
 
 export function importeLinea(linea: LineaCalculo): number {
-  return aEuros(Math.round(aCentimos(linea.precio) * (Number(linea.cantidad) || 0)));
+  return aEuros(redondear0(aCentimos(linea.precio) * (Number(linea.cantidad) || 0)));
 }
 
 export function calcularTotales(d: DatosCalculo): Totales {
   const subtotal = d.lineas.reduce(
-    (acc, l) => acc + Math.round(aCentimos(l.precio) * (Number(l.cantidad) || 0)),
+    (acc, l) => acc + redondear0(aCentimos(l.precio) * (Number(l.cantidad) || 0)),
     0,
   );
   const gastos =
@@ -63,13 +65,13 @@ export function calcularTotales(d: DatosCalculo): Totales {
     aCentimos(d.restaurante) +
     aCentimos(d.combustible);
   const ganancia = aCentimos(d.ganancia);
-  const impGanancia = d.aplicaGanancia ? Math.round(ganancia * IMPUESTO_GANANCIA) : 0;
+  const impGanancia = d.aplicaGanancia ? redondear0(ganancia * IMPUESTO_GANANCIA) : 0;
   const neto = d.totalManualActivo ? aCentimos(d.totalManual) : subtotal;
   const sinIva = neto + gastos + ganancia + aCentimos(d.transporte) + impGanancia;
-  const iva = d.aplicaIva ? Math.round((sinIva * (Number(d.ivaPorcentaje) || 0)) / 100) : 0;
+  const iva = d.aplicaIva ? redondear0((sinIva * (Number(d.ivaPorcentaje) || 0)) / 100) : 0;
   const conIva = sinIva + iva;
   const p = Math.min(100, Math.max(0, Number(d.porcentajeReparto) || 0));
-  const parte1 = Math.round((conIva * p) / 100);
+  const parte1 = redondear0((conIva * p) / 100);
 
   return {
     subtotalLineas: aEuros(subtotal),

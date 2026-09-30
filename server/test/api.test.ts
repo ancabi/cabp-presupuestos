@@ -120,6 +120,30 @@ describe('documentos y numeración por año', () => {
     expect(r.body.lineas).toHaveLength(1);
   });
 
+  it('admite facturas de devolución con importes negativos', async () => {
+    const r = await api.post(
+      '/api/documentos',
+      docBase(clienteId, '2026-11-01', { tipo: 'factura', lineas: [], totalManualActivo: true, totalManual: -500 }),
+    );
+    expect(r.status).toBe(201);
+    expect(r.body.totalManual).toBe(-500);
+    expect(r.body.totalConIva).toBe(-605);
+    const conLinea = await api.post(
+      '/api/documentos',
+      docBase(clienteId, '2026-11-02', {
+        tipo: 'factura',
+        lineas: [{ productoId: null, nombreProducto: 'Devolución', cantidad: -1, precio: 1000 }],
+      }),
+    );
+    expect(conLinea.status).toBe(201);
+    expect(conLinea.body.totalConIva).toBe(-1210);
+  });
+
+  it('sigue rechazando negativos donde no tienen sentido', async () => {
+    const r = await api.post('/api/documentos', docBase(clienteId, '2026-11-03', { kilometros: -1 }));
+    expect(r.status).toBe(400);
+  });
+
   it('no permite mover un documento a otro año al editar', async () => {
     const d = (await api.post('/api/documentos', docBase(clienteId, '2026-08-01'))).body;
     const r = await api.put(`/api/documentos/${d.id}`, docBase(clienteId, '2025-08-01'));

@@ -208,7 +208,7 @@ try {
       }
       const ivaBruto = o.iva == null || typeof o.iva === 'string' ? NaN : num(o.iva, NaN);
       const ivaPorcentaje = Number.isFinite(ivaBruto) && ivaBruto > 0 ? (ivaBruto <= 1 ? ivaBruto * 100 : ivaBruto) : ivaPorDefecto;
-      const datos = documentoSchema.parse({
+      const validacion = documentoSchema.safeParse({
         tipo,
         fecha,
         clienteId,
@@ -246,7 +246,11 @@ try {
         valorC: num(o.valorC),
         valorAux: num(o.valorAux),
       });
-      await insertarDocumento(conn, datos, { numero });
+      if (!validacion.success) {
+        const detalle = validacion.error.issues.map((i) => `${i.path.join('.')}: ${i.message}`).join('; ');
+        throw new Error(`${tipo} ${numero} (año ${anio}) no se puede importar: ${detalle}`);
+      }
+      await insertarDocumento(conn, validacion.data, { numero });
       contar(`${tabla} importados`);
     }
     if (maximo > 0) await ajustarContador(conn, tipo, anio, maximo);

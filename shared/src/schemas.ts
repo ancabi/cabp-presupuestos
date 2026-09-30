@@ -2,6 +2,8 @@ import { z } from 'zod';
 
 const texto = (max = 255) => z.string().trim().max(max).default('');
 const importe = z.coerce.number().finite().min(0).max(9_999_999_999).default(0);
+/** Importes de documentos: pueden ser negativos en facturas de devolución (abonos). */
+const importeConSigno = z.coerce.number().finite().min(-9_999_999_999).max(9_999_999_999).default(0);
 const fechaIso = z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'Fecha con formato AAAA-MM-DD');
 
 export const loginSchema = z.object({
@@ -52,7 +54,7 @@ export type ProductoInput = z.infer<typeof productoSchema>;
 export const lineaSchema = z.object({
   productoId: z.number().int().positive().nullable().default(null),
   nombreProducto: z.string().trim().min(1).max(255),
-  cantidad: z.coerce.number().finite().min(0).max(1_000_000),
+  cantidad: z.coerce.number().finite().min(-1_000_000).max(1_000_000),
   precio: z.coerce.number().finite().min(-9_999_999_999).max(9_999_999_999),
 });
 export type LineaInput = z.infer<typeof lineaSchema>;
@@ -63,13 +65,13 @@ export const documentoSchema = z.object({
   clienteId: z.number().int().positive(),
   distribuidorId: z.number().int().positive().nullable().default(null),
   lineas: z.array(lineaSchema).default([]),
-  ganancia: importe,
-  restaurante: importe,
-  pasaje: importe,
-  combustible: importe,
-  otros: importe,
-  hotel: importe,
-  transporte: importe,
+  ganancia: importeConSigno,
+  restaurante: importeConSigno,
+  pasaje: importeConSigno,
+  combustible: importeConSigno,
+  otros: importeConSigno,
+  hotel: importeConSigno,
+  transporte: importeConSigno,
   kilometros: importe,
   numViajes: z.coerce.number().int().min(0).max(1000).default(2),
   precioGasolina: importe,
@@ -77,7 +79,7 @@ export const documentoSchema = z.object({
   aplicaIva: z.boolean().default(true),
   ivaPorcentaje: z.coerce.number().min(0).max(100),
   totalManualActivo: z.boolean().default(false),
-  totalManual: importe,
+  totalManual: importeConSigno,
   porcentajeReparto: z.coerce.number().int().min(0).max(100).default(50),
   textoConcepto: z.string().max(10000).default(''),
   textoFormaPago: z.string().max(10000).default(''),

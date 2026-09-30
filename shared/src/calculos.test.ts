@@ -75,6 +75,32 @@ describe('calcularTotales', () => {
   });
 });
 
+describe('importes negativos (abonos)', () => {
+  it('total manual negativo', () => {
+    const t = calcularTotales({ ...base, totalManualActivo: true, totalManual: -1000 });
+    expect(t.totalSinIva).toBe(-1000);
+    expect(t.totalIva).toBe(-210);
+    expect(t.totalConIva).toBe(-1210);
+  });
+
+  it('un abono es el espejo exacto de su factura, también con medios céntimos', () => {
+    // 0,025 € * 21 % = 0,00525 -> redondeos en el límite del medio céntimo
+    for (const linea of [{ cantidad: 1, precio: 10.5 }, { cantidad: 3, precio: 0.05 }, { cantidad: 1, precio: 2.5 }]) {
+      for (const iva of [21, 10, 7]) {
+        const factura = calcularTotales({ ...base, ivaPorcentaje: iva, ganancia: 0.05, lineas: [linea] });
+        const abono = calcularTotales({
+          ...base,
+          ivaPorcentaje: iva,
+          ganancia: -0.05,
+          lineas: [{ ...linea, cantidad: -linea.cantidad }],
+        });
+        expect(abono.totalIva).toBe(-factura.totalIva);
+        expect(abono.totalConIva).toBe(-factura.totalConIva);
+      }
+    }
+  });
+});
+
 describe('calculadoras', () => {
   it('viaje = km * viajes * 0.07 * precio', () => {
     expect(calcularViaje(100, 2, 1.5)).toBe(21);

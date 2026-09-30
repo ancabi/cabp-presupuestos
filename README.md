@@ -89,6 +89,7 @@ Qué hace la importación:
 - **`--adjuntos`:** carpeta donde estaban las carpetas `<id><Nombre><Apellidos>` que creaba la versión Java. Sus imágenes y PDFs se copian a la ficha del cliente.
 - **`--iva`:** IVA que se aplica a los documentos antiguos que no lo tenían guardado. Por defecto es 21.
 - **Repetir la importación** es seguro: los documentos ya importados se omiten.
+- **Si un documento no es válido**, la importación se cancela entera y el error indica cuál es (p. ej. `factura 6 (año 2012) no se puede importar: …`). Las facturas de devolución con importes negativos se importan sin problema.
 
 ## Publicación con Docker
 
