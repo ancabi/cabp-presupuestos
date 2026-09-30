@@ -1,0 +1,8 @@
+.fila-clicable {
+  cursor: pointer;
+}
+.importe {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}

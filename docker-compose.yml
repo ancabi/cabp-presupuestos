@@ -1,0 +1,34 @@
+services:
+  db:
+    image: mariadb:11
+    restart: unless-stopped
+    environment:
+      MARIADB_DATABASE: cabp
+      MARIADB_USER: cabp
+      MARIADB_PASSWORD: ${DB_PASSWORD:?Define DB_PASSWORD en .env}
+      MARIADB_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:?Define DB_ROOT_PASSWORD en .env}
+    volumes:
+      - db:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  app:
+    build: .
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: mysql://cabp:${DB_PASSWORD}@db:3306/cabp
+      SESSION_SECRET: ${SESSION_SECRET:?Define SESSION_SECRET en .env}
+    volumes:
+      - uploads:/data/uploads
+    ports:
+      - "127.0.0.1:3000:3000"
+
+volumes:
+  db:
+  uploads:

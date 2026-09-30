@@ -1,0 +1,184 @@
+.impresion {
+  background: #e9ecef;
+  min-height: 100vh;
+  padding: 16px;
+}
+.impresion .barra {
+  max-width: 210mm;
+  margin: 0 auto 16px;
+}
+.hoja {
+  background: #fff;
+  color: #222;
+  width: 210mm;
+  max-width: 100%;
+  min-height: 297mm;
+  margin: 0 auto;
+  padding: 16mm 15mm;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
+  font: 10pt/1.4 'Helvetica Neue', Arial, sans-serif;
+  display: flex;
+  flex-direction: column;
+}
+.hoja .cabecera {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  border-bottom: 2px solid #0c8599;
+  padding-bottom: 10px;
+  margin-bottom: 14px;
+}
+.hoja .empresa {
+  display: flex;
+  gap: 12px;
+  font-size: 8.5pt;
+  color: #444;
+}
+.hoja .logo {
+  height: 64px;
+  width: auto;
+}
+.hoja .empresa-nombre {
+  font-size: 13pt;
+  font-weight: 700;
+  color: #0b7285;
+}
+.hoja .documento {
+  text-align: right;
+}
+.hoja .documento-tipo {
+  font-size: 18pt;
+  font-weight: 700;
+  letter-spacing: 2px;
+  color: #0b7285;
+}
+.hoja .documento table {
+  margin-left: auto;
+  border-collapse: collapse;
+}
+.hoja .documento th {
+  text-align: right;
+  padding: 1px 8px;
+  color: #666;
+  font-weight: 400;
+}
+.hoja .documento td {
+  font-weight: 700;
+  font-family: monospace;
+  font-size: 11pt;
+}
+.hoja .titulo-caja {
+  font-size: 8pt;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: #0b7285;
+  font-weight: 700;
+  margin-bottom: 2px;
+}
+.hoja .cliente {
+  border: 1px solid #ced4da;
+  border-radius: 4px;
+  padding: 8px 10px;
+  width: 55%;
+  margin-left: auto;
+  margin-bottom: 14px;
+}
+.hoja .cliente-nombre {
+  font-weight: 700;
+  font-size: 11pt;
+}
+.hoja .concepto {
+  white-space: pre-wrap;
+  margin-bottom: 12px;
+}
+.hoja table.lineas {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 10px;
+}
+.hoja table.lineas th {
+  background: #0c8599;
+  color: #fff;
+  text-align: left;
+  padding: 5px 6px;
+  font-weight: 600;
+}
+.hoja table.lineas td {
+  padding: 5px 6px;
+  border-bottom: 1px solid #e9ecef;
+  vertical-align: top;
+}
+.hoja .num {
+  text-align: right !important;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+.hoja .cant {
+  width: 50px;
+  text-align: center !important;
+}
+.hoja table.totales {
+  margin-left: auto;
+  border-collapse: collapse;
+  min-width: 45%;
+  margin-bottom: 16px;
+}
+.hoja table.totales th {
+  text-align: left;
+  font-weight: 400;
+  padding: 3px 8px;
+}
+.hoja table.totales td {
+  text-align: right;
+  padding: 3px 8px;
+  font-variant-numeric: tabular-nums;
+}
+.hoja table.totales tr.total th,
+.hoja table.totales tr.total td {
+  font-weight: 700;
+  font-size: 12pt;
+  border-top: 2px solid #0c8599;
+  padding-top: 6px;
+}
+.hoja .bloque {
+  margin-bottom: 10px;
+  break-inside: avoid;
+}
+.hoja .bloque .texto {
+  white-space: pre-wrap;
+  font-size: 9pt;
+}
+.hoja .pie {
+  margin-top: auto;
+  padding-top: 10px;
+  border-top: 1px solid #ced4da;
+  font-size: 7.5pt;
+  color: #666;
+  text-align: center;
+}
+.hoja .pie p {
+  margin: 2px 0;
+}
+.hoja .pie .condiciones {
+  text-align: justify;
+}
+
+@page {
+  size: A4;
+  margin: 0;
+}
+@media print {
+  .no-imprimir {
+    display: none !important;
+  }
+  .impresion {
+    background: none;
+    padding: 0;
+  }
+  .hoja {
+    box-shadow: none;
+    margin: 0;
+    width: 210mm;
+    min-height: 297mm;
+  }
+}

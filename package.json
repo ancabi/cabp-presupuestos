@@ -1,0 +1,22 @@
+{
+  "name": "cabp",
+  "private": true,
+  "version": "2.0.0",
+  "description": "CABP - Gestión de clientes, presupuestos y facturas",
+  "workspaces": ["shared", "server", "web"],
+  "scripts": {
+    "dev": "npm run dev -w server & npm run dev -w web",
+    "build": "npm run build -w web && npm run build -w server",
+    "start": "npm run start -w server",
+    "test": "vitest run",
+    "typecheck": "tsc -p shared --noEmit && tsc -p server --noEmit && tsc -p web --noEmit",
+    "migrar": "npm run migrar -w server",
+    "crear-admin": "npm run crear-admin -w server",
+    "importar": "npm run importar -w server --"
+  },
+  "devDependencies": {
+    "typescript": "^5.6.0",
+    "vitest": "^2.1.0"
+  },
+  "engines": { "node": ">=20" }
+}
