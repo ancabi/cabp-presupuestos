@@ -38,6 +38,8 @@ const CAMPOS: [keyof DocumentoInput, string][] = [
   ['textoConcepto', 'texto_concepto'],
   ['textoFormaPago', 'texto_forma_pago'],
   ['textoExplicativo', 'texto_explicativo'],
+  ['textoImportacion1', 'texto_importacion_1'],
+  ['textoImportacion2', 'texto_importacion_2'],
   ['calcTipo', 'calc_tipo'],
   ['valorA', 'valor_a'],
   ['valorB', 'valor_b'],

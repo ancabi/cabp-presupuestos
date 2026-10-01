@@ -87,6 +87,8 @@ function nuevoDocumento(tipo: TipoDocumento, clienteId: number, iva: number, for
     textoConcepto: '',
     textoFormaPago: formaPago,
     textoExplicativo: '',
+    textoImportacion1: '',
+    textoImportacion2: '',
     calcTipo: 'pitagoras',
     valorA: 0,
     valorB: 0,
@@ -561,6 +563,30 @@ function Editor({ doc, inicial }: { doc?: Documento; inicial: DocumentoInput }) 
           </Paper>
         </Grid.Col>
       </Grid>
+
+      <Paper withBorder p="md">
+        <Title order={4}>Texto de importación (dos columnas)</Title>
+        <Text size="sm" c="dimmed" mb="sm">
+          Se imprime en dos columnas paralelas debajo de los totales, p. ej. español a la izquierda e inglés a la derecha.
+          Los saltos de línea se respetan, así puedes alinear las dos columnas.
+        </Text>
+        <SimpleGrid cols={{ base: 1, sm: 2 }}>
+          <Textarea
+            label="Columna importación 1"
+            autosize
+            minRows={6}
+            value={d.textoImportacion1}
+            onChange={(e) => cambiar({ textoImportacion1: e.currentTarget.value })}
+          />
+          <Textarea
+            label="Columna importación 2"
+            autosize
+            minRows={6}
+            value={d.textoImportacion2}
+            onChange={(e) => cambiar({ textoImportacion2: e.currentTarget.value })}
+          />
+        </SimpleGrid>
+      </Paper>
 
       <CalculadoraEscalera
         abierta={calcAbierta}

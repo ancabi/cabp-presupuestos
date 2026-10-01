@@ -160,4 +160,13 @@ export const migraciones: { nombre: string; sql: string[] }[] = [
          ADD INDEX (codigo_postal)`,
     ],
   },
+  {
+    // Texto explicativo en dos columnas (p. ej. español / inglés) que piden las aduanas para importar.
+    nombre: '003_documento_columnas_importacion',
+    sql: [
+      `ALTER TABLE documentos
+         ADD COLUMN texto_importacion_1 TEXT NOT NULL DEFAULT '' AFTER texto_explicativo,
+         ADD COLUMN texto_importacion_2 TEXT NOT NULL DEFAULT '' AFTER texto_importacion_1`,
+    ],
+  },
 ];

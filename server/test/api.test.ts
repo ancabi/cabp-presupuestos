@@ -155,6 +155,21 @@ describe('documentos y numeración por año', () => {
     expect(r.status).toBe(400);
   });
 
+  it('guarda las dos columnas de importación y las copia al convertir a factura', async () => {
+    const col1 = 'Pago Anticipado: 100 %.\n\nNCM (posición arancelaria): 8428.90.90.900Z.';
+    const col2 = 'Advance Payment: 100 %.\n\nNCM (tariff item): 8428.90.90.900Z.';
+    const p = await api.post(
+      '/api/documentos',
+      docBase(clienteId, '2026-12-01', { textoImportacion1: col1, textoImportacion2: col2 }),
+    );
+    expect(p.status).toBe(201);
+    expect(p.body.textoImportacion1).toBe(col1);
+    expect(p.body.textoImportacion2).toBe(col2);
+    const f = await api.post(`/api/documentos/${p.body.id}/convertir-a-factura`);
+    expect(f.body.textoImportacion1).toBe(col1);
+    expect(f.body.textoImportacion2).toBe(col2);
+  });
+
   it('no permite mover un documento a otro año al editar', async () => {
     const d = (await api.post('/api/documentos', docBase(clienteId, '2026-08-01'))).body;
     const r = await api.put(`/api/documentos/${d.id}`, docBase(clienteId, '2025-08-01'));

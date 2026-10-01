@@ -7,50 +7,63 @@
   max-width: 210mm;
   margin: 0 auto 16px;
 }
+
+/* ---------- Hoja (vista en pantalla) ---------- */
 .hoja {
+  /* Alto real de cabecera y pie; lo calcula DocumentoImprimirPage al pintar. */
+  --alto-cabecera: 0px;
+  --alto-pie: 0px;
   background: #fff;
   color: #222;
+  /* Mismo ancho útil que al imprimir (210mm - 2×12mm de margen), para que las alturas medidas coincidan. */
   width: 210mm;
   max-width: 100%;
   min-height: 297mm;
   margin: 0 auto;
-  padding: 16mm 15mm;
+  padding: 8mm 12mm;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
-  font: 10pt/1.4 'Helvetica Neue', Arial, sans-serif;
+  font: 8.5pt/1.35 'Helvetica Neue', Arial, sans-serif;
   display: flex;
   flex-direction: column;
 }
-.hoja .cabecera {
+
+/* ---------- Cabecera de página ---------- */
+.hoja .cabecera-pagina {
   display: flex;
   justify-content: space-between;
-  gap: 16px;
-  border-bottom: 2px solid #0c8599;
-  padding-bottom: 10px;
-  margin-bottom: 14px;
+  align-items: flex-start;
+  gap: 12px;
+  border-bottom: 1.5px solid #0c8599;
+  padding-bottom: 2mm;
+  background: #fff;
 }
 .hoja .empresa {
   display: flex;
-  gap: 12px;
-  font-size: 8.5pt;
+  gap: 8px;
+  font-size: 7pt;
+  line-height: 1.3;
   color: #444;
 }
 .hoja .logo {
-  height: 64px;
+  height: 44px;
   width: auto;
 }
 .hoja .empresa-nombre {
-  font-size: 13pt;
+  font-size: 11pt;
   font-weight: 700;
   color: #0b7285;
+  line-height: 1.2;
 }
 .hoja .documento {
   text-align: right;
+  flex-shrink: 0;
 }
 .hoja .documento-tipo {
-  font-size: 18pt;
+  font-size: 14pt;
   font-weight: 700;
-  letter-spacing: 2px;
+  letter-spacing: 1.5px;
   color: #0b7285;
+  line-height: 1.1;
 }
 .hoja .documento table {
   margin-left: auto;
@@ -58,55 +71,79 @@
 }
 .hoja .documento th {
   text-align: right;
-  padding: 1px 8px;
+  padding: 0 6px;
   color: #666;
   font-weight: 400;
 }
 .hoja .documento td {
   font-weight: 700;
   font-family: monospace;
-  font-size: 11pt;
+  font-size: 9.5pt;
 }
+
+/* ---------- Maqueta: tabla cuyo thead/tfoot reservan el sitio de cabecera y pie ---------- */
+.hoja table.maqueta {
+  width: 100%;
+  border-collapse: collapse;
+  flex: 1;
+}
+.hoja table.maqueta > * > tr > td {
+  padding: 0;
+  vertical-align: top;
+}
+.hoja .espacio-cabecera,
+.hoja .espacio-pie {
+  display: none;
+}
+.hoja table.maqueta > tbody > tr > td {
+  padding-top: 3mm;
+}
+
+/* ---------- Contenido ---------- */
 .hoja .titulo-caja {
-  font-size: 8pt;
+  font-size: 7pt;
   text-transform: uppercase;
-  letter-spacing: 1px;
+  letter-spacing: 0.8px;
   color: #0b7285;
   font-weight: 700;
-  margin-bottom: 2px;
+  margin-bottom: 1px;
 }
 .hoja .cliente {
   border: 1px solid #ced4da;
-  border-radius: 4px;
-  padding: 8px 10px;
-  width: 55%;
+  border-radius: 3px;
+  padding: 4px 8px;
+  width: 50%;
   margin-left: auto;
-  margin-bottom: 14px;
+  margin-bottom: 3mm;
+  line-height: 1.3;
 }
 .hoja .cliente-nombre {
   font-weight: 700;
-  font-size: 11pt;
+  font-size: 9.5pt;
 }
 .hoja .concepto {
   white-space: pre-wrap;
-  margin-bottom: 12px;
+  margin-bottom: 2mm;
 }
 .hoja table.lineas {
   width: 100%;
   border-collapse: collapse;
-  margin-bottom: 10px;
+  margin-bottom: 2mm;
 }
 .hoja table.lineas th {
   background: #0c8599;
   color: #fff;
   text-align: left;
-  padding: 5px 6px;
+  padding: 3px 5px;
   font-weight: 600;
 }
 .hoja table.lineas td {
-  padding: 5px 6px;
+  padding: 3px 5px;
   border-bottom: 1px solid #e9ecef;
   vertical-align: top;
+}
+.hoja table.lineas tr {
+  break-inside: avoid;
 }
 .hoja .num {
   text-align: right !important;
@@ -114,58 +151,84 @@
   font-variant-numeric: tabular-nums;
 }
 .hoja .cant {
-  width: 50px;
+  width: 40px;
   text-align: center !important;
 }
 .hoja table.totales {
   margin-left: auto;
   border-collapse: collapse;
-  min-width: 45%;
-  margin-bottom: 16px;
+  min-width: 40%;
+  margin-bottom: 3mm;
+  break-inside: avoid;
 }
 .hoja table.totales th {
   text-align: left;
   font-weight: 400;
-  padding: 3px 8px;
+  padding: 1px 6px;
 }
 .hoja table.totales td {
   text-align: right;
-  padding: 3px 8px;
+  padding: 1px 6px;
   font-variant-numeric: tabular-nums;
 }
 .hoja table.totales tr.total th,
 .hoja table.totales tr.total td {
   font-weight: 700;
-  font-size: 12pt;
-  border-top: 2px solid #0c8599;
-  padding-top: 6px;
+  font-size: 10.5pt;
+  border-top: 1.5px solid #0c8599;
+  padding-top: 3px;
 }
+
+/* Texto de importación: dos columnas paralelas (p. ej. español / inglés), como piden en aduanas. */
+.hoja .importacion {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6mm;
+  margin-bottom: 3mm;
+  font-size: 8pt;
+  line-height: 1.35;
+}
+.hoja .importacion > div {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
 .hoja .bloque {
-  margin-bottom: 10px;
+  margin-bottom: 2mm;
   break-inside: avoid;
 }
 .hoja .bloque .texto {
   white-space: pre-wrap;
-  font-size: 9pt;
+  font-size: 8pt;
 }
-.hoja .pie {
+
+/* ---------- Pie de página ---------- */
+.hoja .pie-pagina {
   margin-top: auto;
-  padding-top: 10px;
+  padding-top: 1.5mm;
   border-top: 1px solid #ced4da;
-  font-size: 7.5pt;
+  font-size: 6.5pt;
+  line-height: 1.3;
   color: #666;
   text-align: center;
+  background: #fff;
 }
-.hoja .pie p {
-  margin: 2px 0;
+.hoja .pie-pagina p {
+  margin: 1px 0;
 }
-.hoja .pie .condiciones {
+.hoja .pie-pagina .condiciones {
   text-align: justify;
 }
 
+/* ---------- Impresión / PDF ---------- */
 @page {
   size: A4;
-  margin: 0;
+  margin: 8mm 12mm 9mm;
+  @bottom-right {
+    content: 'Página ' counter(page) ' de ' counter(pages);
+    font: 6.5pt Arial, sans-serif;
+    color: #666;
+  }
 }
 @media print {
   .no-imprimir {
@@ -174,11 +237,40 @@
   .impresion {
     background: none;
     padding: 0;
+    min-height: 0;
   }
   .hoja {
-    box-shadow: none;
+    display: block;
+    width: auto;
+    max-width: none;
+    min-height: 0;
     margin: 0;
-    width: 210mm;
-    min-height: 297mm;
+    padding: 0;
+    box-shadow: none;
+  }
+  /* Se pintan en todas las páginas (dentro de los márgenes de @page). */
+  .hoja .cabecera-pagina {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+  }
+  .hoja .pie-pagina {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+  }
+  /* thead/tfoot de la maqueta se repiten en cada página y reservan el alto de cabecera y pie. */
+  .hoja .espacio-cabecera {
+    display: block;
+    height: calc(var(--alto-cabecera) + 3mm);
+  }
+  .hoja table.maqueta > tbody > tr > td {
+    padding-top: 0;
+  }
+  .hoja .espacio-pie {
+    display: block;
+    height: calc(var(--alto-pie) + 2mm);
   }
 }

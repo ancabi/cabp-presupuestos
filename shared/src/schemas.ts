@@ -90,6 +90,8 @@ export const documentoSchema = z.object({
   textoConcepto: z.string().max(10000).default(''),
   textoFormaPago: z.string().max(10000).default(''),
   textoExplicativo: z.string().max(10000).default(''),
+  textoImportacion1: z.string().max(10000).default(''),
+  textoImportacion2: z.string().max(10000).default(''),
   calcTipo: z.enum(['pitagoras', 'stepper']).default('pitagoras'),
   valorA: z.coerce.number().finite().default(0),
   valorB: z.coerce.number().finite().default(0),
