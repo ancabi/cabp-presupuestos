@@ -74,7 +74,7 @@ export function DocumentoImprimirPage() {
           Volver
         </Button>
         <Text size="sm" c="dimmed">
-          Para obtener el PDF elige «Guardar como PDF» como impresora.
+          Para el PDF: destino «Guardar como PDF», márgenes «Predeterminados» y sin «Encabezados y pies de página».
         </Text>
         <Button leftSection={<IconPrinter size={16} />} onClick={() => window.print()}>
           Imprimir / Guardar PDF
