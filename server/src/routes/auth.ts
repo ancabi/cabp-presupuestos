@@ -23,7 +23,12 @@ export async function rutasAuth(app: FastifyInstance) {
         throw new HttpError(401, 'Email o contraseña incorrectos');
       }
       const { token, expira } = await crearSesion(app.db, u.id);
-      ponerCookie(reply, token, expira, app.config.produccion);
+      // Cookie "Secure" solo si la petición llegó por HTTPS (trustProxy lee X-Forwarded-Proto del proxy).
+      const https = req.protocol === 'https';
+      if (app.config.produccion && !https) {
+        req.log.warn('Login por HTTP: configura HTTPS en el proxy para no enviar contraseñas sin cifrar');
+      }
+      ponerCookie(reply, token, expira, https);
       return { id: u.id, email: u.email, nombre: u.nombre, rol: u.rol, activo: true };
     },
   );

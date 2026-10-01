@@ -247,3 +247,27 @@ describe('adjuntos', () => {
     expect(r.statusCode).toBe(400);
   });
 });
+
+describe('publicación detrás de un proxy', () => {
+  it('no fuerza https en la CSP y marca la cookie Secure solo con HTTPS', async () => {
+    const { crearApp } = await import('../src/app');
+    const prod = await crearApp(
+      { databaseUrl: '', sessionSecret: 'x'.repeat(40), uploadsDir: '/tmp', port: 0, produccion: true, webDist: null },
+      pool,
+    );
+    const login = (proto?: string) =>
+      prod.inject({
+        method: 'POST',
+        url: '/api/auth/login',
+        headers: { 'x-requested-with': 'cabp', ...(proto ? { 'x-forwarded-proto': proto } : {}) },
+        payload: { email: 'admin@test.es', password: 'secreto123' },
+      });
+    const http = await login();
+    expect(http.statusCode).toBe(200);
+    expect(http.headers['content-security-policy']).not.toContain('upgrade-insecure-requests');
+    expect(String(http.headers['set-cookie'])).not.toMatch(/Secure/i);
+    const https = await login('https');
+    expect(String(https.headers['set-cookie'])).toMatch(/Secure/i);
+    await prod.close();
+  });
+});

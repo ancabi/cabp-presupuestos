@@ -117,6 +117,13 @@ docker compose exec app node server/dist/scripts/crear-admin.js tu@email.com "Tu
 
 - Las migraciones de la base de datos se aplican solas al arrancar.
 
+### Coolify (u otro proxy)
+
+- La app escucha en el puerto **3000** y no fuerza HTTPS: eso lo hace el proxy.
+- Para tener HTTPS en Coolify, pon el dominio con `https://` en *Domains* (también vale para `*.sslip.io`). Coolify obtiene el certificado de Let's Encrypt.
+- Funciona también por HTTP, pero entonces la contraseña viaja sin cifrar. El servidor lo avisa en los logs con «Login por HTTP».
+- La cookie de sesión se marca `Secure` automáticamente cuando el proxy indica que la petición llegó por HTTPS (`X-Forwarded-Proto`).
+
 ### Copias de seguridad
 
 Hay que guardar dos cosas: la base de datos y la carpeta de adjuntos.

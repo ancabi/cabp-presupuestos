@@ -47,7 +47,9 @@ export async function crearApp(config: Config, db: Pool, opciones: { logger?: bo
         scriptSrc: ["'self'"],
         objectSrc: ["'none'"],
         frameSrc: ["'self'"],
-        upgradeInsecureRequests: config.produccion ? [] : null,
+        // No se fuerza HTTPS desde la app: lo decide el proxy (Coolify, Caddy…). Forzarlo aquí
+        // deja la página en blanco si se publica por HTTP, porque el JS y el CSS se piden por https://.
+        upgradeInsecureRequests: null,
       },
     },
   });
