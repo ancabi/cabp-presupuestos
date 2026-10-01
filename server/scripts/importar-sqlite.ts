@@ -110,8 +110,8 @@ try {
     } else {
       const r = await ejecutar(
         conn,
-        'INSERT INTO clientes (dni, nombre, apellidos, direccion, ciudad, provincia, empresa, notas) VALUES (?,?,?,?,?,?,?,?)',
-        [dni, nombre, apellidos, str(c.direccion), str(c.ciudad), str(c.provincia), str(c.empresa), str(c.notas)],
+        'INSERT INTO clientes (dni, nombre, apellidos, direccion, codigo_postal, ciudad, provincia, empresa, notas) VALUES (?,?,?,?,?,?,?,?,?)',
+        [dni, nombre, apellidos, str(c.direccion), str(c.codigoPostal).slice(0, 10), str(c.ciudad), str(c.provincia), str(c.empresa), str(c.notas)],
       );
       id = r.insertId;
       contar('clientes nuevos');

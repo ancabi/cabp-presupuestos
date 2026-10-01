@@ -77,6 +77,17 @@ describe('clientes', () => {
     expect(e.body.telefonos).toEqual(['611000000']);
   });
 
+  it('guarda y busca por código postal', async () => {
+    const c = await api.post('/api/clientes', { nombre: 'Postal', ciudad: 'Benalmádena', codigoPostal: ' 29631 ' });
+    expect(c.status).toBe(201);
+    expect(c.body.codigoPostal).toBe('29631');
+    const b = await api.get('/api/clientes?q=29631');
+    expect(b.body.map((x: any) => x.id)).toEqual([c.body.id]);
+    const e = await api.put(`/api/clientes/${c.body.id}`, { ...c.body, codigoPostal: '29630' });
+    expect(e.body.codigoPostal).toBe('29630');
+    expect((await api.post('/api/clientes', { nombre: 'Malo', codigoPostal: '29<6' })).status).toBe(400);
+  });
+
   it('valida el nombre obligatorio', async () => {
     const r = await api.post('/api/clientes', { nombre: '' });
     expect(r.status).toBe(400);

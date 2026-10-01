@@ -8,6 +8,7 @@ const vacio: ClienteInput = {
   nombre: '',
   apellidos: '',
   direccion: '',
+  codigoPostal: '',
   ciudad: '',
   provincia: '',
   empresa: '',
@@ -48,10 +49,13 @@ export function ClienteForm({ cliente, onGuardado }: { cliente?: Cliente; onGuar
         <Grid.Col span={{ base: 12, sm: 6 }}>
           <TextInput label="Dirección" {...campo('direccion')} />
         </Grid.Col>
-        <Grid.Col span={{ base: 12, sm: 3 }}>
+        <Grid.Col span={{ base: 4, sm: 2 }}>
+          <TextInput label="C.P." maxLength={10} {...campo('codigoPostal')} />
+        </Grid.Col>
+        <Grid.Col span={{ base: 8, sm: 2 }}>
           <TextInput label="Ciudad" {...campo('ciudad')} />
         </Grid.Col>
-        <Grid.Col span={{ base: 12, sm: 3 }}>
+        <Grid.Col span={{ base: 12, sm: 2 }}>
           <TextInput label="Provincia" {...campo('provincia')} />
         </Grid.Col>
         <Grid.Col span={{ base: 12, sm: 4 }}>

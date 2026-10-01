@@ -50,7 +50,7 @@ export interface Documento extends Omit<DocumentoInput, 'lineas'> {
   totalSinIva: number;
   totalIva: number;
   totalConIva: number;
-  cliente?: Pick<Cliente, 'id' | 'nombre' | 'apellidos' | 'dni' | 'direccion' | 'ciudad' | 'provincia' | 'telefonos' | 'emails' | 'empresa'>;
+  cliente?: Pick<Cliente, 'id' | 'nombre' | 'apellidos' | 'dni' | 'direccion' | 'codigoPostal' | 'ciudad' | 'provincia' | 'telefonos' | 'emails' | 'empresa'>;
   distribuidor?: Pick<Distribuidor, 'id' | 'nombre'> | null;
 }
 

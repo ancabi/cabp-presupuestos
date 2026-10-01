@@ -16,6 +16,12 @@ export const clienteSchema = z.object({
   nombre: z.string().trim().min(1, 'El nombre es obligatorio').max(100),
   apellidos: texto(150),
   direccion: texto(),
+  codigoPostal: z
+    .string()
+    .trim()
+    .max(10)
+    .regex(/^[0-9A-Za-z -]*$/, 'Código postal no válido')
+    .default(''),
   ciudad: texto(100),
   provincia: texto(100),
   empresa: texto(150),

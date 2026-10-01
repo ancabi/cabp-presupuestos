@@ -24,7 +24,7 @@ export function ClientesPage() {
       <TextInput
         mb="md"
         leftSection={<IconSearch size={16} />}
-        placeholder="Buscar por nombre, DNI, ciudad, teléfono, email…"
+        placeholder="Buscar por nombre, DNI, C.P., ciudad, teléfono, email…"
         value={q}
         onChange={(e) => setQ(e.currentTarget.value)}
       />
@@ -51,7 +51,7 @@ export function ClientesPage() {
                   <Table.Td>{c.dni}</Table.Td>
                   <Table.Td>{c.telefonos[0]}</Table.Td>
                   <Table.Td>{c.emails[0]}</Table.Td>
-                  <Table.Td>{c.ciudad}</Table.Td>
+                  <Table.Td>{[c.codigoPostal, c.ciudad].filter(Boolean).join(' ')}</Table.Td>
                   <Table.Td>{c.provincia}</Table.Td>
                   <Table.Td>{c.empresa}</Table.Td>
                 </Table.Tr>

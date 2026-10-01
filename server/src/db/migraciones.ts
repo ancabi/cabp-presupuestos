@@ -152,4 +152,12 @@ export const migraciones: { nombre: string; sql: string[] }[] = [
       ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci`,
     ],
   },
+  {
+    nombre: '002_cliente_codigo_postal',
+    sql: [
+      `ALTER TABLE clientes
+         ADD COLUMN codigo_postal VARCHAR(10) NOT NULL DEFAULT '' AFTER direccion,
+         ADD INDEX (codigo_postal)`,
+    ],
+  },
 ];

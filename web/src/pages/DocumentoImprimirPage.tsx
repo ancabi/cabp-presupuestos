@@ -94,7 +94,9 @@ export function DocumentoImprimirPage() {
             {c.empresa && <div>{c.empresa}</div>}
             {c.dni && <div>DNI/NIF: {c.dni}</div>}
             {c.direccion && <div>{c.direccion}</div>}
-            {(c.ciudad || c.provincia) && <div>{[c.ciudad, c.provincia].filter(Boolean).join(' · ')}</div>}
+            {(c.codigoPostal || c.ciudad || c.provincia) && (
+              <div>{[[c.codigoPostal, c.ciudad].filter(Boolean).join(' '), c.provincia].filter(Boolean).join(' · ')}</div>
+            )}
             {c.telefonos[0] && <div>Tel.: {c.telefonos.join(', ')}</div>}
           </section>
         )}
