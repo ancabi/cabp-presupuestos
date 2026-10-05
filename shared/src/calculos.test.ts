@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { calcularEscalera, calcularTotales, calcularViaje, type DatosCalculo } from './calculos';
 import { numeroDocumento } from './formato';
+import { textoSobre, variablesPdf, PDF_POR_DEFECTO } from './pdf';
 
 const base: DatosCalculo = {
   lineas: [],
@@ -122,5 +123,18 @@ describe('numeroDocumento', () => {
   it('formatea con prefijo, año y 4 cifras', () => {
     expect(numeroDocumento('factura', 2026, 7)).toBe('F-2026/0007');
     expect(numeroDocumento('presupuesto', 2011, 12345)).toBe('P-2011/12345');
+  });
+});
+
+describe('aspecto del PDF', () => {
+  it('elige texto blanco o negro según el color de fondo', () => {
+    expect(textoSobre('#0c8599')).toBe('#ffffff');
+    expect(textoSobre('#8b1e3f')).toBe('#ffffff');
+    expect(textoSobre('#ffd43b')).toBe('#000000');
+    expect(textoSobre('#e9ecef')).toBe('#000000');
+  });
+  it('escala respecto al tamaño de diseño (8,5 pt)', () => {
+    expect(variablesPdf(PDF_POR_DEFECTO)['--pdf-escala']).toBe('1');
+    expect(variablesPdf({ ...PDF_POR_DEFECTO, tamanoLetra: 17 })['--pdf-escala']).toBe('2');
   });
 });

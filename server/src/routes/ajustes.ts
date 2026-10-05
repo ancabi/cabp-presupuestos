@@ -1,5 +1,5 @@
 import type { FastifyInstance } from 'fastify';
-import { ajustesSchema, type Ajustes } from '@cabp/shared';
+import { PDF_POR_DEFECTO, ajustesSchema, type Ajustes } from '@cabp/shared';
 import { consultar, ejecutar, type Db } from '../db/pool';
 import { exigirAdmin } from '../auth/sesiones';
 
@@ -17,6 +17,7 @@ export const AJUSTES_POR_DEFECTO: Ajustes = {
     cuentaBancaria: 'Banco Popular · IBAN ES72 0075 0953 6407 0137 7061 · BIC POPUESMM',
     logoUrl: '/logo.png',
   },
+  pdf: PDF_POR_DEFECTO,
   textoFormaPagoDefecto:
     'Existen dos formas de pago:\n' +
     'PEDIDO NORMAL: 40% al encargar la fabricación, 40% a los 30 días y 20% a la instalación. Plazo aproximado para la Península: 50-60 días.\n' +
@@ -30,7 +31,12 @@ export async function leerAjustes(db: Db): Promise<Ajustes> {
   const [f] = await consultar(db, "SELECT valor FROM ajustes WHERE clave = 'general'");
   if (!f) return AJUSTES_POR_DEFECTO;
   const valor = typeof f.valor === 'string' ? JSON.parse(f.valor) : f.valor;
-  return ajustesSchema.parse({ ...AJUSTES_POR_DEFECTO, ...valor, empresa: { ...AJUSTES_POR_DEFECTO.empresa, ...valor.empresa } });
+  return ajustesSchema.parse({
+    ...AJUSTES_POR_DEFECTO,
+    ...valor,
+    empresa: { ...AJUSTES_POR_DEFECTO.empresa, ...valor.empresa },
+    pdf: { ...PDF_POR_DEFECTO, ...valor.pdf },
+  });
 }
 
 export async function rutasAjustes(app: FastifyInstance) {

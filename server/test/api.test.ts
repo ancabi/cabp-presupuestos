@@ -297,3 +297,23 @@ describe('publicación detrás de un proxy', () => {
     await prod.close();
   });
 });
+
+describe('ajustes: aspecto del PDF', () => {
+  it('usa los valores por defecto si los ajustes guardados no tienen "pdf"', async () => {
+    const actuales = (await api.get('/api/ajustes')).body;
+    const { pdf: _pdf, ...sinPdf } = actuales;
+    await pool.query("REPLACE INTO ajustes (clave, valor) VALUES ('general', ?)", [JSON.stringify(sinPdf)]);
+    const r = await api.get('/api/ajustes');
+    expect(r.body.pdf).toEqual({ fuente: 'helvetica', tamanoLetra: 8.5, colorPrincipal: '#0c8599', colorTexto: '#222222', tamanoLogo: 44 });
+  });
+
+  it('guarda fuente, tamaño, colores y logo, y valida los valores', async () => {
+    const actuales = (await api.get('/api/ajustes')).body;
+    const pdf = { fuente: 'merriweather', tamanoLetra: 10, colorPrincipal: '#8b1e3f', colorTexto: '#111111', tamanoLogo: 80 };
+    expect((await api.put('/api/ajustes', { ...actuales, pdf })).status).toBe(200);
+    expect((await api.get('/api/ajustes')).body.pdf).toEqual(pdf);
+    for (const malo of [{ colorPrincipal: 'rojo' }, { tamanoLetra: 30 }, { tamanoLogo: 5 }, { fuente: 'comic-sans' }]) {
+      expect((await api.put('/api/ajustes', { ...actuales, pdf: { ...pdf, ...malo } })).status).toBe(400);
+    }
+  });
+});

@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { FUENTES_PDF, PDF_POR_DEFECTO, type FuentePdf } from './pdf';
 
 const texto = (max = 255) => z.string().trim().max(max).default('');
 const importe = z.coerce.number().finite().min(0).max(9_999_999_999).default(0);
@@ -112,9 +113,20 @@ export const empresaSchema = z.object({
   logoUrl: texto(1000),
 });
 
+const colorHex = z.string().trim().regex(/^#[0-9a-fA-F]{6}$/, 'Color no válido (formato #rrggbb)');
+
+export const pdfSchema = z.object({
+  fuente: z.enum(FUENTES_PDF.map((f) => f.value) as [FuentePdf, ...FuentePdf[]]),
+  tamanoLetra: z.coerce.number().min(6, 'Mínimo 6 pt').max(14, 'Máximo 14 pt'),
+  colorPrincipal: colorHex,
+  colorTexto: colorHex,
+  tamanoLogo: z.coerce.number().int().min(16, 'Mínimo 16 px').max(160, 'Máximo 160 px'),
+});
+
 export const ajustesSchema = z.object({
   ivaPorcentaje: z.coerce.number().min(0).max(100),
   empresa: empresaSchema,
+  pdf: pdfSchema.default(PDF_POR_DEFECTO),
   textoFormaPagoDefecto: z.string().max(10000).default(''),
   textoCondiciones: z.string().max(10000).default(''),
 });

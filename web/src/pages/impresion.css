@@ -13,8 +13,15 @@
   /* Alto real de cabecera y pie; lo calcula DocumentoImprimirPage al pintar. */
   --alto-cabecera: 0px;
   --alto-pie: 0px;
+  /* Aspecto configurable en Ajustes (DocumentoImprimirPage los sobrescribe); estos son los valores por defecto. */
+  --pdf-fuente: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  --pdf-escala: 1;
+  --pdf-color: var(--pdf-color);
+  --pdf-sobre-color: #ffffff;
+  --pdf-texto: #222222;
+  --pdf-logo: 44px;
   background: #fff;
-  color: #222;
+  color: var(--pdf-texto);
   /* Mismos márgenes que @page: el ancho útil (210mm - 2×15mm) coincide con el impreso y las alturas medidas también. */
   width: 210mm;
   max-width: 100%;
@@ -22,7 +29,9 @@
   margin: 0 auto;
   padding: 14mm 15mm 15mm;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
-  font: 8.5pt/1.35 'Helvetica Neue', Arial, sans-serif;
+  font-family: var(--pdf-fuente);
+  font-size: calc(8.5pt * var(--pdf-escala));
+  line-height: 1.35;
   display: flex;
   flex-direction: column;
 }
@@ -33,25 +42,25 @@
   justify-content: space-between;
   align-items: flex-start;
   gap: 12px;
-  border-bottom: 1.5px solid #0c8599;
+  border-bottom: 1.5px solid var(--pdf-color);
   padding-bottom: 2mm;
   background: #fff;
 }
 .hoja .empresa {
   display: flex;
   gap: 8px;
-  font-size: 7pt;
+  font-size: calc(7pt * var(--pdf-escala));
   line-height: 1.3;
   color: #444;
 }
 .hoja .logo {
-  height: 44px;
+  height: var(--pdf-logo);
   width: auto;
 }
 .hoja .empresa-nombre {
-  font-size: 11pt;
+  font-size: calc(11pt * var(--pdf-escala));
   font-weight: 700;
-  color: #0b7285;
+  color: var(--pdf-color);
   line-height: 1.2;
 }
 .hoja .documento {
@@ -59,10 +68,10 @@
   flex-shrink: 0;
 }
 .hoja .documento-tipo {
-  font-size: 14pt;
+  font-size: calc(14pt * var(--pdf-escala));
   font-weight: 700;
   letter-spacing: 1.5px;
-  color: #0b7285;
+  color: var(--pdf-color);
   line-height: 1.1;
 }
 .hoja .documento table {
@@ -78,7 +87,7 @@
 .hoja .documento td {
   font-weight: 700;
   font-family: monospace;
-  font-size: 9.5pt;
+  font-size: calc(9.5pt * var(--pdf-escala));
 }
 
 /* ---------- Maqueta: tabla cuyo thead/tfoot reservan el sitio de cabecera y pie ---------- */
@@ -101,10 +110,10 @@
 
 /* ---------- Contenido ---------- */
 .hoja .titulo-caja {
-  font-size: 7pt;
+  font-size: calc(7pt * var(--pdf-escala));
   text-transform: uppercase;
   letter-spacing: 0.8px;
-  color: #0b7285;
+  color: var(--pdf-color);
   font-weight: 700;
   margin-bottom: 1px;
 }
@@ -119,7 +128,7 @@
 }
 .hoja .cliente-nombre {
   font-weight: 700;
-  font-size: 9.5pt;
+  font-size: calc(9.5pt * var(--pdf-escala));
 }
 .hoja .concepto {
   white-space: pre-wrap;
@@ -131,8 +140,8 @@
   margin-bottom: 2mm;
 }
 .hoja table.lineas th {
-  background: #0c8599;
-  color: #fff;
+  background: var(--pdf-color);
+  color: var(--pdf-sobre-color);
   text-align: left;
   padding: 3px 5px;
   font-weight: 600;
@@ -174,8 +183,8 @@
 .hoja table.totales tr.total th,
 .hoja table.totales tr.total td {
   font-weight: 700;
-  font-size: 10.5pt;
-  border-top: 1.5px solid #0c8599;
+  font-size: calc(10.5pt * var(--pdf-escala));
+  border-top: 1.5px solid var(--pdf-color);
   padding-top: 3px;
 }
 
@@ -185,7 +194,7 @@
   grid-template-columns: 1fr 1fr;
   gap: 6mm;
   margin-bottom: 3mm;
-  font-size: 8pt;
+  font-size: calc(8pt * var(--pdf-escala));
   line-height: 1.35;
 }
 .hoja .importacion > div {
@@ -199,7 +208,7 @@
 }
 .hoja .bloque .texto {
   white-space: pre-wrap;
-  font-size: 8pt;
+  font-size: calc(8pt * var(--pdf-escala));
 }
 
 /* ---------- Pie de página ---------- */
@@ -207,7 +216,7 @@
   margin-top: auto;
   padding-top: 1.5mm;
   border-top: 1px solid #ced4da;
-  font-size: 6.5pt;
+  font-size: calc(6.5pt * var(--pdf-escala));
   line-height: 1.3;
   color: #666;
   text-align: center;
@@ -275,4 +284,15 @@
     display: block;
     height: calc(var(--alto-pie) + 2mm);
   }
+}
+
+/* ---------- Vista previa en Ajustes ---------- */
+.hoja.muestra {
+  min-height: 0;
+  box-shadow: none;
+  border: 1px solid #dee2e6;
+  overflow-x: auto;
+}
+.hoja.muestra .muestra-cuerpo {
+  padding-top: 3mm;
 }

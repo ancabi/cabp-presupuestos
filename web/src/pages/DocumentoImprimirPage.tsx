@@ -1,9 +1,11 @@
-import { useEffect, useLayoutEffect, useRef } from 'react';
+import { useEffect, useLayoutEffect, useRef, type CSSProperties } from 'react';
 import { Button, Center, Group, Loader, Text } from '@mantine/core';
 import { IconArrowLeft, IconPrinter } from '@tabler/icons-react';
 import { Link, useParams } from 'react-router-dom';
-import { formatoEuros, formatoFecha, importeLinea } from '@cabp/shared';
+import { formatoEuros, formatoFecha, importeLinea, variablesPdf } from '@cabp/shared';
 import { useAjustes, useDocumento } from '../api/hooks';
+import { CabeceraDocumento } from '../components/CabeceraDocumento';
+import '../fuentesPdf';
 import './impresion.css';
 
 /**
@@ -34,6 +36,8 @@ export function DocumentoImprimirPage() {
     window.addEventListener('beforeprint', medir);
     const imgs = hojaRef.current?.querySelectorAll('img') ?? [];
     imgs.forEach((i) => i.addEventListener('load', medir));
+    // La fuente elegida en Ajustes cambia el alto de cabecera y pie: volver a medir cuando cargue.
+    document.fonts?.ready.then(medir);
     return () => {
       window.removeEventListener('beforeprint', medir);
       imgs.forEach((i) => i.removeEventListener('load', medir));
@@ -81,33 +85,14 @@ export function DocumentoImprimirPage() {
         </Button>
       </Group>
 
-      <article className="hoja" ref={hojaRef}>
-        <header className="cabecera-pagina" ref={cabeceraRef}>
-          <div className="empresa">
-            {e.logoUrl && <img src={e.logoUrl} alt="" className="logo" />}
-            <div>
-              <div className="empresa-nombre">{e.nombre}</div>
-              <div>{[e.titular, e.nif && `NIF: ${e.nif}`].filter(Boolean).join(' · ')}</div>
-              {e.direccion && <div>{e.direccion}</div>}
-              {e.telefonos && <div>{e.telefonos}</div>}
-            </div>
-          </div>
-          <div className="documento">
-            <div className="documento-tipo">{esFactura ? 'FACTURA' : 'PRESUPUESTO'}</div>
-            <table>
-              <tbody>
-                <tr>
-                  <th>Nº</th>
-                  <td>{doc.codigo}</td>
-                </tr>
-                <tr>
-                  <th>Fecha</th>
-                  <td>{formatoFecha(doc.fecha)}</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </header>
+      <article className="hoja" ref={hojaRef} style={variablesPdf(ajustes.pdf) as CSSProperties}>
+        <CabeceraDocumento
+          ref={cabeceraRef}
+          empresa={e}
+          tipo={esFactura ? 'FACTURA' : 'PRESUPUESTO'}
+          codigo={doc.codigo}
+          fecha={formatoFecha(doc.fecha)}
+        />
 
         <table className="maqueta">
           <thead>
