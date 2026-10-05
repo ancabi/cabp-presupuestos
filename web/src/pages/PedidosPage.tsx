@@ -57,12 +57,13 @@ export function PedidosPage() {
       />
       <Paper withBorder>
         <ScrollArea>
-          <Table striped highlightOnHover miw={700}>
+          <Table striped highlightOnHover miw={780}>
             <Table.Thead>
               <Table.Tr>
                 <Table.Th>Pedido</Table.Th>
                 <Table.Th>Cliente</Table.Th>
                 <Table.Th>Factura</Table.Th>
+                <Table.Th ta="right">Documentos</Table.Th>
                 {cabeceraFecha('creadoEn', 'Creado')}
                 {cabeceraFecha('actualizadoEn', 'Última modificación')}
               </Table.Tr>
@@ -78,6 +79,15 @@ export function PedidosPage() {
                   <Table.Td>{p.clienteNombre}</Table.Td>
                   <Table.Td ff="monospace" style={{ whiteSpace: 'nowrap' }}>
                     {p.facturaCodigo ?? <Text span c="dimmed" size="sm">Sin factura</Text>}
+                  </Table.Td>
+                  <Table.Td
+                    ta="right"
+                    style={{ fontVariantNumeric: 'tabular-nums' }}
+                    title={[p.facturaId && 'Factura', p.numFicheros && `${p.numFicheros} fichero${p.numFicheros === 1 ? '' : 's'}`]
+                      .filter(Boolean)
+                      .join(' + ')}
+                  >
+                    {p.numFicheros + (p.facturaId ? 1 : 0)}
                   </Table.Td>
                   <Table.Td style={{ whiteSpace: 'nowrap' }}>{fechaHora(p.creadoEn)}</Table.Td>
                   <Table.Td style={{ whiteSpace: 'nowrap' }}>{fechaHora(p.actualizadoEn)}</Table.Td>
