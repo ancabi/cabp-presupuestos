@@ -31,8 +31,13 @@ WORKDIR /app
 COPY --from=deps /app ./
 COPY --from=build /app/server/dist server/dist
 COPY --from=build /app/web/dist web/dist
-RUN mkdir -p /data/uploads && chown -R node:node /data
-USER node
+COPY docker-entrypoint.sh ./
+# /app/uploads también, por si el volumen se monta ahí (UPLOADS_DIR=/app/uploads).
+RUN chmod 755 docker-entrypoint.sh \
+ && mkdir -p /data/uploads /app/uploads \
+ && chown -R node:node /data /app/uploads
 VOLUME /data/uploads
 EXPOSE 3000
+# El entrypoint arranca como root, da permisos sobre UPLOADS_DIR y ejecuta la app como «node».
+ENTRYPOINT ["/app/docker-entrypoint.sh"]
 CMD ["node", "server/dist/index.js"]

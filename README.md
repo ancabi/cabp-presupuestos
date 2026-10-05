@@ -130,6 +130,8 @@ docker compose exec app node server/dist/scripts/crear-admin.js tu@email.com "Tu
 - Para tener HTTPS en Coolify, pon el dominio con `https://` en *Domains* (también vale para `*.sslip.io`). Coolify obtiene el certificado de Let's Encrypt.
 - Funciona también por HTTP, pero entonces la contraseña viaja sin cifrar. El servidor lo avisa en los logs con «Login por HTTP».
 - La cookie de sesión se marca `Secure` automáticamente cuando el proxy indica que la petición llegó por HTTPS (`X-Forwarded-Proto`).
+- **Volumen de adjuntos:** móntalo en `/data/uploads` y no definas `UPLOADS_DIR`. Si lo montas en otra ruta (p. ej. `/app/uploads`), pon `UPLOADS_DIR` con esa misma ruta.
+- Los permisos del volumen se corrigen solos: el contenedor arranca como root, hace que el usuario `node` sea el dueño de la carpeta de adjuntos y ejecuta la aplicación como `node`. Si aun así no puede escribir, el servidor no arranca y lo explica en los logs.
 
 ### Copias de seguridad
 
