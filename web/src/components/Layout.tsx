@@ -7,6 +7,7 @@ import {
   IconFileText,
   IconKey,
   IconLogout,
+  IconPackage,
   IconSettings,
   IconUsers,
   IconUserShield,
@@ -44,6 +45,7 @@ function Contenido() {
   const enlaces = [
     { to: '/presupuestos', label: 'Presupuestos', icon: IconFileText },
     { to: '/facturas', label: 'Facturas', icon: IconFileInvoice },
+    { to: '/pedidos', label: 'Pedidos', icon: IconPackage },
     { to: '/clientes', label: 'Clientes', icon: IconUsers },
     { to: '/distribuidores', label: 'Distribuidores y productos', icon: IconBuildingStore },
     ...(yo?.rol === 'admin'

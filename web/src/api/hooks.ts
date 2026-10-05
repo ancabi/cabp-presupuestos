@@ -10,9 +10,13 @@ import type {
   Documento,
   DocumentoInput,
   DocumentoResumen,
+  Pedido,
+  PedidoFichero,
+  PedidoResumen,
   Producto,
   ProductoInput,
   TipoDocumento,
+  TipoFichero,
   Usuario,
 } from '@cabp/shared';
 import { http } from './http';
@@ -145,6 +149,8 @@ function useInvalidarDocumentos() {
     qc.invalidateQueries({ queryKey: ['documentos'] });
     qc.invalidateQueries({ queryKey: ['anios'] });
     qc.invalidateQueries({ queryKey: ['proximo'] });
+    qc.invalidateQueries({ queryKey: ['pedidos'] });
+    qc.invalidateQueries({ queryKey: ['pedido'] });
     if (d) qc.setQueryData(['documento', d.id], d);
   };
 }
@@ -169,10 +175,91 @@ export function useConvertirAFactura() {
   const invalidar = useInvalidarDocumentos();
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: (id: number) => http.post<Documento>(`/documentos/${id}/convertir-a-factura`),
+    mutationFn: ({ id, pedidoNombre }: { id: number; pedidoNombre: string }) =>
+      http.post<Documento>(`/documentos/${id}/convertir-a-factura`, { pedidoNombre }),
     onSuccess: (f) => {
       invalidar(f);
       if (f.presupuestoOrigenId) qc.invalidateQueries({ queryKey: ['documento', f.presupuestoOrigenId] });
+    },
+    onError: notificarError,
+  });
+}
+
+export function useCrearPedidoFactura() {
+  const invalidar = useInvalidarDocumentos();
+  return useMutation({
+    mutationFn: ({ facturaId, nombre }: { facturaId: number; nombre: string }) =>
+      http.post<Documento>(`/documentos/${facturaId}/pedido`, { nombre }),
+    onSuccess: invalidar,
+    onError: notificarError,
+  });
+}
+
+// --- Pedidos ---
+export const usePedidos = (f: { anio?: number | null; q?: string }) => {
+  const p = new URLSearchParams();
+  if (f.anio) p.set('anio', String(f.anio));
+  if (f.q) p.set('q', f.q);
+  return useQuery({ queryKey: ['pedidos', f], queryFn: () => http.get<PedidoResumen[]>(`/pedidos?${p}`) });
+};
+export const usePedido = (id: number) =>
+  useQuery({ queryKey: ['pedido', id], queryFn: () => http.get<Pedido>(`/pedidos/${id}`), enabled: !!id });
+
+/** Tras cambiar un pedido: refresca su detalle, la lista y la factura (que muestra el nombre del pedido). */
+function useInvalidarPedido(pedidoId: number) {
+  const qc = useQueryClient();
+  return () => {
+    qc.invalidateQueries({ queryKey: ['pedido', pedidoId] });
+    qc.invalidateQueries({ queryKey: ['pedidos'] });
+    qc.invalidateQueries({ queryKey: ['documento'] });
+  };
+}
+export function useRenombrarPedido(pedidoId: number) {
+  const invalidar = useInvalidarPedido(pedidoId);
+  return useMutation({
+    mutationFn: (nombre: string) => http.put<Pedido>(`/pedidos/${pedidoId}`, { nombre }),
+    onSuccess: invalidar,
+    onError: notificarError,
+  });
+}
+export function useSubirFicherosPedido(pedidoId: number) {
+  const invalidar = useInvalidarPedido(pedidoId);
+  return useMutation({
+    mutationFn: ({ tipoId, ficheros }: { tipoId: number; ficheros: File[] }) => {
+      const fd = new FormData();
+      ficheros.forEach((f) => fd.append('ficheros', f));
+      return http.post<PedidoFichero[]>(`/pedidos/${pedidoId}/ficheros?tipoId=${tipoId}`, fd);
+    },
+    onSuccess: invalidar,
+    onError: notificarError,
+  });
+}
+export function useCambiarTipoFichero(pedidoId: number) {
+  const invalidar = useInvalidarPedido(pedidoId);
+  return useMutation({
+    mutationFn: ({ id, tipoId }: { id: number; tipoId: number }) => http.patch(`/pedido-ficheros/${id}`, { tipoId }),
+    onSuccess: invalidar,
+    onError: notificarError,
+  });
+}
+export function useBorrarFicheroPedido(pedidoId: number) {
+  const invalidar = useInvalidarPedido(pedidoId);
+  return useMutation({
+    mutationFn: (id: number) => http.del(`/pedido-ficheros/${id}`),
+    onSuccess: invalidar,
+    onError: notificarError,
+  });
+}
+export const useTiposFichero = () =>
+  useQuery({ queryKey: ['tipos-fichero'], queryFn: () => http.get<TipoFichero[]>('/tipos-fichero') });
+export function useGuardarTipoFichero() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, nombre }: { id?: number; nombre: string }) =>
+      id ? http.put<TipoFichero[]>(`/tipos-fichero/${id}`, { nombre }) : http.post<TipoFichero[]>('/tipos-fichero', { nombre }),
+    onSuccess: (tipos) => {
+      qc.setQueryData(['tipos-fichero'], tipos);
+      qc.invalidateQueries({ queryKey: ['pedido'] });
     },
     onError: notificarError,
   });

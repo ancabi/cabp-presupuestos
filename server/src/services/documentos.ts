@@ -12,6 +12,7 @@ import type { Pool } from 'mysql2/promise';
 import { consultar, ejecutar, transaccion, type Db } from '../db/pool';
 import { conflicto, noEncontrado, peticionIncorrecta } from '../errores';
 import { obtenerCliente } from './clientes';
+import { crearPedido, tocarPedido } from './pedidos';
 import { siguienteNumero } from './numeracion';
 
 /** Correspondencia campo de la API -> columna. */
@@ -91,31 +92,39 @@ async function comprobarReferencias(conn: Db, d: DocumentoInput) {
 export async function insertarDocumento(
   conn: Db,
   d: DocumentoInput,
-  extra: { numero?: number; presupuestoOrigenId?: number | null; usuarioId?: number | null } = {},
+  extra: { numero?: number; presupuestoOrigenId?: number | null; usuarioId?: number | null; pedidoId?: number | null } = {},
 ): Promise<number> {
   const anio = anioDeFecha(d.fecha);
   const numero = extra.numero ?? (await siguienteNumero(conn, d.tipo, anio));
   const { cols, vals } = valoresConTotales(d);
   const r = await ejecutar(
     conn,
-    `INSERT INTO documentos (tipo, anio, numero, presupuesto_origen_id, creado_por, ${cols.join(', ')})
-     VALUES (?, ?, ?, ?, ?, ${cols.map(() => '?').join(', ')})`,
-    [d.tipo, anio, numero, extra.presupuestoOrigenId ?? null, extra.usuarioId ?? null, ...vals],
+    `INSERT INTO documentos (tipo, anio, numero, presupuesto_origen_id, pedido_id, creado_por, ${cols.join(', ')})
+     VALUES (?, ?, ?, ?, ?, ?, ${cols.map(() => '?').join(', ')})`,
+    [d.tipo, anio, numero, extra.presupuestoOrigenId ?? null, extra.pedidoId ?? null, extra.usuarioId ?? null, ...vals],
   );
   await guardarLineas(conn, r.insertId, d);
   return r.insertId;
 }
 
+/** Cada factura nueva abre su pedido, con el cliente y el año de la factura. */
+async function pedidoParaFactura(conn: Db, d: DocumentoInput, nombre: string | undefined): Promise<number | null> {
+  if (d.tipo !== 'factura') return null;
+  if (!nombre?.trim()) throw peticionIncorrecta('Indica el nombre del pedido');
+  return crearPedido(conn, { nombre: nombre.trim(), clienteId: d.clienteId, anio: anioDeFecha(d.fecha) });
+}
+
 export async function crearDocumento(pool: Pool, d: DocumentoInput, usuarioId: number): Promise<number> {
   return transaccion(pool, async (conn) => {
     await comprobarReferencias(conn, d);
-    return insertarDocumento(conn, d, { usuarioId });
+    const pedidoId = await pedidoParaFactura(conn, d, d.pedidoNombre);
+    return insertarDocumento(conn, d, { usuarioId, pedidoId });
   });
 }
 
 export async function actualizarDocumento(pool: Pool, id: number, d: DocumentoInput): Promise<void> {
   await transaccion(pool, async (conn) => {
-    const [actual] = await consultar(conn, 'SELECT tipo, anio FROM documentos WHERE id = ? FOR UPDATE', [id]);
+    const [actual] = await consultar(conn, 'SELECT tipo, anio, pedido_id FROM documentos WHERE id = ? FOR UPDATE', [id]);
     if (!actual) throw noEncontrado('Documento');
     if (actual.tipo !== d.tipo) throw peticionIncorrecta('No se puede cambiar el tipo de documento');
     if (anioDeFecha(d.fecha) !== actual.anio) {
@@ -125,6 +134,10 @@ export async function actualizarDocumento(pool: Pool, id: number, d: DocumentoIn
     const { cols, vals } = valoresConTotales(d);
     await ejecutar(conn, `UPDATE documentos SET ${cols.map((c) => `${c} = ?`).join(', ')} WHERE id = ?`, [...vals, id]);
     await guardarLineas(conn, id, d);
+    if (actual.pedido_id) {
+      await ejecutar(conn, 'UPDATE pedidos SET cliente_id = ? WHERE id = ?', [d.clienteId, actual.pedido_id]);
+      await tocarPedido(conn, actual.pedido_id);
+    }
   });
 }
 
@@ -137,6 +150,7 @@ function mapear(f: any): Omit<Documento, 'lineas'> {
     codigo: numeroDocumento(f.tipo, f.anio, f.numero),
     presupuestoOrigenId: f.presupuesto_origen_id,
     facturaId: f.factura_id ?? null,
+    pedido: f.pedido_id ? { id: f.pedido_id, nombre: f.pedido_nombre } : null,
     totalSinIva: f.total_sin_iva,
     totalIva: f.total_iva,
     totalConIva: f.total_con_iva,
@@ -148,10 +162,11 @@ function mapear(f: any): Omit<Documento, 'lineas'> {
 export async function obtenerDocumento(db: Db, id: number): Promise<Documento> {
   const [f] = await consultar(
     db,
-    `SELECT d.*, f.id AS factura_id, di.nombre AS distribuidor_nombre
+    `SELECT d.*, f.id AS factura_id, di.nombre AS distribuidor_nombre, pe.nombre AS pedido_nombre
        FROM documentos d
        LEFT JOIN documentos f ON f.presupuesto_origen_id = d.id
        LEFT JOIN distribuidores di ON di.id = d.distribuidor_id
+       LEFT JOIN pedidos pe ON pe.id = d.pedido_id
       WHERE d.id = ?`,
     [id],
   );
@@ -222,7 +237,12 @@ export async function aniosConDocumentos(db: Db): Promise<number[]> {
 }
 
 /** Crea una factura (fecha de hoy, numeración del año actual) a partir de un presupuesto. */
-export async function convertirAFactura(pool: Pool, presupuestoId: number, usuarioId: number): Promise<number> {
+export async function convertirAFactura(
+  pool: Pool,
+  presupuestoId: number,
+  usuarioId: number,
+  pedidoNombre: string | undefined,
+): Promise<number> {
   return transaccion(pool, async (conn) => {
     const [p] = await consultar(conn, 'SELECT tipo FROM documentos WHERE id = ? FOR UPDATE', [presupuestoId]);
     if (!p) throw noEncontrado('Presupuesto');
@@ -230,14 +250,15 @@ export async function convertirAFactura(pool: Pool, presupuestoId: number, usuar
     const [ya] = await consultar(conn, 'SELECT id FROM documentos WHERE presupuesto_origen_id = ?', [presupuestoId]);
     if (ya) throw conflicto('Este presupuesto ya se convirtió en factura');
     const doc = await obtenerDocumento(conn, presupuestoId);
-    const { id: _id, anio: _a, numero: _n, codigo: _c, presupuestoOrigenId: _p, facturaId: _f, cliente: _cl, distribuidor: _d, totalSinIva: _1, totalIva: _2, totalConIva: _3, ...resto } = doc;
+    const { id: _id, anio: _a, numero: _n, codigo: _c, presupuestoOrigenId: _p, facturaId: _f, pedido: _pe, cliente: _cl, distribuidor: _d, totalSinIva: _1, totalIva: _2, totalConIva: _3, ...resto } = doc;
     const datos: DocumentoInput = {
       ...resto,
       tipo: 'factura',
       fecha: hoyIso(),
       lineas: doc.lineas.map(({ id: _lid, ...l }) => l),
     };
-    return insertarDocumento(conn, datos, { presupuestoOrigenId: presupuestoId, usuarioId });
+    const pedidoId = await pedidoParaFactura(conn, datos, pedidoNombre);
+    return insertarDocumento(conn, datos, { presupuestoOrigenId: presupuestoId, usuarioId, pedidoId });
   });
 }
 

@@ -29,6 +29,7 @@ import {
   IconCalculator,
   IconDeviceFloppy,
   IconFileInvoice,
+  IconPackage,
   IconPlus,
   IconPrinter,
   IconTrash,
@@ -46,11 +47,13 @@ import {
   type TipoDocumento,
 } from '@cabp/shared';
 import {
+  notificarError,
   notificarOk,
   useAjustes,
   useBorrarDocumento,
   useClientes,
   useConvertirAFactura,
+  useCrearPedidoFactura,
   useDistribuidores,
   useDocumento,
   useGuardarDocumento,
@@ -60,6 +63,7 @@ import {
 import { Numero } from '../components/Numero';
 import { CalculadoraEscalera } from '../components/CalculadoraEscalera';
 import { confirmar } from '../components/confirmar';
+import { NombrePedidoModal } from '../components/NombrePedidoModal';
 
 function nuevoDocumento(tipo: TipoDocumento, clienteId: number, iva: number, formaPago: string): DocumentoInput {
   return {
@@ -105,6 +109,7 @@ function aInput(d: Documento): DocumentoInput {
     codigo: _c,
     presupuestoOrigenId: _p,
     facturaId: _f,
+    pedido: _pe,
     cliente: _cl,
     distribuidor: _di,
     totalSinIva: _t1,
@@ -155,6 +160,8 @@ function Editor({ doc, inicial }: { doc?: Documento; inicial: DocumentoInput }) 
   const guardar = useGuardarDocumento();
   const borrar = useBorrarDocumento();
   const convertir = useConvertirAFactura();
+  const crearPedido = useCrearPedidoFactura();
+  const [modalPedido, setModalPedido] = useState<'convertir' | 'crear' | null>(null);
   const proximo = useProximoNumero(d.tipo, anioDeFecha(d.fecha) || new Date().getFullYear(), !doc);
 
   const t = useMemo(() => calcularTotales(d), [d]);
@@ -192,6 +199,10 @@ function Editor({ doc, inicial }: { doc?: Documento; inicial: DocumentoInput }) 
 
   const onGuardar = (despues?: (doc: Documento) => void) => {
     if (!d.clienteId) return;
+    if (!doc && !esPresupuesto && !d.pedidoNombre?.trim()) {
+      notificarError(new Error('Indica el nombre del pedido'));
+      return;
+    }
     guardar.mutate(
       { id: doc?.id, datos: d },
       {
@@ -232,19 +243,30 @@ function Editor({ doc, inicial }: { doc?: Documento; inicial: DocumentoInput }) 
         }),
     );
 
-  const pedirConversion = () =>
+  const convertirConPedido = (pedidoNombre: string) =>
     doc &&
-    confirmar(
-      'Convertir a factura',
-      `Se creará una factura con fecha de hoy copiando el presupuesto ${doc.codigo}. ¿Continuar?`,
-      () =>
-        convertir.mutate(doc.id, {
-          onSuccess: (f) => {
-            notificarOk(`Factura ${f.codigo} creada`);
-            navigate(`/documentos/${f.id}`);
-          },
-        }),
-      'Convertir',
+    convertir.mutate(
+      { id: doc.id, pedidoNombre },
+      {
+        onSuccess: (f) => {
+          setModalPedido(null);
+          notificarOk(`Factura ${f.codigo} creada`);
+          navigate(`/documentos/${f.id}`);
+        },
+      },
+    );
+
+  const crearPedidoFactura = (nombre: string) =>
+    doc &&
+    crearPedido.mutate(
+      { facturaId: doc.id, nombre },
+      {
+        onSuccess: (f) => {
+          setModalPedido(null);
+          notificarOk('Pedido creado');
+          if (f.pedido) navigate(`/pedidos/${f.pedido.id}`);
+        },
+      },
     );
 
   const anioFijo = doc?.anio;
@@ -270,7 +292,7 @@ function Editor({ doc, inicial }: { doc?: Documento; inicial: DocumentoInput }) 
             Imprimir / PDF
           </Button>
           {doc && esPresupuesto && !doc.facturaId && (
-            <Button leftSection={<IconFileInvoice size={16} />} variant="light" onClick={pedirConversion} loading={convertir.isPending}>
+            <Button leftSection={<IconFileInvoice size={16} />} variant="light" onClick={() => setModalPedido('convertir')}>
               Convertir a factura
             </Button>
           )}
@@ -291,6 +313,25 @@ function Editor({ doc, inicial }: { doc?: Documento; inicial: DocumentoInput }) 
           <Anchor component={Link} to={`/documentos/${doc.facturaId}`}>
             Ver factura <IconArrowRight size={12} />
           </Anchor>
+        </Alert>
+      )}
+      {doc && !esPresupuesto && (
+        <Alert color="grape" p="xs" icon={<IconPackage size={18} />}>
+          {doc.pedido ? (
+            <>
+              Pedido:{' '}
+              <Anchor component={Link} to={`/pedidos/${doc.pedido.id}`} fw={500}>
+                {doc.pedido.nombre}
+              </Anchor>
+            </>
+          ) : (
+            <Group justify="space-between" gap="xs">
+              <span>Esta factura no tiene pedido.</span>
+              <Button size="compact-sm" variant="light" color="grape" onClick={() => setModalPedido('crear')}>
+                Crear pedido
+              </Button>
+            </Group>
+          )}
         </Alert>
       )}
       {doc?.presupuestoOrigenId && (
@@ -344,6 +385,20 @@ function Editor({ doc, inicial }: { doc?: Documento; inicial: DocumentoInput }) 
               onChange={(e) => cambiar({ fecha: e.currentTarget.value })}
             />
           </Grid.Col>
+          {!doc && !esPresupuesto && (
+            <Grid.Col span={12}>
+              <Textarea
+                label="Nombre del pedido"
+                description="Cada factura abre un pedido del cliente, donde después se suben sus ficheros."
+                required
+                autosize
+                minRows={1}
+                maxLength={1000}
+                value={d.pedidoNombre ?? ''}
+                onChange={(e) => cambiar({ pedidoNombre: e.currentTarget.value })}
+              />
+            </Grid.Col>
+          )}
         </Grid>
       </Paper>
 
@@ -593,6 +648,21 @@ function Editor({ doc, inicial }: { doc?: Documento; inicial: DocumentoInput }) 
         onClose={calc.close}
         valores={{ calcTipo: d.calcTipo, valorA: d.valorA, valorB: d.valorB, valorC: d.valorC, valorAux: d.valorAux }}
         onChange={(v) => cambiar(v)}
+      />
+
+      <NombrePedidoModal
+        abierto={modalPedido !== null}
+        titulo={modalPedido === 'convertir' ? 'Convertir a factura' : 'Crear pedido'}
+        explicacion={
+          modalPedido === 'convertir'
+            ? `Se creará una factura con fecha de hoy copiando el presupuesto ${doc?.codigo}, y con ella su pedido.`
+            : `El pedido será del cliente de la factura ${doc?.codigo}.`
+        }
+        inicial={modalPedido === 'convertir' ? (doc?.textoConcepto.split('\n')[0] ?? '').trim() : ''}
+        etiquetaBoton={modalPedido === 'convertir' ? 'Convertir' : 'Crear pedido'}
+        cargando={convertir.isPending || crearPedido.isPending}
+        onCerrar={() => setModalPedido(null)}
+        onAceptar={modalPedido === 'convertir' ? convertirConPedido : crearPedidoFactura}
       />
     </Stack>
   );

@@ -11,6 +11,8 @@ import { DistribuidorPage } from './pages/DistribuidorPage';
 import { AjustesPage } from './pages/AjustesPage';
 import { UsuariosPage } from './pages/UsuariosPage';
 import { CuentaPage } from './pages/CuentaPage';
+import { PedidosPage } from './pages/PedidosPage';
+import { PedidoPage } from './pages/PedidoPage';
 import { RequiereSesion } from './components/RequiereSesion';
 
 export const router = createBrowserRouter([
@@ -27,6 +29,8 @@ export const router = createBrowserRouter([
           { path: '/clientes/:id', element: <ClientePage /> },
           { path: '/presupuestos', element: <DocumentosPage tipo="presupuesto" /> },
           { path: '/facturas', element: <DocumentosPage tipo="factura" /> },
+          { path: '/pedidos', element: <PedidosPage /> },
+          { path: '/pedidos/:id', element: <PedidoPage /> },
           { path: '/documentos/nuevo', element: <DocumentoEditorPage /> },
           { path: '/documentos/:id', element: <DocumentoEditorPage /> },
           { path: '/distribuidores', element: <DistribuidoresPage /> },

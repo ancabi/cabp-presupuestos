@@ -16,7 +16,7 @@
   /* Aspecto configurable en Ajustes (DocumentoImprimirPage los sobrescribe); estos son los valores por defecto. */
   --pdf-fuente: 'Helvetica Neue', Helvetica, Arial, sans-serif;
   --pdf-escala: 1;
-  --pdf-color: var(--pdf-color);
+  --pdf-color: #0c8599;
   --pdf-sobre-color: #ffffff;
   --pdf-texto: #222222;
   --pdf-logo: 44px;

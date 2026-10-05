@@ -169,4 +169,44 @@ export const migraciones: { nombre: string; sql: string[] }[] = [
          ADD COLUMN texto_importacion_2 TEXT NOT NULL DEFAULT '' AFTER texto_importacion_1`,
     ],
   },
+  {
+    // Pedidos: cada factura nueva abre un pedido del cliente donde se suben ficheros con un tipo.
+    nombre: '004_pedidos',
+    sql: [
+      `CREATE TABLE tipos_fichero (
+        id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+        nombre VARCHAR(100) NOT NULL UNIQUE,
+        sistema TINYINT(1) NOT NULL DEFAULT 0,
+        creado_en DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+      ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci`,
+      `INSERT INTO tipos_fichero (nombre, sistema) VALUES ('Factura cliente', 1)`,
+      `CREATE TABLE pedidos (
+        id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+        nombre VARCHAR(1000) NOT NULL,
+        cliente_id INT UNSIGNED NOT NULL,
+        anio SMALLINT UNSIGNED NOT NULL,
+        creado_en DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        actualizado_en DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        INDEX (anio),
+        FOREIGN KEY (cliente_id) REFERENCES clientes(id) ON DELETE RESTRICT
+      ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci`,
+      `ALTER TABLE documentos
+         ADD COLUMN pedido_id INT UNSIGNED NULL UNIQUE AFTER presupuesto_origen_id,
+         ADD FOREIGN KEY (pedido_id) REFERENCES pedidos(id) ON DELETE SET NULL`,
+      `CREATE TABLE pedido_ficheros (
+        id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+        pedido_id INT UNSIGNED NOT NULL,
+        tipo_id INT UNSIGNED NOT NULL,
+        nombre_original VARCHAR(255) NOT NULL,
+        fichero VARCHAR(255) NOT NULL,
+        mime VARCHAR(100) NOT NULL,
+        tamano INT UNSIGNED NOT NULL,
+        subido_por INT UNSIGNED NULL,
+        subido_en DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (pedido_id) REFERENCES pedidos(id) ON DELETE CASCADE,
+        FOREIGN KEY (tipo_id) REFERENCES tipos_fichero(id) ON DELETE RESTRICT,
+        FOREIGN KEY (subido_por) REFERENCES usuarios(id) ON DELETE SET NULL
+      ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci`,
+    ],
+  },
 ];

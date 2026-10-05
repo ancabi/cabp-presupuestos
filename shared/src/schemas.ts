@@ -98,6 +98,8 @@ export const documentoSchema = z.object({
   valorB: z.coerce.number().finite().default(0),
   valorC: z.coerce.number().finite().default(0),
   valorAux: z.coerce.number().finite().default(0),
+  /** Solo al crear una factura: nombre del pedido que se abre con ella (obligatorio en ese caso). */
+  pedidoNombre: z.string().trim().max(1000, 'Máximo 1000 caracteres').optional(),
 });
 export type DocumentoInput = z.infer<typeof documentoSchema>;
 
@@ -147,4 +149,11 @@ export const usuarioEditarSchema = z.object({
 export const cambiarPasswordSchema = z.object({
   actual: z.string().min(1),
   nueva: z.string().min(8, 'Mínimo 8 caracteres').max(200),
+});
+
+export const pedidoSchema = z.object({
+  nombre: z.string().trim().min(1, 'Indica el nombre del pedido').max(1000, 'Máximo 1000 caracteres'),
+});
+export const tipoFicheroSchema = z.object({
+  nombre: z.string().trim().min(1, 'Indica el nombre del tipo').max(100, 'Máximo 100 caracteres'),
 });

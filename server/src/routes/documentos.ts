@@ -58,7 +58,8 @@ export async function rutasDocumentos(app: FastifyInstance) {
   });
 
   app.post('/documentos/:id/convertir-a-factura', async (req, reply) => {
-    const id = await convertirAFactura(app.db, idParam(req), req.usuario!.id);
+    const { pedidoNombre } = (req.body ?? {}) as { pedidoNombre?: unknown };
+    const id = await convertirAFactura(app.db, idParam(req), req.usuario!.id, typeof pedidoNombre === 'string' ? pedidoNombre.slice(0, 1000) : undefined);
     reply.status(201);
     return obtenerDocumento(app.db, id);
   });

@@ -31,5 +31,6 @@ export const http = {
   get: <T>(url: string) => pedir<T>('GET', url),
   post: <T>(url: string, body: unknown = {}) => pedir<T>('POST', url, body),
   put: <T>(url: string, body: unknown) => pedir<T>('PUT', url, body),
+  patch: <T>(url: string, body: unknown) => pedir<T>('PATCH', url, body),
   del: <T = { ok: true }>(url: string) => pedir<T>('DELETE', url),
 };

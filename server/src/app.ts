@@ -19,6 +19,8 @@ import { rutasDistribuidores } from './routes/distribuidores';
 import { rutasDocumentos } from './routes/documentos';
 import { rutasAjustes } from './routes/ajustes';
 import { rutasUsuarios } from './routes/usuarios';
+import { rutasPedidos } from './routes/pedidos';
+import { rutasTiposFichero } from './routes/tiposFichero';
 
 declare module 'fastify' {
   interface FastifyInstance {
@@ -92,6 +94,8 @@ export async function crearApp(config: Config, db: Pool, opciones: { logger?: bo
       await api.register(rutasDocumentos);
       await api.register(rutasAjustes);
       await api.register(rutasUsuarios);
+      await api.register(rutasPedidos);
+      await api.register(rutasTiposFichero);
       api.setNotFoundHandler((_req, reply) => reply.status(404).send({ error: 'Ruta no encontrada' }));
     },
     { prefix: '/api' },

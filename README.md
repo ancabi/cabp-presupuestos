@@ -11,6 +11,13 @@ Es la reescritura de la aplicación Java Swing original (proyecto fin de grado, 
 - **PDF sin librerías.** Cada documento tiene una vista A4 imprimible y el navegador genera el PDF con «Imprimir → Guardar como PDF». Imprime todas las líneas, el IVA real y los datos de la empresa configurados en *Ajustes*.
 - **Numeración segura.** El número se asigna al guardar, dentro de una transacción, así que nunca hay números repetidos. Una factura solo se puede borrar si es la última del año, para no dejar huecos.
 - **Presupuesto → factura.** La conversión enlaza ambos documentos e impide convertir dos veces.
+- **Pedidos.**
+  - Cada factura nueva abre un pedido del cliente con un nombre descriptivo. Al convertir un presupuesto en factura se pide ese nombre.
+  - Dentro del pedido se suben PDFs e imágenes, cada uno con un **tipo** (p. ej. «Documento aduana»).
+  - La propia factura aparece siempre como primer fichero, de tipo «Factura cliente», y abre su PDF actualizado.
+  - Los tipos se añaden y renombran en *Ajustes*. No se pueden borrar, para no dejar ficheros sin tipo.
+  - La vista *Pedidos* lista los del ejercicio, con buscador por nombre del pedido o del cliente y orden por fecha de creación o de última modificación.
+  - Las facturas anteriores (o importadas) no tienen pedido; desde la factura se puede crear con «Crear pedido».
 - **Totales calculados en el servidor.** Se usa la misma función que en la pantalla ([`shared/src/calculos.ts`](shared/src/calculos.ts)) y se trabaja en céntimos, sin errores de redondeo.
 - **Errores corregidos de la versión anterior:**
   - al editar se perdía la fecha;
@@ -126,7 +133,7 @@ docker compose exec app node server/dist/scripts/crear-admin.js tu@email.com "Tu
 
 ### Copias de seguridad
 
-Hay que guardar dos cosas: la base de datos y la carpeta de adjuntos.
+Hay que guardar dos cosas: la base de datos y la carpeta de adjuntos (incluye `pedidos/`, con los ficheros de los pedidos).
 
 ```bash
 docker compose exec db mariadb-dump -u root -p"$DB_ROOT_PASSWORD" cabp > cabp-$(date +%F).sql
@@ -143,7 +150,7 @@ docker compose cp app:/data/uploads ./uploads-$(date +%F)
   - al cambiar la contraseña o desactivar un usuario, se cierran sus sesiones.
 - **Login:** limitado a 10 intentos cada 5 minutos por IP.
 - **CSRF:** toda petición de escritura debe llevar la cabecera `X-Requested-With: cabp`.
-- **Adjuntos:**
+- **Adjuntos y ficheros de pedidos:**
   - solo se aceptan imágenes y PDF, de hasta 20 MB;
   - se guardan con un nombre aleatorio;
   - solo se sirven a usuarios con sesión iniciada.
