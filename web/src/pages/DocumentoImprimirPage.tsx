@@ -47,7 +47,7 @@ export function DocumentoImprimirPage() {
   useEffect(() => {
     if (doc) {
       const cliente = doc.cliente ? ` ${doc.cliente.nombre} ${doc.cliente.apellidos}`.trimEnd() : '';
-      document.title = `${doc.codigo.replace('/', '-')}${cliente}`;
+      document.title = `${doc.codigo.replaceAll('/', '-')}${cliente}`;
     }
     return () => {
       document.title = 'CABP · Presupuestos y facturas';
@@ -90,7 +90,7 @@ export function DocumentoImprimirPage() {
           ref={cabeceraRef}
           empresa={e}
           tipo={esFactura ? 'FACTURA' : 'PRESUPUESTO'}
-          codigo={doc.codigo}
+          codigo={doc.codigo.replaceAll('/', '-')}
           fecha={formatoFecha(doc.fecha)}
         />
 

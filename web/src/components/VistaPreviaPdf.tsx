@@ -14,7 +14,7 @@ export function VistaPreviaPdf({ ajustes }: { ajustes: Ajustes }) {
   const iva = Math.round(base * ajustes.ivaPorcentaje) / 100;
   return (
     <article className="hoja muestra" style={variablesPdf(ajustes.pdf) as CSSProperties}>
-      <CabeceraDocumento empresa={ajustes.empresa} tipo="FACTURA" codigo="F-2026/0001" fecha="05/10/2026" />
+      <CabeceraDocumento empresa={ajustes.empresa} tipo="FACTURA" codigo="F-2026-0001" fecha="05/10/2026" />
       <div className="muestra-cuerpo">
         <section className="cliente">
           <div className="titulo-caja">Facturar a</div>
