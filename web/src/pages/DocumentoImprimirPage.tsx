@@ -115,10 +115,10 @@ export function DocumentoImprimirPage() {
                 {c && (
                   <section className="cliente">
                     <div className="titulo-caja">{esFactura ? 'Facturar a' : 'Cliente'}</div>
-                    <div className="cliente-nombre">
+                    {c.empresa && <div className="cliente-nombre">{c.empresa}</div>}
+                    <div className={c.empresa ? undefined : 'cliente-nombre'}>
                       {c.nombre} {c.apellidos}
                     </div>
-                    {c.empresa && <div>{c.empresa}</div>}
                     {c.dni && <div>DNI/NIF: {c.dni}</div>}
                     {c.direccion && <div>{c.direccion}</div>}
                     {(c.codigoPostal || c.ciudad || c.provincia) && (
