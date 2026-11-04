@@ -8,7 +8,7 @@ import type { MultipartFile } from '@fastify/multipart';
 import type { Fila } from '../db/pool';
 import { noEncontrado, peticionIncorrecta } from '../errores';
 
-/** Tipos de fichero que se aceptan en adjuntos de clientes y en pedidos. */
+/** Tipos de fichero que se aceptan en adjuntos de clientes. */
 export const TIPOS_PERMITIDOS: Record<string, { ext: string; tipo: 'imagen' | 'pdf' }> = {
   'image/jpeg': { ext: 'jpg', tipo: 'imagen' },
   'image/png': { ext: 'png', tipo: 'imagen' },
@@ -17,9 +17,19 @@ export const TIPOS_PERMITIDOS: Record<string, { ext: string; tipo: 'imagen' | 'p
   'application/pdf': { ext: 'pdf', tipo: 'pdf' },
 };
 
+/** Tipos de fichero que se aceptan en pedidos: los de adjuntos y además texto plano. */
+export const TIPOS_PEDIDO: Record<string, { ext: string; tipo: string }> = {
+  ...TIPOS_PERMITIDOS,
+  'text/plain': { ext: 'txt', tipo: 'texto' },
+};
+
 /** Guarda una parte multipart en `dir` con nombre aleatorio. Rechaza tipos no permitidos y ficheros demasiado grandes. */
-export async function guardarSubida(parte: MultipartFile, dir: string) {
-  const info = TIPOS_PERMITIDOS[parte.mimetype];
+export async function guardarSubida<T extends string = 'imagen' | 'pdf'>(
+  parte: MultipartFile,
+  dir: string,
+  permitidos: Record<string, { ext: string; tipo: T }> = TIPOS_PERMITIDOS as Record<string, { ext: string; tipo: T }>,
+) {
+  const info = permitidos[parte.mimetype];
   if (!info) {
     parte.file.resume();
     throw peticionIncorrecta(`Tipo de fichero no permitido: ${parte.filename}`);

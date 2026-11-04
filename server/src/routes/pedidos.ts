@@ -5,7 +5,7 @@ import { pedidoSchema, type PedidoFichero } from '@cabp/shared';
 import { z } from 'zod';
 import { consultar, ejecutar, transaccion, type Fila } from '../db/pool';
 import { conflicto, noEncontrado, peticionIncorrecta } from '../errores';
-import { enviarFichero, guardarSubida } from '../services/ficheros';
+import { TIPOS_PEDIDO, enviarFichero, guardarSubida } from '../services/ficheros';
 import { crearPedido, listarPedidos, mapearFichero, obtenerPedido, tocarPedido } from '../services/pedidos';
 import { obtenerDocumento } from '../services/documentos';
 import { idParam, queryInt, queryStr } from './util';
@@ -48,7 +48,7 @@ export async function rutasPedidos(app: FastifyInstance) {
 
     const creados: PedidoFichero[] = [];
     for await (const parte of req.files()) {
-      const g = await guardarSubida(parte, dirPedido(pedidoId));
+      const g = await guardarSubida(parte, dirPedido(pedidoId), TIPOS_PEDIDO);
       const r = await ejecutar(
         app.db,
         `INSERT INTO pedido_ficheros (pedido_id, tipo_id, nombre_original, fichero, mime, tamano, subido_por)

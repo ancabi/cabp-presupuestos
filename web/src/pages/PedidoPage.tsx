@@ -18,7 +18,7 @@ import {
   Title,
   Tooltip,
 } from '@mantine/core';
-import { IconDownload, IconEdit, IconFileTypePdf, IconPhoto, IconPrinter, IconTrash, IconUpload } from '@tabler/icons-react';
+import { IconDownload, IconEdit, IconFileText, IconFileTypePdf, IconPhoto, IconPrinter, IconTrash, IconUpload } from '@tabler/icons-react';
 import { Link, useParams } from 'react-router-dom';
 import { formatoEuros, formatoFecha, type PedidoFichero } from '@cabp/shared';
 import {
@@ -120,7 +120,7 @@ export function PedidoPage() {
             />
             <FileButton
               multiple
-              accept="application/pdf,image/png,image/jpeg,image/gif,image/webp"
+              accept="application/pdf,image/png,image/jpeg,image/gif,image/webp,text/plain,.txt"
               onChange={(f) =>
                 f.length &&
                 tipoSubida &&
@@ -211,6 +211,8 @@ export function PedidoPage() {
                     <Group gap="xs" wrap="nowrap">
                       {f.mime === 'application/pdf' ? (
                         <IconFileTypePdf size={18} color="var(--mantine-color-red-7)" />
+                      ) : f.mime === 'text/plain' ? (
+                        <IconFileText size={18} color="var(--mantine-color-gray-7)" />
                       ) : (
                         <IconPhoto size={18} color="var(--mantine-color-blue-7)" />
                       )}
@@ -243,7 +245,7 @@ export function PedidoPage() {
           </Table>
         </ScrollArea>
         <Text size="xs" c="dimmed" mt="xs">
-          Se admiten PDF e imágenes (JPG, PNG, GIF, WebP) de hasta 20 MB. Los tipos se gestionan en Ajustes.
+          Se admiten PDF, imágenes (JPG, PNG, GIF, WebP) y texto (TXT) de hasta 20 MB. Los tipos se gestionan en Ajustes.
         </Text>
       </Paper>
     </Stack>

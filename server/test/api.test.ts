@@ -474,7 +474,7 @@ describe('pedidos', () => {
 
     expect((await subir(pedidoId, 9999, 'a.pdf', 'application/pdf', '%PDF')).statusCode).toBe(400);
     expect((await subir(pedidoId, '', 'a.pdf', 'application/pdf', '%PDF')).statusCode).toBe(400);
-    expect((await subir(pedidoId, dua.id, 'a.txt', 'text/plain', 'hola')).statusCode).toBe(400);
+    expect((await subir(pedidoId, dua.id, 'a.zip', 'application/zip', 'PK')).statusCode).toBe(400);
 
     await esperar();
     const r = await subir(pedidoId, factura.id, 'factura firmada.pdf', 'application/pdf', '%PDF-firmada');
@@ -509,6 +509,19 @@ describe('pedidos', () => {
     expect((await api.del(`/api/pedido-ficheros/${fi.id}`)).status).toBe(200);
     expect(fs.readdirSync(ruta)).toHaveLength(0);
     expect((await api.get(`/api/pedidos/${pedidoId}`)).body.ficheros).toHaveLength(0);
+  });
+
+  it('admite ficheros de texto en pedidos', async () => {
+    const f = (await api.post('/api/documentos', docBase(clienteId, '2040-05-02', { tipo: 'factura', pedidoNombre: 'Con txt' }))).body;
+    const dua = (await api.get('/api/tipos-fichero')).body.find((t: any) => t.nombre === 'DUA aduana');
+    const r = await subir(f.pedido.id, dua.id, 'notas.txt', 'text/plain', 'hola');
+    expect(r.statusCode).toBe(201);
+    const [fi] = JSON.parse(r.body);
+    expect(fi).toMatchObject({ nombreOriginal: 'notas.txt', mime: 'text/plain' });
+    const d = await app.inject({ method: 'GET', url: `/api/pedido-ficheros/${fi.id}/fichero`, headers: { cookie } });
+    expect(d.body).toBe('hola');
+    expect(d.headers['content-type']).toMatch(/^text\/plain/);
+    expect((await api.del(`/api/pedido-ficheros/${fi.id}`)).status).toBe(200);
   });
 
   it('renombrar el pedido o editar su factura lo marca como modificado; el cliente se sincroniza', async () => {
