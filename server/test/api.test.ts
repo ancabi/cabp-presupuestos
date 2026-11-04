@@ -221,6 +221,14 @@ describe('documentos y numeración por año', () => {
     const rep = await api.post('/api/documentos', fac('2032-01-03', { numero: 10 }));
     expect(rep.status).toBe(409);
     expect(rep.body.error).toContain('F-2032/0010');
+    expect(rep.body.campo).toBe('numero');
+    // Comprobación en vivo del formulario.
+    const ocupado = await api.get('/api/documentos/numero-libre?tipo=factura&anio=2032&numero=10');
+    expect(ocupado.body).toEqual({ libre: false, codigo: 'F-2032/0010' });
+    const propio = await api.get(`/api/documentos/numero-libre?tipo=factura&anio=2032&numero=10&excluir=${a.body.id}`);
+    expect(propio.body.libre).toBe(true);
+    expect((await api.get('/api/documentos/numero-libre?tipo=factura&anio=2032&numero=3')).body.libre).toBe(true);
+    expect((await api.get('/api/documentos/proximo-numero?tipo=factura&anio=2032')).body).toEqual({ numero: 12, codigo: 'F-2032/0012' });
     // Otro año sí puede usar el mismo número.
     expect((await api.post('/api/documentos', fac('2033-01-01', { numero: 10 }))).status).toBe(201);
     // Al editar: número ocupado -> error; libre -> se cambia.

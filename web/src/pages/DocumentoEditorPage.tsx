@@ -1,9 +1,10 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import {
   ActionIcon,
   Alert,
   Anchor,
   Badge,
+  Box,
   Button,
   Center,
   Checkbox,
@@ -13,7 +14,6 @@ import {
   Loader,
   NumberInput,
   Paper,
-  ScrollArea,
   Select,
   SimpleGrid,
   Slider,
@@ -23,8 +23,10 @@ import {
   Textarea,
   TextInput,
   Title,
+  Tooltip,
 } from '@mantine/core';
-import { useDisclosure } from '@mantine/hooks';
+import { useDebouncedValue, useDisclosure, useHotkeys } from '@mantine/hooks';
+import { modals } from '@mantine/modals';
 import {
   IconArrowRight,
   IconCalculator,
@@ -35,7 +37,7 @@ import {
   IconPrinter,
   IconTrash,
 } from '@tabler/icons-react';
-import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom';
+import { Link, useBlocker, useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import {
   anioDeFecha,
   calcularTotales,
@@ -49,7 +51,6 @@ import {
   type TipoDocumento,
 } from '@cabp/shared';
 import {
-  notificarError,
   notificarOk,
   useAjustes,
   useBorrarDocumento,
@@ -59,9 +60,11 @@ import {
   useDistribuidores,
   useDocumento,
   useGuardarDocumento,
+  useNumeroLibre,
   useProductos,
   useProximoNumero,
 } from '../api/hooks';
+import { ApiError } from '../api/http';
 import { Numero } from '../components/Numero';
 import { CalculadoraEscalera } from '../components/CalculadoraEscalera';
 import { confirmar } from '../components/confirmar';
@@ -149,12 +152,30 @@ export function DocumentoEditorPage() {
   return <Editor key={doc ? `${doc.id}` : 'nuevo'} doc={doc} inicial={inicial} />;
 }
 
+type Errores = Partial<Record<'clienteId' | 'numero' | 'pedidoNombre', string>>;
+type Linea = DocumentoInput['lineas'][number];
+
 function Editor({ doc, inicial }: { doc?: Documento; inicial: DocumentoInput }) {
   const [d, setD] = useState<DocumentoInput>(inicial);
-  const [sucio, setSucio] = useState(false);
+  const [sucio, setSucioEstado] = useState(false);
+  const [errores, setErrores] = useState<Errores>({});
   const [calcAbierta, calc] = useDisclosure();
   const [productoSel, setProductoSel] = useState<string | null>(null);
+  const [enfocarLinea, setEnfocarLinea] = useState<number | null>(null);
   const navigate = useNavigate();
+
+  // El bloqueo de navegación lee el ref: así, al guardar y navegar en el mismo clic, ya no bloquea.
+  const sucioRef = useRef(false);
+  const setSucio = (v: boolean) => {
+    sucioRef.current = v;
+    setSucioEstado(v);
+  };
+  const clienteRef = useRef<HTMLInputElement>(null);
+  const numeroRef = useRef<HTMLInputElement>(null);
+  const pedidoRef = useRef<HTMLTextAreaElement>(null);
+  const refsCampo = { clienteId: clienteRef, numero: numeroRef, pedidoNombre: pedidoRef };
+  const conceptoRefs = useRef<(HTMLInputElement | null)[]>([]);
+  const conceptoMovilRefs = useRef<(HTMLInputElement | null)[]>([]);
 
   const { data: clientes = [] } = useClientes('');
   const { data: distribuidores = [] } = useDistribuidores();
@@ -164,14 +185,27 @@ function Editor({ doc, inicial }: { doc?: Documento; inicial: DocumentoInput }) 
   const convertir = useConvertirAFactura();
   const crearPedido = useCrearPedidoFactura();
   const [modalPedido, setModalPedido] = useState<'convertir' | 'crear' | null>(null);
-  const proximo = useProximoNumero(d.tipo, anioDeFecha(d.fecha) || new Date().getFullYear(), !doc);
 
   const t = useMemo(() => calcularTotales(d), [d]);
   const viaje = calcularViaje(d.kilometros, d.numViajes, d.consumo, d.precioGasolina);
   const esPresupuesto = d.tipo === 'presupuesto';
   const nombreTipo = esPresupuesto ? 'Presupuesto' : 'Factura';
+  const anio = doc?.anio ?? (anioDeFecha(d.fecha) || new Date().getFullYear());
+  const proximo = useProximoNumero(d.tipo, anio, true);
 
-  // Aviso al salir con cambios sin guardar.
+  // Comprobación en vivo del nº de factura elegido a mano.
+  const [numeroEscrito] = useDebouncedValue(d.numero, 300);
+  const numeroPropio = !esPresupuesto && d.numero != null && d.numero !== doc?.numero;
+  const comprobacion = useNumeroLibre(d.tipo, anio, numeroPropio ? numeroEscrito : undefined, doc?.id);
+  const numeroOcupado = numeroPropio && numeroEscrito === d.numero && comprobacion.data?.libre === false;
+  const errorNumero = numeroOcupado
+    ? `${comprobacion.data!.codigo} ya existe${proximo.data ? ` · siguiente libre: ${proximo.data.codigo}` : ''}`
+    : errores.numero;
+
+  // Solo se puede borrar la última factura del año (no deja huecos en la numeración).
+  const esUltimaFactura = !doc || esPresupuesto || proximo.data?.numero === doc.numero + 1;
+
+  // Aviso al cerrar o recargar la pestaña con cambios sin guardar...
   useEffect(() => {
     if (!sucio) return;
     const h = (e: BeforeUnloadEvent) => e.preventDefault();
@@ -179,16 +213,54 @@ function Editor({ doc, inicial }: { doc?: Documento; inicial: DocumentoInput }) 
     return () => window.removeEventListener('beforeunload', h);
   }, [sucio]);
 
+  // ...y al navegar dentro de la aplicación (menú, enlaces).
+  const blocker = useBlocker(({ currentLocation, nextLocation }) => sucioRef.current && currentLocation.pathname !== nextLocation.pathname);
+  const blockerRef = useRef(blocker);
+  blockerRef.current = blocker;
+  useEffect(() => {
+    if (blocker.state !== 'blocked') return;
+    modals.openConfirmModal({
+      title: 'Cambios sin guardar',
+      children: <Text size="sm">Si sales ahora se perderán los cambios de {doc ? doc.codigo : `este ${nombreTipo.toLowerCase()} nuevo`}.</Text>,
+      labels: { confirm: 'Salir sin guardar', cancel: 'Seguir editando' },
+      confirmProps: { color: 'red' },
+      onConfirm: () => blockerRef.current.proceed?.(),
+      onClose: () => {
+        if (blockerRef.current.state === 'blocked') blockerRef.current.reset?.();
+      },
+    });
+  }, [blocker.state]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Lleva el foco al concepto de la línea recién añadida (en la tabla o en la vista móvil, la que se vea).
+  useEffect(() => {
+    if (enfocarLinea == null) return;
+    const candidatos = [conceptoRefs.current[enfocarLinea], conceptoMovilRefs.current[enfocarLinea]];
+    candidatos.find((el) => el && el.offsetParent !== null)?.focus();
+    setEnfocarLinea(null);
+  }, [enfocarLinea]);
+
   const cambiar = (parcial: Partial<DocumentoInput>) => {
     setD((prev) => ({ ...prev, ...parcial }));
     setSucio(true);
+    const claves = Object.keys(parcial).filter((k) => k in errores);
+    if (claves.length)
+      setErrores((prev) => {
+        const n = { ...prev };
+        for (const k of claves) delete n[k as keyof Errores];
+        return n;
+      });
   };
   const num = (k: keyof DocumentoInput) => ({
     value: d[k] as number,
     onChange: (n: number) => cambiar({ [k]: n } as Partial<DocumentoInput>),
   });
-  const setLinea = (i: number, parcial: Partial<DocumentoInput['lineas'][number]>) =>
+  const setLinea = (i: number, parcial: Partial<Linea>) =>
     cambiar({ lineas: d.lineas.map((l, j) => (j === i ? { ...l, ...parcial } : l)) });
+  const quitarLinea = (i: number) => cambiar({ lineas: d.lineas.filter((_, j) => j !== i) });
+  const lineaLibre = () => {
+    cambiar({ lineas: [...d.lineas, { productoId: null, nombreProducto: '', cantidad: 1, precio: 0 }] });
+    setEnfocarLinea(d.lineas.length);
+  };
 
   const anadirProducto = () => {
     const p = productos.find((x) => String(x.id) === productoSel);
@@ -199,24 +271,32 @@ function Editor({ doc, inicial }: { doc?: Documento; inicial: DocumentoInput }) 
     setProductoSel(null);
   };
 
+  const marcarError = (campo: keyof Errores, mensaje: string) => {
+    setErrores((prev) => ({ ...prev, [campo]: mensaje }));
+    refsCampo[campo].current?.focus();
+  };
+
   const onGuardar = (despues?: (doc: Documento) => void) => {
-    if (!d.clienteId) return;
-    if (!doc && !esPresupuesto && !d.pedidoNombre?.trim()) {
-      notificarError(new Error('Indica el nombre del pedido'));
-      return;
-    }
+    if (!d.clienteId) return marcarError('clienteId', 'Elige el cliente');
+    if (numeroOcupado) return numeroRef.current?.focus();
+    if (!doc && !esPresupuesto && !d.pedidoNombre?.trim()) return marcarError('pedidoNombre', 'Indica el nombre del pedido');
     guardar.mutate(
       { id: doc?.id, datos: d },
       {
         onSuccess: (g) => {
           setSucio(false);
-          notificarOk(`${nombreTipo} ${g.codigo} guardado`);
+          notificarOk(`${nombreTipo} ${g.codigo} ${esPresupuesto ? 'guardado' : 'guardada'}`);
           if (despues) despues(g);
           else if (!doc) navigate(`/documentos/${g.id}`, { replace: true });
+        },
+        onError: (e) => {
+          if (e instanceof ApiError && e.campo && e.campo in refsCampo) marcarError(e.campo as keyof Errores, e.message);
         },
       },
     );
   };
+
+  useHotkeys([['mod+S', () => onGuardar()]], []);
 
   const imprimir = () => {
     const abrir = (g: Documento) => window.open(`/documentos/${g.id}/imprimir`, '_blank');
@@ -234,12 +314,12 @@ function Editor({ doc, inicial }: { doc?: Documento; inicial: DocumentoInput }) 
       `Borrar ${nombreTipo.toLowerCase()}`,
       esPresupuesto
         ? `¿Borrar el presupuesto ${doc.codigo}? No se puede deshacer.`
-        : `¿Borrar la factura ${doc.codigo}? Solo es posible si es la última del año ${doc.anio}.`,
+        : `¿Borrar la factura ${doc.codigo}? No se puede deshacer; la numeración del año ${doc.anio} vuelve a la anterior.`,
       () =>
         borrar.mutate(doc.id, {
           onSuccess: () => {
             setSucio(false);
-            notificarOk('Documento borrado');
+            notificarOk(`${nombreTipo} ${doc.codigo} ${esPresupuesto ? 'borrado' : 'borrada'}`);
             navigate(esPresupuesto ? '/presupuestos' : '/facturas');
           },
         }),
@@ -272,22 +352,36 @@ function Editor({ doc, inicial }: { doc?: Documento; inicial: DocumentoInput }) 
     );
 
   const anioFijo = doc?.anio;
+  const codigoActual = doc
+    ? doc.numero === d.numero || d.numero == null
+      ? doc.codigo
+      : `${doc.codigo} → ${numeroDocumento(d.tipo, doc.anio, d.numero)}`
+    : d.numero
+      ? `(nuevo · ${numeroDocumento(d.tipo, anio, d.numero)})`
+      : proximo.data
+        ? `(nuevo · ${proximo.data.codigo})`
+        : '(nuevo)';
+  // Las descripciones van debajo del campo para que todos los inputs de la fila queden alineados.
+  const ordenCampo: ('label' | 'input' | 'description' | 'error')[] = ['label', 'input', 'description', 'error'];
+
+  const botonGuardar = (
+    <Button
+      leftSection={<IconDeviceFloppy size={16} />}
+      onClick={() => onGuardar()}
+      loading={guardar.isPending}
+      disabled={!d.clienteId}
+      title="Guardar (Ctrl+S)"
+    >
+      Guardar
+    </Button>
+  );
 
   return (
     <Stack>
-      <Group justify="space-between">
+      <Group justify="space-between" gap="sm">
         <Group gap="sm">
           <Title order={2}>
-            {nombreTipo}{' '}
-            {doc
-              ? doc.numero === d.numero
-                ? doc.codigo
-                : `${doc.codigo} → ${numeroDocumento(d.tipo, doc.anio, d.numero ?? doc.numero)}`
-              : d.numero
-                ? `(nuevo · ${numeroDocumento(d.tipo, anioDeFecha(d.fecha) || new Date().getFullYear(), d.numero)})`
-                : proximo.data
-                  ? `(nuevo · ${proximo.data.codigo})`
-                  : '(nuevo)'}
+            {nombreTipo} {codigoActual}
           </Title>
           {sucio && (
             <Badge color="orange" variant="light">
@@ -308,13 +402,27 @@ function Editor({ doc, inicial }: { doc?: Documento; inicial: DocumentoInput }) 
             </Button>
           )}
           {doc && (
-            <ActionIcon size="lg" variant="subtle" color="red" onClick={pedirBorrado} aria-label="Borrar">
-              <IconTrash size={18} />
-            </ActionIcon>
+            <Tooltip
+              label={
+                esUltimaFactura
+                  ? `Borrar ${doc.codigo}`
+                  : `Solo se puede borrar la última factura de ${doc.anio}${proximo.data ? ` (${numeroDocumento('factura', doc.anio, proximo.data.numero - 1)})` : ''}`
+              }
+            >
+              <ActionIcon
+                size="lg"
+                variant="subtle"
+                color="red"
+                onClick={esUltimaFactura ? pedirBorrado : undefined}
+                data-disabled={!esUltimaFactura || undefined}
+                aria-disabled={!esUltimaFactura}
+                aria-label={esUltimaFactura ? `Borrar ${doc.codigo}` : `${doc.codigo}: solo se puede borrar la última factura del año`}
+              >
+                <IconTrash size={18} />
+              </ActionIcon>
+            </Tooltip>
           )}
-          <Button leftSection={<IconDeviceFloppy size={16} />} onClick={() => onGuardar()} loading={guardar.isPending} disabled={!d.clienteId}>
-            Guardar
-          </Button>
+          {botonGuardar}
         </Group>
       </Group>
 
@@ -327,7 +435,7 @@ function Editor({ doc, inicial }: { doc?: Documento; inicial: DocumentoInput }) 
         </Alert>
       )}
       {doc && !esPresupuesto && (
-        <Alert color="grape" p="xs" icon={<IconPackage size={18} />}>
+        <Alert variant="default" p="xs" icon={<IconPackage size={18} />}>
           {doc.pedido ? (
             <>
               Pedido:{' '}
@@ -338,7 +446,7 @@ function Editor({ doc, inicial }: { doc?: Documento; inicial: DocumentoInput }) 
           ) : (
             <Group justify="space-between" gap="xs">
               <span>Esta factura no tiene pedido.</span>
-              <Button size="compact-sm" variant="light" color="grape" onClick={() => setModalPedido('crear')}>
+              <Button size="compact-sm" variant="light" onClick={() => setModalPedido('crear')}>
                 Crear pedido
               </Button>
             </Group>
@@ -356,8 +464,9 @@ function Editor({ doc, inicial }: { doc?: Documento; inicial: DocumentoInput }) 
 
       <Paper withBorder p="md">
         <Grid>
-          <Grid.Col span={{ base: 12, md: 5 }}>
+          <Grid.Col span={{ base: 12, md: esPresupuesto ? 5 : 4 }}>
             <Select
+              ref={clienteRef}
               label="Cliente"
               required
               searchable
@@ -366,6 +475,7 @@ function Editor({ doc, inicial }: { doc?: Documento; inicial: DocumentoInput }) 
               onChange={(v) => cambiar({ clienteId: Number(v) || 0 })}
               data={clientes.map((c) => ({ value: String(c.id), label: `${c.nombre} ${c.apellidos}${c.dni ? ` · ${c.dni}` : ''}` }))}
               nothingFoundMessage="Sin resultados"
+              error={errores.clienteId}
             />
             {d.clienteId > 0 && (
               <Anchor component={Link} to={`/clientes/${d.clienteId}`} size="xs">
@@ -373,7 +483,7 @@ function Editor({ doc, inicial }: { doc?: Documento; inicial: DocumentoInput }) 
               </Anchor>
             )}
           </Grid.Col>
-          <Grid.Col span={{ base: 12, sm: 6, md: 4 }}>
+          <Grid.Col span={{ base: 12, sm: 6, md: esPresupuesto ? 4 : 3 }}>
             <Select
               label="Distribuidor"
               searchable
@@ -392,16 +502,19 @@ function Editor({ doc, inicial }: { doc?: Documento; inicial: DocumentoInput }) 
               value={d.fecha}
               min={anioFijo ? `${anioFijo}-01-01` : undefined}
               max={anioFijo ? `${anioFijo}-12-31` : undefined}
-              description={anioFijo ? `Ejercicio ${anioFijo}` : 'El año de la fecha determina la numeración'}
+              inputWrapperOrder={ordenCampo}
+              description={anioFijo ? `Ejercicio ${anioFijo}` : 'El año fija la numeración'}
               onChange={(e) => cambiar({ fecha: e.currentTarget.value })}
             />
           </Grid.Col>
           {!esPresupuesto && (
-            <Grid.Col span={{ base: 12, sm: 6, md: 3 }}>
+            <Grid.Col span={{ base: 12, sm: 6, md: 2 }}>
               <NumberInput
+                ref={numeroRef}
                 label="Nº de factura"
-                description={doc ? 'Se comprueba que no exista otra con ese número' : 'Vacío: el siguiente automático'}
-                placeholder={proximo.data ? `Automático (${proximo.data.codigo})` : 'Automático'}
+                inputWrapperOrder={ordenCampo}
+                description={doc || errorNumero ? undefined : 'Vacío = automático'}
+                placeholder={proximo.data ? String(proximo.data.numero) : 'Automático'}
                 allowDecimal={false}
                 allowNegative={false}
                 hideControls
@@ -410,20 +523,23 @@ function Editor({ doc, inicial }: { doc?: Documento; inicial: DocumentoInput }) 
                 required={!!doc}
                 value={d.numero ?? ''}
                 onChange={(v) => cambiar({ numero: typeof v === 'number' && v > 0 ? v : undefined })}
+                error={errorNumero}
               />
             </Grid.Col>
           )}
           {!doc && !esPresupuesto && (
             <Grid.Col span={12}>
               <Textarea
+                ref={pedidoRef}
                 label="Nombre del pedido"
-                description="Cada factura abre un pedido del cliente, donde después se suben sus ficheros."
+                description="Cada factura abre un pedido del cliente, donde después se suben sus ficheros. Por ejemplo: «Silla salvaescaleras · C/ Mayor 12»."
                 required
                 autosize
                 minRows={1}
                 maxLength={1000}
                 value={d.pedidoNombre ?? ''}
                 onChange={(e) => cambiar({ pedidoNombre: e.currentTarget.value })}
+                error={errores.pedidoNombre}
               />
             </Grid.Col>
           )}
@@ -431,12 +547,16 @@ function Editor({ doc, inicial }: { doc?: Documento; inicial: DocumentoInput }) 
       </Paper>
 
       <Paper withBorder p="md">
-        <Group justify="space-between" mb="sm">
-          <Title order={4}>Líneas</Title>
-          <Group gap="xs" wrap="nowrap">
+        <Group justify="space-between" mb="sm" gap="sm">
+          <Title order={3} size="h4">
+            Líneas
+          </Title>
+          <Group gap="xs" w={{ base: '100%', sm: 'auto' }}>
             <Select
-              w={280}
+              flex={1}
+              miw={220}
               searchable
+              aria-label="Producto del distribuidor"
               placeholder={d.distribuidorId ? 'Producto del distribuidor…' : 'Elige antes un distribuidor'}
               disabled={!d.distribuidorId}
               value={productoSel}
@@ -447,17 +567,15 @@ function Editor({ doc, inicial }: { doc?: Documento; inicial: DocumentoInput }) 
             <Button variant="light" onClick={anadirProducto} disabled={!productoSel}>
               Añadir
             </Button>
-            <Button
-              variant="subtle"
-              leftSection={<IconPlus size={16} />}
-              onClick={() => cambiar({ lineas: [...d.lineas, { productoId: null, nombreProducto: '', cantidad: 1, precio: 0 }] })}
-            >
+            <Button variant="subtle" leftSection={<IconPlus size={16} />} onClick={lineaLibre}>
               Línea libre
             </Button>
           </Group>
         </Group>
-        <ScrollArea>
-          <Table miw={640}>
+
+        {/* Escritorio y tableta: tabla */}
+        <Box visibleFrom="sm">
+          <Table>
             <Table.Thead>
               <Table.Tr>
                 <Table.Th>Concepto</Table.Th>
@@ -474,26 +592,25 @@ function Editor({ doc, inicial }: { doc?: Documento; inicial: DocumentoInput }) 
                 <Table.Tr key={i}>
                   <Table.Td>
                     <TextInput
+                      ref={(el) => {
+                        conceptoRefs.current[i] = el;
+                      }}
                       value={l.nombreProducto}
                       required
+                      aria-label={`Concepto, línea ${i + 1}`}
                       placeholder="Descripción"
                       onChange={(e) => setLinea(i, { nombreProducto: e.currentTarget.value })}
                     />
                   </Table.Td>
                   <Table.Td>
-                    <Numero value={l.cantidad} onChange={(n) => setLinea(i, { cantidad: n })} />
+                    <Numero aria-label={`Cantidad, línea ${i + 1}`} value={l.cantidad} onChange={(n) => setLinea(i, { cantidad: n })} />
                   </Table.Td>
                   <Table.Td>
-                    <Numero euros value={l.precio} onChange={(n) => setLinea(i, { precio: n })} />
+                    <Numero euros aria-label={`Precio, línea ${i + 1}`} value={l.precio} onChange={(n) => setLinea(i, { precio: n })} />
                   </Table.Td>
                   <Table.Td className="importe">{formatoEuros(importeLinea(l))}</Table.Td>
                   <Table.Td>
-                    <ActionIcon
-                      variant="subtle"
-                      color="red"
-                      aria-label="Quitar línea"
-                      onClick={() => cambiar({ lineas: d.lineas.filter((_, j) => j !== i) })}
-                    >
+                    <ActionIcon variant="subtle" color="red" aria-label={`Quitar línea ${i + 1}`} onClick={() => quitarLinea(i)}>
                       <IconTrash size={16} />
                     </ActionIcon>
                   </Table.Td>
@@ -517,14 +634,59 @@ function Editor({ doc, inicial }: { doc?: Documento; inicial: DocumentoInput }) 
               </Table.Tr>
             </Table.Tfoot>
           </Table>
-        </ScrollArea>
+        </Box>
+
+        {/* Móvil: una ficha por línea */}
+        <Stack hiddenFrom="sm" gap="sm">
+          {d.lineas.map((l, i) => (
+            <Paper key={i} withBorder p="sm" bg="gray.0">
+              <Stack gap="xs">
+                <TextInput
+                  ref={(el) => {
+                    conceptoMovilRefs.current[i] = el;
+                  }}
+                  label={`Concepto ${i + 1}`}
+                  value={l.nombreProducto}
+                  required
+                  placeholder="Descripción"
+                  onChange={(e) => setLinea(i, { nombreProducto: e.currentTarget.value })}
+                />
+                <Group grow gap="xs">
+                  <Numero label="Cantidad" value={l.cantidad} onChange={(n) => setLinea(i, { cantidad: n })} />
+                  <Numero euros label="Precio" value={l.precio} onChange={(n) => setLinea(i, { precio: n })} />
+                </Group>
+                <Group justify="space-between">
+                  <Text size="sm">
+                    Importe: <b className="importe">{formatoEuros(importeLinea(l))}</b>
+                  </Text>
+                  <Button size="compact-sm" variant="subtle" color="red" leftSection={<IconTrash size={14} />} onClick={() => quitarLinea(i)}>
+                    Quitar
+                  </Button>
+                </Group>
+              </Stack>
+            </Paper>
+          ))}
+          {!d.lineas.length && (
+            <Text c="dimmed" ta="center" size="sm">
+              Sin líneas. Añade productos del distribuidor o una línea libre.
+            </Text>
+          )}
+          <Group justify="space-between" px="xs">
+            <Text fw={700} size="sm">
+              Subtotal líneas
+            </Text>
+            <Text fw={700} size="sm" className="importe">
+              {formatoEuros(t.subtotalLineas)}
+            </Text>
+          </Group>
+        </Stack>
       </Paper>
 
       <Grid>
         <Grid.Col span={{ base: 12, md: 7 }}>
           <Stack>
             <Paper withBorder p="md">
-              <Title order={4} mb="sm">
+              <Title order={3} size="h4" mb="sm">
                 Gastos y ganancia
               </Title>
               <SimpleGrid cols={{ base: 2, sm: 4 }}>
@@ -535,37 +697,37 @@ function Editor({ doc, inicial }: { doc?: Documento; inicial: DocumentoInput }) 
                 <Numero euros label="Otros" {...num('otros')} />
                 <Numero euros label="Transporte" {...num('transporte')} />
                 <Numero euros label="Ganancia" {...num('ganancia')} />
-                <Checkbox
-                  mt={30}
-                  label="+20% sobre ganancia"
-                  checked={d.aplicaGanancia}
-                  onChange={(e) => cambiar({ aplicaGanancia: e.currentTarget.checked })}
-                />
               </SimpleGrid>
+              <Checkbox
+                mt="md"
+                label="Recargo del 20 % sobre la ganancia"
+                checked={d.aplicaGanancia}
+                onChange={(e) => cambiar({ aplicaGanancia: e.currentTarget.checked })}
+              />
             </Paper>
             <Paper withBorder p="md">
-              <Title order={4} mb="sm">
+              <Title order={3} size="h4" mb="sm">
                 Cálculo de viaje
               </Title>
-              <SimpleGrid cols={{ base: 2, sm: 5 }}>
+              <SimpleGrid cols={{ base: 2, lg: 4 }}>
                 <Numero label="Kilómetros" {...num('kilometros')} />
                 <Numero label="Nº de viajes" decimalScale={0} {...num('numViajes')} />
                 <Numero label="Consumo (l/100 km)" decimalScale={2} {...num('consumo')} />
-                <Numero euros label="Precio gasolina (€/l)" decimalScale={3} {...num('precioGasolina')} />
-                <Stack gap={4} justify="flex-end">
-                  <Text size="sm">
-                    Coste: <b>{formatoEuros(viaje)}</b>
-                  </Text>
-                  <Button size="xs" variant="light" onClick={() => cambiar({ combustible: viaje })}>
-                    Pasar a combustible
-                  </Button>
-                </Stack>
+                <Numero euros label="Gasolina (€/l)" decimalScale={3} {...num('precioGasolina')} />
               </SimpleGrid>
+              <Group justify="space-between" mt="md" gap="sm">
+                <Text size="sm">
+                  Coste estimado: <b className="importe">{formatoEuros(viaje)}</b>
+                </Text>
+                <Button size="xs" variant="default" onClick={() => cambiar({ combustible: viaje })}>
+                  Pasar a combustible
+                </Button>
+              </Group>
             </Paper>
             <Paper withBorder p="md">
               <Stack>
                 <Textarea
-                  label={`Concepto (texto principal del ${nombreTipo.toLowerCase()})`}
+                  label={`Concepto (texto principal ${esPresupuesto ? 'del presupuesto' : 'de la factura'})`}
                   autosize
                   minRows={3}
                   value={d.textoConcepto}
@@ -592,7 +754,7 @@ function Editor({ doc, inicial }: { doc?: Documento; inicial: DocumentoInput }) 
 
         <Grid.Col span={{ base: 12, md: 5 }}>
           <Paper withBorder p="md" pos="sticky" top={76}>
-            <Title order={4} mb="sm">
+            <Title order={3} size="h4" mb="sm">
               Totales
             </Title>
             <Stack gap="xs">
@@ -608,13 +770,13 @@ function Editor({ doc, inicial }: { doc?: Documento; inicial: DocumentoInput }) 
                   <Fila etiqueta="Gastos" valor={t.totalGastos} />
                   <Fila etiqueta="Transporte" valor={d.transporte} />
                   <Fila etiqueta="Ganancia" valor={d.ganancia} />
-                  {d.aplicaGanancia && <Fila etiqueta="+20% ganancia" valor={t.impuestoGanancia} />}
+                  {d.aplicaGanancia && <Fila etiqueta="Recargo 20 % ganancia" valor={t.impuestoGanancia} />}
                   <Fila etiqueta="Base imponible" valor={t.totalSinIva} fuerte />
                 </Table.Tbody>
               </Table>
               <Group gap="xs" align="flex-end" wrap="nowrap">
                 <Checkbox label="Aplicar IVA" checked={d.aplicaIva} onChange={(e) => cambiar({ aplicaIva: e.currentTarget.checked })} mb={8} />
-                <Numero w={100} suffix=" %" disabled={!d.aplicaIva} {...num('ivaPorcentaje')} />
+                <Numero w={100} suffix=" %" aria-label="Porcentaje de IVA" disabled={!d.aplicaIva} {...num('ivaPorcentaje')} />
                 <Text className="importe" ml="auto" mb={8}>
                   {formatoEuros(t.totalIva)}
                 </Text>
@@ -634,13 +796,14 @@ function Editor({ doc, inicial }: { doc?: Documento; inicial: DocumentoInput }) 
                 onChange={(v) => cambiar({ porcentajeReparto: v })}
                 marks={[{ value: 25 }, { value: 50 }, { value: 75 }]}
                 label={(v) => `${v}%`}
+                thumbLabel="Porcentaje del primer pago"
               />
               <Group justify="space-between">
                 <Text size="sm">
-                  {d.porcentajeReparto}%: <b>{formatoEuros(t.reparto[0])}</b>
+                  {d.porcentajeReparto}%: <b className="importe">{formatoEuros(t.reparto[0])}</b>
                 </Text>
                 <Text size="sm">
-                  {100 - d.porcentajeReparto}%: <b>{formatoEuros(t.reparto[1])}</b>
+                  {100 - d.porcentajeReparto}%: <b className="importe">{formatoEuros(t.reparto[1])}</b>
                 </Text>
               </Group>
             </Stack>
@@ -649,7 +812,9 @@ function Editor({ doc, inicial }: { doc?: Documento; inicial: DocumentoInput }) 
       </Grid>
 
       <Paper withBorder p="md">
-        <Title order={4}>Texto de importación (dos columnas)</Title>
+        <Title order={3} size="h4">
+          Texto de importación (dos columnas)
+        </Title>
         <Text size="sm" c="dimmed" mb="sm">
           Se imprime en dos columnas paralelas debajo de los totales, p. ej. español a la izquierda e inglés a la derecha.
           Los saltos de línea se respetan, así puedes alinear las dos columnas.
@@ -671,6 +836,32 @@ function Editor({ doc, inicial }: { doc?: Documento; inicial: DocumentoInput }) 
           />
         </SimpleGrid>
       </Paper>
+
+      {/* Móvil: total y guardar siempre a mano */}
+      <Box h={56} hiddenFrom="md" />
+      <Box
+        hiddenFrom="md"
+        pos="fixed"
+        bottom={0}
+        left={0}
+        right={0}
+        px="md"
+        py="xs"
+        bg="var(--mantine-color-body)"
+        style={{ borderTop: '1px solid var(--mantine-color-gray-3)', zIndex: 150 }}
+      >
+        <Group justify="space-between" wrap="nowrap">
+          <div>
+            <Text size="xs" c="dimmed" lh={1.2}>
+              TOTAL{sucio ? ' · sin guardar' : ''}
+            </Text>
+            <Text fw={700} size="lg" className="importe" lh={1.2}>
+              {formatoEuros(t.totalConIva)}
+            </Text>
+          </div>
+          {botonGuardar}
+        </Group>
+      </Box>
 
       <CalculadoraEscalera
         abierta={calcAbierta}

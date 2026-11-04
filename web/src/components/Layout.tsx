@@ -26,7 +26,7 @@ function SelectorEjercicio() {
   return (
     <Select
       aria-label="Ejercicio"
-      w={140}
+      w={160}
       value={anio == null ? 'todos' : String(anio)}
       onChange={(v) => setAnio(!v || v === 'todos' ? null : Number(v))}
       data={[...lista.map((a) => ({ value: String(a), label: `Ejercicio ${a}` })), { value: 'todos', label: 'Todos los años' }]}

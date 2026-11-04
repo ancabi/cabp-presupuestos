@@ -8,6 +8,7 @@ import {
   convertirAFactura,
   crearDocumento,
   listarDocumentos,
+  numeroLibre,
   obtenerDocumento,
   proximoNumero,
 } from '../services/documentos';
@@ -34,7 +35,15 @@ export async function rutasDocumentos(app: FastifyInstance) {
   app.get('/documentos/proximo-numero', async (req) => {
     const tipo = tipoQuery(queryStr(req, 'tipo')) ?? 'presupuesto';
     const anio = queryInt(req, 'anio') ?? new Date().getFullYear();
-    return { codigo: await proximoNumero(app.db, tipo, anio) };
+    return proximoNumero(app.db, tipo, anio);
+  });
+
+  app.get('/documentos/numero-libre', async (req) => {
+    const tipo = tipoQuery(queryStr(req, 'tipo')) ?? 'factura';
+    const anio = queryInt(req, 'anio') ?? new Date().getFullYear();
+    const numero = queryInt(req, 'numero');
+    if (!numero || numero < 1) throw peticionIncorrecta('Número no válido');
+    return numeroLibre(app.db, tipo, anio, numero, queryInt(req, 'excluir'));
   });
 
   app.get('/documentos/:id', async (req) => obtenerDocumento(app.db, idParam(req)));

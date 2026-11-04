@@ -2,6 +2,8 @@ export class ApiError extends Error {
   constructor(
     public status: number,
     message: string,
+    /** Campo del formulario al que se refiere el error (si el servidor lo indica). */
+    public campo?: string,
   ) {
     super(message);
   }
@@ -22,7 +24,7 @@ async function pedir<T>(method: string, url: string, body?: unknown): Promise<T>
   const datos = texto ? JSON.parse(texto) : null;
   if (!r.ok) {
     if (r.status === 401 && !url.startsWith('/auth/')) window.dispatchEvent(new Event('cabp:no-autenticado'));
-    throw new ApiError(r.status, datos?.error ?? `Error ${r.status}`);
+    throw new ApiError(r.status, datos?.error ?? `Error ${r.status}`, datos?.campo);
   }
   return datos as T;
 }

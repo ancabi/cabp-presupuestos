@@ -64,7 +64,9 @@ export async function crearApp(config: Config, db: Pool, opciones: { logger?: bo
       const msg = err.issues.map((i) => (i.path.length ? `${i.path.join('.')}: ${i.message}` : i.message)).join('; ');
       return reply.status(400).send({ error: msg });
     }
-    if (err instanceof HttpError) return reply.status(err.statusCode).send({ error: err.message });
+    if (err instanceof HttpError) {
+      return reply.status(err.statusCode).send(err.campo ? { error: err.message, campo: err.campo } : { error: err.message });
+    }
     const code = (err as { code?: string }).code;
     if (code === 'ER_ROW_IS_REFERENCED_2' || code === 'ER_ROW_IS_REFERENCED') {
       return reply.status(409).send({ error: 'No se puede borrar: tiene datos relacionados' });

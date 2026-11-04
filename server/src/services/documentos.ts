@@ -84,7 +84,7 @@ async function guardarLineas(conn: Db, documentoId: number, d: DocumentoInput) {
 const esDuplicado = (e: unknown) => (e as { code?: string }).code === 'ER_DUP_ENTRY';
 
 const yaExiste = (tipo: TipoDocumento, anio: number, numero: number) =>
-  conflicto(`Ya existe ${tipo === 'factura' ? 'la factura' : 'el presupuesto'} ${numeroDocumento(tipo, anio, numero)}`);
+  conflicto(`Ya existe ${tipo === 'factura' ? 'la factura' : 'el presupuesto'} ${numeroDocumento(tipo, anio, numero)}`, 'numero');
 
 /** Error si ya hay otro documento del mismo tipo y año con ese número. */
 async function comprobarNumeroLibre(conn: Db, tipo: TipoDocumento, anio: number, numero: number, excluirId?: number) {
@@ -98,7 +98,7 @@ async function comprobarNumeroLibre(conn: Db, tipo: TipoDocumento, anio: number,
 
 async function comprobarReferencias(conn: Db, d: DocumentoInput) {
   const [c] = await consultar(conn, 'SELECT id FROM clientes WHERE id = ?', [d.clienteId]);
-  if (!c) throw peticionIncorrecta('El cliente no existe');
+  if (!c) throw peticionIncorrecta('El cliente no existe', 'clienteId');
   if (d.distribuidorId) {
     const [di] = await consultar(conn, 'SELECT id FROM distribuidores WHERE id = ?', [d.distribuidorId]);
     if (!di) throw peticionIncorrecta('El distribuidor no existe');
@@ -135,7 +135,7 @@ export async function insertarDocumento(
 /** Cada factura nueva abre su pedido, con el cliente y el año de la factura. */
 async function pedidoParaFactura(conn: Db, d: DocumentoInput, nombre: string | undefined): Promise<number | null> {
   if (d.tipo !== 'factura') return null;
-  if (!nombre?.trim()) throw peticionIncorrecta('Indica el nombre del pedido');
+  if (!nombre?.trim()) throw peticionIncorrecta('Indica el nombre del pedido', 'pedidoNombre');
   return crearPedido(conn, { nombre: nombre.trim(), clienteId: d.clienteId, anio: anioDeFecha(d.fecha) });
 }
 
@@ -323,8 +323,26 @@ export async function borrarDocumento(pool: Pool, id: number): Promise<void> {
   });
 }
 
-/** Para el formulario de "nuevo": el número que previsiblemente se asignará. */
-export async function proximoNumero(db: Db, tipo: TipoDocumento, anio: number): Promise<string> {
+/** Para el formulario: el número que previsiblemente se asignará al siguiente documento del año. */
+export async function proximoNumero(db: Db, tipo: TipoDocumento, anio: number): Promise<{ numero: number; codigo: string }> {
   const [c] = await consultar(db, 'SELECT ultimo_numero FROM contadores WHERE tipo = ? AND anio = ?', [tipo, anio]);
-  return numeroDocumento(tipo, anio, (c?.ultimo_numero ?? 0) + 1);
+  const numero = (c?.ultimo_numero ?? 0) + 1;
+  return { numero, codigo: numeroDocumento(tipo, anio, numero) };
+}
+
+/** Comprobación en vivo del formulario: ¿está libre ese número? (excluirId = el propio documento al editar). */
+export async function numeroLibre(
+  db: Db,
+  tipo: TipoDocumento,
+  anio: number,
+  numero: number,
+  excluirId?: number,
+): Promise<{ libre: boolean; codigo: string }> {
+  const [otro] = await consultar(db, 'SELECT id FROM documentos WHERE tipo = ? AND anio = ? AND numero = ? AND id <> ?', [
+    tipo,
+    anio,
+    numero,
+    excluirId ?? 0,
+  ]);
+  return { libre: !otro, codigo: numeroDocumento(tipo, anio, numero) };
 }

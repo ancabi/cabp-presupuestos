@@ -19,7 +19,7 @@ import type {
   TipoFichero,
   Usuario,
 } from '@cabp/shared';
-import { http } from './http';
+import { ApiError, http } from './http';
 
 export const notificarError = (e: unknown) =>
   notifications.show({ color: 'red', title: 'Error', message: e instanceof Error ? e.message : String(e) });
@@ -139,8 +139,20 @@ export const useDocumento = (id: number | undefined) =>
 export const useProximoNumero = (tipo: TipoDocumento, anio: number, activo: boolean) =>
   useQuery({
     queryKey: ['proximo', tipo, anio],
-    queryFn: () => http.get<{ codigo: string }>(`/documentos/proximo-numero?tipo=${tipo}&anio=${anio}`),
+    queryFn: () => http.get<{ numero: number; codigo: string }>(`/documentos/proximo-numero?tipo=${tipo}&anio=${anio}`),
     enabled: activo,
+  });
+
+/** Comprueba si un número está libre en ese tipo y año (excluyendo el propio documento al editar). */
+export const useNumeroLibre = (tipo: TipoDocumento, anio: number, numero: number | undefined, excluirId?: number) =>
+  useQuery({
+    queryKey: ['numero-libre', tipo, anio, numero, excluirId ?? 0],
+    queryFn: () =>
+      http.get<{ libre: boolean; codigo: string }>(
+        `/documentos/numero-libre?tipo=${tipo}&anio=${anio}&numero=${numero}${excluirId ? `&excluir=${excluirId}` : ''}`,
+      ),
+    enabled: !!numero && numero > 0 && !!anio,
+    staleTime: 5_000,
   });
 
 function useInvalidarDocumentos() {
@@ -149,6 +161,7 @@ function useInvalidarDocumentos() {
     qc.invalidateQueries({ queryKey: ['documentos'] });
     qc.invalidateQueries({ queryKey: ['anios'] });
     qc.invalidateQueries({ queryKey: ['proximo'] });
+    qc.invalidateQueries({ queryKey: ['numero-libre'] });
     qc.invalidateQueries({ queryKey: ['pedidos'] });
     qc.invalidateQueries({ queryKey: ['pedido'] });
     if (d) qc.setQueryData(['documento', d.id], d);
@@ -160,7 +173,10 @@ export function useGuardarDocumento() {
     mutationFn: ({ id, datos }: { id?: number; datos: DocumentoInput }) =>
       id ? http.put<Documento>(`/documentos/${id}`, datos) : http.post<Documento>('/documentos', datos),
     onSuccess: invalidar,
-    onError: notificarError,
+    // Los errores de un campo concreto los muestra el editor junto al campo.
+    onError: (e) => {
+      if (!(e instanceof ApiError && e.campo)) notificarError(e);
+    },
   });
 }
 export function useBorrarDocumento() {
