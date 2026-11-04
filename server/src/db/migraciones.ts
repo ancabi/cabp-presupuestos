@@ -217,4 +217,17 @@ export const migraciones: { nombre: string; sql: string[] }[] = [
          ADD COLUMN consumo DECIMAL(6,2) NOT NULL DEFAULT 7 AFTER num_viajes`,
     ],
   },
+  {
+    // Línea principal: en el PDF se le suman los gastos y la ganancia en lugar de añadir otra línea.
+    nombre: '006_linea_principal',
+    sql: [
+      `ALTER TABLE documento_lineas
+         ADD COLUMN principal TINYINT(1) NOT NULL DEFAULT 0 AFTER precio`,
+      // Los documentos que ya existen quedan con su primera línea como principal.
+      `UPDATE documento_lineas l
+         JOIN (SELECT documento_id, MIN(orden) AS orden FROM documento_lineas GROUP BY documento_id) p
+           ON p.documento_id = l.documento_id AND p.orden = l.orden
+          SET l.principal = 1`,
+    ],
+  },
 ];

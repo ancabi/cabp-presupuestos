@@ -14,6 +14,7 @@ import {
   Loader,
   NumberInput,
   Paper,
+  Radio,
   Select,
   SimpleGrid,
   Slider,
@@ -45,6 +46,7 @@ import {
   formatoEuros,
   hoyIso,
   importeLinea,
+  indicePrincipal,
   numeroDocumento,
   type Documento,
   type DocumentoInput,
@@ -257,8 +259,10 @@ function Editor({ doc, inicial }: { doc?: Documento; inicial: DocumentoInput }) 
   const setLinea = (i: number, parcial: Partial<Linea>) =>
     cambiar({ lineas: d.lineas.map((l, j) => (j === i ? { ...l, ...parcial } : l)) });
   const quitarLinea = (i: number) => cambiar({ lineas: d.lineas.filter((_, j) => j !== i) });
+  const marcarPrincipal = (i: number) => cambiar({ lineas: d.lineas.map((l, j) => ({ ...l, principal: j === i })) });
+  const principal = indicePrincipal(d.lineas);
   const lineaLibre = () => {
-    cambiar({ lineas: [...d.lineas, { productoId: null, nombreProducto: '', cantidad: 1, precio: 0 }] });
+    cambiar({ lineas: [...d.lineas, { productoId: null, nombreProducto: '', cantidad: 1, precio: 0, principal: false }] });
     setEnfocarLinea(d.lineas.length);
   };
 
@@ -267,7 +271,7 @@ function Editor({ doc, inicial }: { doc?: Documento; inicial: DocumentoInput }) 
     if (!p) return;
     const i = d.lineas.findIndex((l) => l.productoId === p.id);
     if (i >= 0) setLinea(i, { cantidad: d.lineas[i].cantidad + 1 });
-    else cambiar({ lineas: [...d.lineas, { productoId: p.id, nombreProducto: p.nombre, cantidad: 1, precio: p.precio }] });
+    else cambiar({ lineas: [...d.lineas, { productoId: p.id, nombreProducto: p.nombre, cantidad: 1, precio: p.precio, principal: false }] });
     setProductoSel(null);
   };
 
@@ -578,6 +582,7 @@ function Editor({ doc, inicial }: { doc?: Documento; inicial: DocumentoInput }) 
           <Table>
             <Table.Thead>
               <Table.Tr>
+                <Table.Th w={70}>Principal</Table.Th>
                 <Table.Th>Concepto</Table.Th>
                 <Table.Th w={100}>Cantidad</Table.Th>
                 <Table.Th w={140}>Precio</Table.Th>
@@ -590,6 +595,16 @@ function Editor({ doc, inicial }: { doc?: Documento; inicial: DocumentoInput }) 
             <Table.Tbody>
               {d.lineas.map((l, i) => (
                 <Table.Tr key={i}>
+                  <Table.Td>
+                    <Center>
+                      <Radio
+                        name="linea-principal"
+                        aria-label={`Línea ${i + 1} principal`}
+                        checked={i === principal}
+                        onChange={() => marcarPrincipal(i)}
+                      />
+                    </Center>
+                  </Table.Td>
                   <Table.Td>
                     <TextInput
                       ref={(el) => {
@@ -618,7 +633,7 @@ function Editor({ doc, inicial }: { doc?: Documento; inicial: DocumentoInput }) 
               ))}
               {!d.lineas.length && (
                 <Table.Tr>
-                  <Table.Td colSpan={5}>
+                  <Table.Td colSpan={6}>
                     <Text c="dimmed" ta="center" size="sm">
                       Sin líneas. Añade productos del distribuidor o una línea libre.
                     </Text>
@@ -628,7 +643,7 @@ function Editor({ doc, inicial }: { doc?: Documento; inicial: DocumentoInput }) 
             </Table.Tbody>
             <Table.Tfoot>
               <Table.Tr>
-                <Table.Th colSpan={3}>Subtotal líneas</Table.Th>
+                <Table.Th colSpan={4}>Subtotal líneas</Table.Th>
                 <Table.Th className="importe">{formatoEuros(t.subtotalLineas)}</Table.Th>
                 <Table.Th />
               </Table.Tr>
@@ -655,6 +670,12 @@ function Editor({ doc, inicial }: { doc?: Documento; inicial: DocumentoInput }) 
                   <Numero label="Cantidad" value={l.cantidad} onChange={(n) => setLinea(i, { cantidad: n })} />
                   <Numero euros label="Precio" value={l.precio} onChange={(n) => setLinea(i, { precio: n })} />
                 </Group>
+                <Radio
+                  name="linea-principal-movil"
+                  label="Línea principal"
+                  checked={i === principal}
+                  onChange={() => marcarPrincipal(i)}
+                />
                 <Group justify="space-between">
                   <Text size="sm">
                     Importe: <b className="importe">{formatoEuros(importeLinea(l))}</b>
@@ -689,6 +710,14 @@ function Editor({ doc, inicial }: { doc?: Documento; inicial: DocumentoInput }) 
               <Title order={3} size="h4" mb="sm">
                 Gastos y ganancia
               </Title>
+              <Text size="sm" c="dimmed" mb="sm">
+                {d.totalManualActivo
+                  ? 'En el PDF se suman al total manual, en una sola línea.'
+                  : principal >= 0
+                    ? `En el PDF se suman al total de la línea principal (${d.lineas[principal].nombreProducto || `línea ${principal + 1}`}), sin crear otra línea.`
+                    : 'Sin líneas: en el PDF aparecerán como una línea aparte.'}
+                {t.totalSinIva !== t.neto && <> Ahora suman <b className="importe">{formatoEuros(Math.round((t.totalSinIva - t.neto) * 100) / 100)}</b>.</>}
+              </Text>
               <SimpleGrid cols={{ base: 2, sm: 4 }}>
                 <Numero euros label="Hotel" {...num('hotel')} />
                 <Numero euros label="Pasaje" {...num('pasaje')} />

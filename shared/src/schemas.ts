@@ -63,8 +63,17 @@ export const lineaSchema = z.object({
   nombreProducto: z.string().trim().min(1).max(255),
   cantidad: z.coerce.number().finite().min(-1_000_000).max(1_000_000),
   precio: z.coerce.number().finite().min(-9_999_999_999).max(9_999_999_999),
+  /** Línea a la que se suman en el PDF los gastos y la ganancia. Si ninguna lo está, es la primera. */
+  principal: z.boolean().default(false),
 });
 export type LineaInput = z.infer<typeof lineaSchema>;
+
+/** Índice de la línea principal: la primera marcada o, si no hay ninguna, la primera (−1 si no hay líneas). */
+export function indicePrincipal(lineas: readonly { principal?: boolean }[]): number {
+  if (!lineas.length) return -1;
+  const i = lineas.findIndex((l) => l.principal);
+  return i < 0 ? 0 : i;
+}
 
 export const documentoSchema = z.object({
   tipo: z.enum(['presupuesto', 'factura']),

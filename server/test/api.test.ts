@@ -249,6 +249,14 @@ describe('documentos y numeración por año', () => {
     expect(anios.body).toEqual(expect.arrayContaining([2031, 2030, 2027, 2026]));
   });
 
+  it('guarda una sola línea principal: la marcada o, si no hay ninguna, la primera', async () => {
+    const l = (nombreProducto: string, principal?: boolean) => ({ productoId: null, nombreProducto, cantidad: 1, precio: 10, principal });
+    const sinMarcar = await api.post('/api/documentos', docBase(clienteId, '2026-07-01', { lineas: [l('A'), l('B')] }));
+    expect(sinMarcar.body.lineas.map((x: any) => x.principal)).toEqual([true, false]);
+    const marcadas = await api.post('/api/documentos', docBase(clienteId, '2026-07-02', { lineas: [l('A'), l('B', true), l('C', true)] }));
+    expect(marcadas.body.lineas.map((x: any) => x.principal)).toEqual([false, true, false]);
+  });
+
   it('no deja borrar un cliente con documentos', async () => {
     expect((await api.del(`/api/clientes/${clienteId}`)).status).toBe(409);
   });

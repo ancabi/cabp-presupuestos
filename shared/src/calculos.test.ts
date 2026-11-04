@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { calcularEscalera, calcularTotales, calcularViaje, type DatosCalculo } from './calculos';
 import { numeroDocumento } from './formato';
 import { textoSobre, variablesPdf, PDF_POR_DEFECTO } from './pdf';
+import { indicePrincipal } from './schemas';
 
 const base: DatosCalculo = {
   lineas: [],
@@ -139,5 +140,13 @@ describe('aspecto del PDF', () => {
   it('escala respecto al tamaño de diseño (8,5 pt)', () => {
     expect(variablesPdf(PDF_POR_DEFECTO)['--pdf-escala']).toBe('1');
     expect(variablesPdf({ ...PDF_POR_DEFECTO, tamanoLetra: 17 })['--pdf-escala']).toBe('2');
+  });
+});
+
+describe('línea principal', () => {
+  it('es la primera marcada o, si no hay ninguna, la primera', () => {
+    expect(indicePrincipal([])).toBe(-1);
+    expect(indicePrincipal([{}, {}])).toBe(0);
+    expect(indicePrincipal([{ principal: false }, { principal: true }, { principal: true }])).toBe(1);
   });
 });

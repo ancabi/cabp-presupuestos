@@ -2,6 +2,7 @@ import {
   anioDeFecha,
   calcularTotales,
   hoyIso,
+  indicePrincipal,
   numeroDocumento,
   type Documento,
   type DocumentoInput,
@@ -65,9 +66,10 @@ async function guardarLineas(conn: Db, documentoId: number, d: DocumentoInput) {
   const existentes = new Set(
     ids.length ? (await consultar(conn, 'SELECT id FROM productos WHERE id IN (?)', [ids])).map((f) => f.id) : [],
   );
+  const principal = indicePrincipal(d.lineas);
   await ejecutar(
     conn,
-    'INSERT INTO documento_lineas (documento_id, orden, producto_id, nombre_producto, cantidad, precio) VALUES ?',
+    'INSERT INTO documento_lineas (documento_id, orden, producto_id, nombre_producto, cantidad, precio, principal) VALUES ?',
     [
       d.lineas.map((l, i) => [
         documentoId,
@@ -76,6 +78,7 @@ async function guardarLineas(conn: Db, documentoId: number, d: DocumentoInput) {
         l.nombreProducto,
         l.cantidad,
         l.precio,
+        i === principal ? 1 : 0,
       ]),
     ],
   );
@@ -217,6 +220,7 @@ export async function obtenerDocumento(db: Db, id: number): Promise<Documento> {
     nombreProducto: l.nombre_producto,
     cantidad: l.cantidad,
     precio: l.precio,
+    principal: !!l.principal,
   }));
   const cliente = await obtenerCliente(db, f.cliente_id);
   return {
