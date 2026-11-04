@@ -81,6 +81,7 @@ function nuevoDocumento(tipo: TipoDocumento, clienteId: number, iva: number, for
     transporte: 0,
     kilometros: 0,
     numViajes: 2,
+    consumo: 7,
     precioGasolina: 1,
     aplicaGanancia: true,
     aplicaIva: true,
@@ -165,7 +166,7 @@ function Editor({ doc, inicial }: { doc?: Documento; inicial: DocumentoInput }) 
   const proximo = useProximoNumero(d.tipo, anioDeFecha(d.fecha) || new Date().getFullYear(), !doc);
 
   const t = useMemo(() => calcularTotales(d), [d]);
-  const viaje = calcularViaje(d.kilometros, d.numViajes, d.precioGasolina);
+  const viaje = calcularViaje(d.kilometros, d.numViajes, d.consumo, d.precioGasolina);
   const esPresupuesto = d.tipo === 'presupuesto';
   const nombreTipo = esPresupuesto ? 'Presupuesto' : 'Factura';
 
@@ -519,9 +520,10 @@ function Editor({ doc, inicial }: { doc?: Documento; inicial: DocumentoInput }) 
               <Title order={4} mb="sm">
                 Cálculo de viaje
               </Title>
-              <SimpleGrid cols={{ base: 2, sm: 4 }}>
+              <SimpleGrid cols={{ base: 2, sm: 5 }}>
                 <Numero label="Kilómetros" {...num('kilometros')} />
                 <Numero label="Nº de viajes" decimalScale={0} {...num('numViajes')} />
+                <Numero label="Consumo (l/100 km)" decimalScale={2} {...num('consumo')} />
                 <Numero euros label="Precio gasolina (€/l)" decimalScale={3} {...num('precioGasolina')} />
                 <Stack gap={4} justify="flex-end">
                   <Text size="sm">

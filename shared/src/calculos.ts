@@ -8,8 +8,8 @@
 
 /** Recargo que se aplica sobre la ganancia cuando "aplicaGanancia" está activo. */
 export const IMPUESTO_GANANCIA = 0.2;
-/** Litros por kilómetro usados en la calculadora de viajes. */
-export const CONSUMO_POR_KM = 0.07;
+/** Consumo por defecto (litros a los 100 km) de la calculadora de viajes. */
+export const CONSUMO_POR_DEFECTO = 7;
 
 export interface LineaCalculo {
   cantidad: number;
@@ -85,9 +85,19 @@ export function calcularTotales(d: DatosCalculo): Totales {
   };
 }
 
-/** Coste estimado de combustible de los desplazamientos. */
-export function calcularViaje(kilometros: number, numViajes: number, precioGasolina: number): number {
-  const litros = (Number(kilometros) || 0) * (Number(numViajes) || 0) * CONSUMO_POR_KM;
+/**
+ * Coste estimado de combustible de los desplazamientos:
+ * km totales = kilómetros × nº de viajes; litros = km totales × consumo (l/100 km) / 100;
+ * coste = litros × precio de la gasolina (€/l).
+ */
+export function calcularViaje(
+  kilometros: number,
+  numViajes: number,
+  consumo100km: number,
+  precioGasolina: number,
+): number {
+  const kmTotales = (Number(kilometros) || 0) * (Number(numViajes) || 0);
+  const litros = (kmTotales * (Number(consumo100km) || 0)) / 100;
   return Math.round(litros * (Number(precioGasolina) || 0) * 100) / 100;
 }
 

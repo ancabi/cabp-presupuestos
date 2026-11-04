@@ -81,6 +81,8 @@ export const documentoSchema = z.object({
   transporte: importeConSigno,
   kilometros: importe,
   numViajes: z.coerce.number().int().min(0).max(1000).default(2),
+  /** Consumo del vehículo en litros a los 100 km. */
+  consumo: z.coerce.number().finite().min(0).max(100).default(7),
   precioGasolina: importe,
   aplicaGanancia: z.boolean().default(true),
   aplicaIva: z.boolean().default(true),

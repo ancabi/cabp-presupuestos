@@ -230,6 +230,7 @@ try {
         transporte: num(o.transporte),
         kilometros: num(o.kilometros),
         numViajes: Math.trunc(num(o.totViajes, 2)),
+        consumo: 7,
         precioGasolina: num(o.precioGasolina, 1),
         aplicaGanancia: bool(o.isGanancia, true),
         aplicaIva: bool(o.isCanarias, true),

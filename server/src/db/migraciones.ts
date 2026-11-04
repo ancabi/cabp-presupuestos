@@ -209,4 +209,12 @@ export const migraciones: { nombre: string; sql: string[] }[] = [
       ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci`,
     ],
   },
+  {
+    // Cálculo de viaje: consumo del vehículo (litros a los 100 km). 7 reproduce el valor fijo anterior.
+    nombre: '005_documento_consumo',
+    sql: [
+      `ALTER TABLE documentos
+         ADD COLUMN consumo DECIMAL(6,2) NOT NULL DEFAULT 7 AFTER num_viajes`,
+    ],
+  },
 ];

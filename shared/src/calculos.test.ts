@@ -103,8 +103,11 @@ describe('importes negativos (abonos)', () => {
 });
 
 describe('calculadoras', () => {
-  it('viaje = km * viajes * 0.07 * precio', () => {
-    expect(calcularViaje(100, 2, 1.5)).toBe(21);
+  it('viaje = km * viajes * consumo / 100 * precio', () => {
+    expect(calcularViaje(100, 2, 7, 1.5)).toBe(21);
+    // 250 km × 2 = 500 km; 500 × 6,5 / 100 = 32,5 l; 32,5 × 1,6 = 52 €
+    expect(calcularViaje(250, 2, 6.5, 1.6)).toBe(52);
+    expect(calcularViaje(100, 2, 0, 1.5)).toBe(0);
   });
 
   it('pitágoras', () => {

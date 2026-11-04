@@ -29,6 +29,7 @@ const CAMPOS: [keyof DocumentoInput, string][] = [
   ['transporte', 'transporte'],
   ['kilometros', 'kilometros'],
   ['numViajes', 'num_viajes'],
+  ['consumo', 'consumo'],
   ['precioGasolina', 'precio_gasolina'],
   ['aplicaGanancia', 'aplica_ganancia'],
   ['aplicaIva', 'aplica_iva'],
