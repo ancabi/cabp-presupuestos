@@ -249,6 +249,18 @@ describe('documentos y numeración por año', () => {
     expect(anios.body).toEqual(expect.arrayContaining([2031, 2030, 2027, 2026]));
   });
 
+  it('filtra el listado por trimestre según la fecha', async () => {
+    await api.post('/api/documentos', docBase(clienteId, '2045-02-10'));
+    await api.post('/api/documentos', docBase(clienteId, '2045-05-20'));
+    await api.post('/api/documentos', docBase(clienteId, '2045-06-30'));
+    const fechas = async (t: number) =>
+      (await api.get(`/api/documentos?anio=2045&trimestre=${t}`)).body.map((d: any) => d.fecha).sort();
+    expect(await fechas(1)).toEqual(['2045-02-10']);
+    expect(await fechas(2)).toEqual(['2045-05-20', '2045-06-30']);
+    expect(await fechas(4)).toEqual([]);
+    expect((await api.get('/api/documentos?trimestre=5')).status).toBe(400);
+  });
+
   it('guarda una sola línea principal: la marcada o, si no hay ninguna, la primera', async () => {
     const l = (nombreProducto: string, principal?: boolean) => ({ productoId: null, nombreProducto, cantidad: 1, precio: 10, principal });
     const sinMarcar = await api.post('/api/documentos', docBase(clienteId, '2026-07-01', { lineas: [l('A'), l('B')] }));
@@ -440,6 +452,10 @@ describe('pedidos', () => {
     expect((await api.get('/api/pedidos?anio=2040&q=pedidera')).body.map((p: any) => p.nombre)).toEqual([
       expect.stringMatching(/^Silla salvaescaleras/),
     ]);
+    // Trimestre de la factura del pedido (abril → 2T).
+    expect((await api.get('/api/pedidos?anio=2040&trimestre=2')).body.map((p: any) => p.nombre)).toContain('Elevador de piscina');
+    expect((await api.get('/api/pedidos?anio=2040&trimestre=1')).body.map((p: any) => p.nombre)).not.toContain('Elevador de piscina');
+    expect((await api.get('/api/pedidos?trimestre=0')).status).toBe(400);
     // Convertir un presupuesto crea la factura (y su pedido) en el año actual.
     expect((await api.get(`/api/pedidos?anio=${new Date().getFullYear()}&q=plataforma`)).body).toHaveLength(1);
     expect((await api.get('/api/pedidos?q=100%')).body).toHaveLength(0);

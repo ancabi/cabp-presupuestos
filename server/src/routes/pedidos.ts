@@ -8,7 +8,7 @@ import { conflicto, noEncontrado, peticionIncorrecta } from '../errores';
 import { TIPOS_PEDIDO, enviarFichero, guardarSubida } from '../services/ficheros';
 import { crearPedido, listarPedidos, mapearFichero, obtenerPedido, tocarPedido } from '../services/pedidos';
 import { obtenerDocumento } from '../services/documentos';
-import { idParam, queryInt, queryStr } from './util';
+import { idParam, queryInt, queryStr, queryTrimestre } from './util';
 
 const cambioTipoSchema = z.object({ tipoId: z.number().int().positive() });
 
@@ -26,7 +26,7 @@ export async function rutasPedidos(app: FastifyInstance) {
     return f;
   };
 
-  app.get('/pedidos', async (req) => listarPedidos(app.db, { anio: queryInt(req, 'anio'), q: queryStr(req, 'q') }));
+  app.get('/pedidos', async (req) => listarPedidos(app.db, { anio: queryInt(req, 'anio'), trimestre: queryTrimestre(req), q: queryStr(req, 'q') }));
 
   app.get('/pedidos/:id', async (req) => obtenerPedido(app.db, idParam(req)));
 

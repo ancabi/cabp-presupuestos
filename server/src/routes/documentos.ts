@@ -12,7 +12,7 @@ import {
   obtenerDocumento,
   proximoNumero,
 } from '../services/documentos';
-import { idParam, queryInt, queryStr } from './util';
+import { idParam, queryInt, queryStr, queryTrimestre } from './util';
 
 function tipoQuery(v: string | undefined): TipoDocumento | undefined {
   if (v === undefined) return undefined;
@@ -25,6 +25,7 @@ export async function rutasDocumentos(app: FastifyInstance) {
     listarDocumentos(app.db, {
       tipo: tipoQuery(queryStr(req, 'tipo')),
       anio: queryInt(req, 'anio'),
+      trimestre: queryTrimestre(req),
       clienteId: queryInt(req, 'clienteId'),
       q: queryStr(req, 'q'),
     }),

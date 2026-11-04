@@ -125,10 +125,11 @@ export function useBorrarProducto(distribuidorId: number) {
 }
 
 // --- Documentos ---
-export const useDocumentos = (f: { tipo?: TipoDocumento; anio?: number | null; clienteId?: number; q?: string }) => {
+export const useDocumentos = (f: { tipo?: TipoDocumento; anio?: number | null; trimestre?: number | null; clienteId?: number; q?: string }) => {
   const p = new URLSearchParams();
   if (f.tipo) p.set('tipo', f.tipo);
   if (f.anio) p.set('anio', String(f.anio));
+  if (f.trimestre) p.set('trimestre', String(f.trimestre));
   if (f.clienteId) p.set('clienteId', String(f.clienteId));
   if (f.q) p.set('q', f.q);
   return useQuery({ queryKey: ['documentos', f], queryFn: () => http.get<DocumentoResumen[]>(`/documentos?${p}`) });
@@ -212,9 +213,10 @@ export function useCrearPedidoFactura() {
 }
 
 // --- Pedidos ---
-export const usePedidos = (f: { anio?: number | null; q?: string }) => {
+export const usePedidos = (f: { anio?: number | null; trimestre?: number | null; q?: string }) => {
   const p = new URLSearchParams();
   if (f.anio) p.set('anio', String(f.anio));
+  if (f.trimestre) p.set('trimestre', String(f.trimestre));
   if (f.q) p.set('q', f.q);
   return useQuery({ queryKey: ['pedidos', f], queryFn: () => http.get<PedidoResumen[]>(`/pedidos?${p}`) });
 };

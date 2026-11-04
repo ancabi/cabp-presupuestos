@@ -233,12 +233,13 @@ export async function obtenerDocumento(db: Db, id: number): Promise<Documento> {
 
 export async function listarDocumentos(
   db: Db,
-  filtro: { tipo?: TipoDocumento; anio?: number; clienteId?: number; q?: string },
+  filtro: { tipo?: TipoDocumento; anio?: number; trimestre?: number; clienteId?: number; q?: string },
 ): Promise<DocumentoResumen[]> {
   const where: string[] = [];
   const params: unknown[] = [];
   if (filtro.tipo) (where.push('d.tipo = ?'), params.push(filtro.tipo));
   if (filtro.anio) (where.push('d.anio = ?'), params.push(filtro.anio));
+  if (filtro.trimestre) (where.push('QUARTER(d.fecha) = ?'), params.push(filtro.trimestre));
   if (filtro.clienteId) (where.push('d.cliente_id = ?'), params.push(filtro.clienteId));
   if (filtro.q) {
     const like = `%${filtro.q.replace(/[\\%_]/g, (c) => '\\' + c)}%`;

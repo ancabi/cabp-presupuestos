@@ -45,10 +45,12 @@ export const mapearFichero = (f: any): PedidoFichero => ({
   subidoEn: f.subido_en,
 });
 
-export async function listarPedidos(db: Db, filtro: { anio?: number; q?: string }): Promise<PedidoResumen[]> {
+export async function listarPedidos(db: Db, filtro: { anio?: number; trimestre?: number; q?: string }): Promise<PedidoResumen[]> {
   const where: string[] = [];
   const params: unknown[] = [];
   if (filtro.anio) (where.push('p.anio = ?'), params.push(filtro.anio));
+  // Trimestre de la factura del pedido; si aún no tiene, el de su creación.
+  if (filtro.trimestre) (where.push('QUARTER(COALESCE(d.fecha, p.creado_en)) = ?'), params.push(filtro.trimestre));
   if (filtro.q) {
     const like = `%${filtro.q.replace(/[\\%_]/g, (c) => '\\' + c)}%`;
     where.push("(p.nombre LIKE ? OR CONCAT(c.nombre, ' ', c.apellidos) LIKE ? OR c.empresa LIKE ?)");

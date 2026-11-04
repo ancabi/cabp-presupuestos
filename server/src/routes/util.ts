@@ -12,6 +12,13 @@ export function queryStr(req: FastifyRequest, nombre: string): string | undefine
   return typeof v === 'string' && v !== '' ? v : undefined;
 }
 
+/** Trimestre (1-4) del parámetro `trimestre`, o undefined si no viene. */
+export function queryTrimestre(req: FastifyRequest): number | undefined {
+  const t = queryInt(req, 'trimestre');
+  if (t !== undefined && (t < 1 || t > 4)) throw peticionIncorrecta('Parámetro trimestre no válido');
+  return t;
+}
+
 export function queryInt(req: FastifyRequest, nombre: string): number | undefined {
   const v = queryStr(req, nombre);
   if (v === undefined) return undefined;

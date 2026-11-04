@@ -5,16 +5,16 @@ import { IconArrowDown, IconArrowUp, IconSearch, IconSelector } from '@tabler/ic
 import { useNavigate } from 'react-router-dom';
 import type { PedidoResumen } from '@cabp/shared';
 import { usePedidos } from '../api/hooks';
-import { useEjercicio } from '../components/Ejercicio';
+import { FiltroTrimestre, textoPeriodo, useEjercicio } from '../components/Ejercicio';
 import { fechaHora } from '../fechaHora';
 
 type Campo = 'creadoEn' | 'actualizadoEn';
 
 export function PedidosPage() {
-  const { anio } = useEjercicio();
+  const { anio, trimestre } = useEjercicio();
   const [q, setQ] = useState('');
   const [qd] = useDebouncedValue(q, 250);
-  const { data = [], isLoading } = usePedidos({ anio, q: qd });
+  const { data = [], isLoading } = usePedidos({ anio, trimestre, q: qd });
   const [orden, setOrden] = useState<{ campo: Campo; asc: boolean }>({ campo: 'actualizadoEn', asc: false });
   const navigate = useNavigate();
 
@@ -45,9 +45,10 @@ export function PedidosPage() {
 
   return (
     <>
-      <Title order={2} mb="md">
-        Pedidos {anio ?? '(todos los años)'}
-      </Title>
+      <Group justify="space-between" mb="md">
+        <Title order={2}>Pedidos {textoPeriodo(anio, trimestre)}</Title>
+        <FiltroTrimestre />
+      </Group>
       <TextInput
         mb="md"
         leftSection={<IconSearch size={16} />}
@@ -98,7 +99,7 @@ export function PedidosPage() {
         </ScrollArea>
         {!isLoading && !filas.length && (
           <Text c="dimmed" ta="center" p="lg">
-            {qd ? 'Ningún pedido coincide con la búsqueda.' : 'No hay pedidos. Se crean al hacer una factura.'}
+            {qd ? 'Ningún pedido coincide con la búsqueda.' : trimestre ? 'No hay pedidos en este trimestre.' : 'No hay pedidos. Se crean al hacer una factura.'}
           </Text>
         )}
       </Paper>

@@ -5,14 +5,14 @@ import { IconPlus, IconSearch } from '@tabler/icons-react';
 import { formatoEuros, type TipoDocumento } from '@cabp/shared';
 import { useNavigate } from 'react-router-dom';
 import { useDocumentos } from '../api/hooks';
-import { useEjercicio } from '../components/Ejercicio';
+import { FiltroTrimestre, textoPeriodo, useEjercicio } from '../components/Ejercicio';
 import { DocumentosTabla } from '../components/DocumentosTabla';
 
 export function DocumentosPage({ tipo }: { tipo: TipoDocumento }) {
-  const { anio } = useEjercicio();
+  const { anio, trimestre } = useEjercicio();
   const [q, setQ] = useState('');
   const [qd] = useDebouncedValue(q, 250);
-  const { data = [], isLoading } = useDocumentos({ tipo, anio, q: qd });
+  const { data = [], isLoading } = useDocumentos({ tipo, anio, trimestre, q: qd });
   const navigate = useNavigate();
   const titulo = tipo === 'presupuesto' ? 'Presupuestos' : 'Facturas';
   const total = data.reduce((a, d) => a + d.totalConIva, 0);
@@ -21,11 +21,14 @@ export function DocumentosPage({ tipo }: { tipo: TipoDocumento }) {
     <>
       <Group justify="space-between" mb="md">
         <Title order={2}>
-          {titulo} {anio ?? '(todos los años)'}
+          {titulo} {textoPeriodo(anio, trimestre)}
         </Title>
-        <Button leftSection={<IconPlus size={16} />} onClick={() => navigate(`/documentos/nuevo?tipo=${tipo}`)}>
-          {tipo === 'presupuesto' ? 'Nuevo presupuesto' : 'Nueva factura'}
-        </Button>
+        <Group gap="sm">
+          <FiltroTrimestre />
+            <Button leftSection={<IconPlus size={16} />} onClick={() => navigate(`/documentos/nuevo?tipo=${tipo}`)}>
+            {tipo === 'presupuesto' ? 'Nuevo presupuesto' : 'Nueva factura'}
+          </Button>
+        </Group>
       </Group>
       <TextInput
         mb="md"
