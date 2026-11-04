@@ -12,6 +12,7 @@
     "typecheck": "tsc -p shared --noEmit && tsc -p server --noEmit && tsc -p web --noEmit",
     "migrar": "npm run migrar -w server",
     "crear-admin": "npm run crear-admin -w server",
+    "cambiar-password": "npm run cambiar-password -w server --",
     "importar": "npm run importar -w server --"
   },
   "devDependencies": {

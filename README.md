@@ -37,7 +37,7 @@ Es la reescritura de la aplicación Java Swing original (proyecto fin de grado, 
 
 ```
 shared/   lógica común (cálculos de totales, esquemas de validación, tipos)
-server/   API REST (/api), migraciones, scripts (crear-admin, importar)
+server/   API REST (/api), migraciones, scripts (crear-admin, cambiar-password, importar)
 web/      interfaz React
 cabpTrunk/ versión Java original
 ```
@@ -66,6 +66,7 @@ npm run dev
 Otros comandos:
 
 ```bash
+npm run cambiar-password -- usuario@email.com   # nueva contraseña de un usuario existente (cierra sus sesiones)
 npm test            # tests (necesitan la BD cabp_test, ver abajo)
 npm run typecheck   # comprobación de tipos de todo el proyecto
 npm run build       # compila web/dist y server/dist
@@ -105,6 +106,8 @@ cp .env.example .env
 # Rellena en .env: DB_PASSWORD, DB_ROOT_PASSWORD y SESSION_SECRET (openssl rand -hex 32)
 docker compose up -d --build
 docker compose exec app node server/dist/scripts/crear-admin.js tu@email.com "Tu nombre"
+# Cambiar la contraseña de un usuario que ya existe (-it para que la pida por consola):
+docker compose exec -it app node server/dist/scripts/cambiar-password.js usuario@email.com
 ```
 
 - La aplicación queda en `127.0.0.1:3000`. Publícala detrás de un proxy inverso con HTTPS, por ejemplo este `Caddyfile`:

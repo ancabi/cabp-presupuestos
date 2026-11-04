@@ -9,6 +9,7 @@
     "start": "node --env-file-if-exists=../.env dist/index.js",
     "migrar": "tsx --env-file-if-exists=../.env scripts/migrar.ts",
     "crear-admin": "tsx --env-file-if-exists=../.env scripts/crear-admin.ts",
+    "cambiar-password": "tsx --env-file-if-exists=../.env scripts/cambiar-password.ts",
     "importar": "tsx --env-file-if-exists=../.env scripts/importar-sqlite.ts"
   },
   "dependencies": {
