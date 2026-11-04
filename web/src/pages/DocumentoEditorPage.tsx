@@ -11,6 +11,7 @@ import {
   Grid,
   Group,
   Loader,
+  NumberInput,
   Paper,
   ScrollArea,
   Select,
@@ -42,6 +43,7 @@ import {
   formatoEuros,
   hoyIso,
   importeLinea,
+  numeroDocumento,
   type Documento,
   type DocumentoInput,
   type TipoDocumento,
@@ -106,7 +108,6 @@ function aInput(d: Documento): DocumentoInput {
   const {
     id: _id,
     anio: _a,
-    numero: _n,
     codigo: _c,
     presupuestoOrigenId: _p,
     facturaId: _f,
@@ -277,7 +278,16 @@ function Editor({ doc, inicial }: { doc?: Documento; inicial: DocumentoInput }) 
       <Group justify="space-between">
         <Group gap="sm">
           <Title order={2}>
-            {nombreTipo} {doc ? doc.codigo : proximo.data ? `(nuevo · ${proximo.data.codigo})` : '(nuevo)'}
+            {nombreTipo}{' '}
+            {doc
+              ? doc.numero === d.numero
+                ? doc.codigo
+                : `${doc.codigo} → ${numeroDocumento(d.tipo, doc.anio, d.numero ?? doc.numero)}`
+              : d.numero
+                ? `(nuevo · ${numeroDocumento(d.tipo, anioDeFecha(d.fecha) || new Date().getFullYear(), d.numero)})`
+                : proximo.data
+                  ? `(nuevo · ${proximo.data.codigo})`
+                  : '(nuevo)'}
           </Title>
           {sucio && (
             <Badge color="orange" variant="light">
@@ -386,6 +396,23 @@ function Editor({ doc, inicial }: { doc?: Documento; inicial: DocumentoInput }) 
               onChange={(e) => cambiar({ fecha: e.currentTarget.value })}
             />
           </Grid.Col>
+          {!esPresupuesto && (
+            <Grid.Col span={{ base: 12, sm: 6, md: 3 }}>
+              <NumberInput
+                label="Nº de factura"
+                description={doc ? 'Se comprueba que no exista otra con ese número' : 'Vacío: el siguiente automático'}
+                placeholder={proximo.data ? `Automático (${proximo.data.codigo})` : 'Automático'}
+                allowDecimal={false}
+                allowNegative={false}
+                hideControls
+                min={1}
+                max={999999}
+                required={!!doc}
+                value={d.numero ?? ''}
+                onChange={(v) => cambiar({ numero: typeof v === 'number' && v > 0 ? v : undefined })}
+              />
+            </Grid.Col>
+          )}
           {!doc && !esPresupuesto && (
             <Grid.Col span={12}>
               <Textarea

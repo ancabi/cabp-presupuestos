@@ -13,7 +13,7 @@ import { consultar, ejecutar, transaccion, type Db } from '../db/pool';
 import { conflicto, noEncontrado, peticionIncorrecta } from '../errores';
 import { obtenerCliente } from './clientes';
 import { crearPedido, tocarPedido } from './pedidos';
-import { siguienteNumero } from './numeracion';
+import { recalcularContador, siguienteNumero } from './numeracion';
 
 /** Correspondencia campo de la API -> columna. */
 const CAMPOS: [keyof DocumentoInput, string][] = [
@@ -81,6 +81,21 @@ async function guardarLineas(conn: Db, documentoId: number, d: DocumentoInput) {
   );
 }
 
+const esDuplicado = (e: unknown) => (e as { code?: string }).code === 'ER_DUP_ENTRY';
+
+const yaExiste = (tipo: TipoDocumento, anio: number, numero: number) =>
+  conflicto(`Ya existe ${tipo === 'factura' ? 'la factura' : 'el presupuesto'} ${numeroDocumento(tipo, anio, numero)}`);
+
+/** Error si ya hay otro documento del mismo tipo y año con ese número. */
+async function comprobarNumeroLibre(conn: Db, tipo: TipoDocumento, anio: number, numero: number, excluirId?: number) {
+  const [otro] = await consultar(
+    conn,
+    'SELECT id FROM documentos WHERE tipo = ? AND anio = ? AND numero = ? AND id <> ? FOR UPDATE',
+    [tipo, anio, numero, excluirId ?? 0],
+  );
+  if (otro) throw yaExiste(tipo, anio, numero);
+}
+
 async function comprobarReferencias(conn: Db, d: DocumentoInput) {
   const [c] = await consultar(conn, 'SELECT id FROM clientes WHERE id = ?', [d.clienteId]);
   if (!c) throw peticionIncorrecta('El cliente no existe');
@@ -96,14 +111,23 @@ export async function insertarDocumento(
   extra: { numero?: number; presupuestoOrigenId?: number | null; usuarioId?: number | null; pedidoId?: number | null } = {},
 ): Promise<number> {
   const anio = anioDeFecha(d.fecha);
-  const numero = extra.numero ?? (await siguienteNumero(conn, d.tipo, anio));
+  const manual = extra.numero ?? d.numero;
+  if (manual != null) await comprobarNumeroLibre(conn, d.tipo, anio, manual);
+  const numero = manual ?? (await siguienteNumero(conn, d.tipo, anio));
   const { cols, vals } = valoresConTotales(d);
-  const r = await ejecutar(
-    conn,
-    `INSERT INTO documentos (tipo, anio, numero, presupuesto_origen_id, pedido_id, creado_por, ${cols.join(', ')})
-     VALUES (?, ?, ?, ?, ?, ?, ${cols.map(() => '?').join(', ')})`,
-    [d.tipo, anio, numero, extra.presupuestoOrigenId ?? null, extra.pedidoId ?? null, extra.usuarioId ?? null, ...vals],
-  );
+  let r;
+  try {
+    r = await ejecutar(
+      conn,
+      `INSERT INTO documentos (tipo, anio, numero, presupuesto_origen_id, pedido_id, creado_por, ${cols.join(', ')})
+       VALUES (?, ?, ?, ?, ?, ?, ${cols.map(() => '?').join(', ')})`,
+      [d.tipo, anio, numero, extra.presupuestoOrigenId ?? null, extra.pedidoId ?? null, extra.usuarioId ?? null, ...vals],
+    );
+  } catch (e) {
+    if (esDuplicado(e)) throw yaExiste(d.tipo, anio, numero);
+    throw e;
+  }
+  if (manual != null) await recalcularContador(conn, d.tipo, anio);
   await guardarLineas(conn, r.insertId, d);
   return r.insertId;
 }
@@ -125,15 +149,28 @@ export async function crearDocumento(pool: Pool, d: DocumentoInput, usuarioId: n
 
 export async function actualizarDocumento(pool: Pool, id: number, d: DocumentoInput): Promise<void> {
   await transaccion(pool, async (conn) => {
-    const [actual] = await consultar(conn, 'SELECT tipo, anio, pedido_id FROM documentos WHERE id = ? FOR UPDATE', [id]);
+    const [actual] = await consultar(conn, 'SELECT tipo, anio, numero, pedido_id FROM documentos WHERE id = ? FOR UPDATE', [id]);
     if (!actual) throw noEncontrado('Documento');
     if (actual.tipo !== d.tipo) throw peticionIncorrecta('No se puede cambiar el tipo de documento');
     if (anioDeFecha(d.fecha) !== actual.anio) {
       throw peticionIncorrecta(`La fecha debe ser del ejercicio ${actual.anio}: el número ya está asignado a ese año`);
     }
     await comprobarReferencias(conn, d);
+    const numero = d.numero ?? actual.numero;
+    const cambiaNumero = numero !== actual.numero;
+    if (cambiaNumero) await comprobarNumeroLibre(conn, actual.tipo, actual.anio, numero, id);
     const { cols, vals } = valoresConTotales(d);
-    await ejecutar(conn, `UPDATE documentos SET ${cols.map((c) => `${c} = ?`).join(', ')} WHERE id = ?`, [...vals, id]);
+    try {
+      await ejecutar(conn, `UPDATE documentos SET numero = ?, ${cols.map((c) => `${c} = ?`).join(', ')} WHERE id = ?`, [
+        numero,
+        ...vals,
+        id,
+      ]);
+    } catch (e) {
+      if (esDuplicado(e)) throw yaExiste(actual.tipo, actual.anio, numero);
+      throw e;
+    }
+    if (cambiaNumero) await recalcularContador(conn, actual.tipo, actual.anio);
     await guardarLineas(conn, id, d);
     if (actual.pedido_id) {
       await ejecutar(conn, 'UPDATE pedidos SET cliente_id = ? WHERE id = ?', [d.clienteId, actual.pedido_id]);
@@ -279,12 +316,10 @@ export async function borrarDocumento(pool: Pool, id: number): Promise<void> {
       if (!c || c.ultimo_numero !== d.numero) {
         throw conflicto('Solo se puede borrar la última factura del año para no dejar huecos en la numeración');
       }
-      await ejecutar(conn, 'UPDATE contadores SET ultimo_numero = ultimo_numero - 1 WHERE tipo = ? AND anio = ?', [
-        'factura',
-        d.anio,
-      ]);
     }
     await ejecutar(conn, 'DELETE FROM documentos WHERE id = ?', [id]);
+    // El contador retrocede hasta la factura más alta que queda (puede haber huecos por números puestos a mano).
+    if (d.tipo === 'factura') await recalcularContador(conn, 'factura', d.anio);
   });
 }
 

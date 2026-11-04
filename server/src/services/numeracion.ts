@@ -17,6 +17,21 @@ export async function siguienteNumero(conn: Db, tipo: TipoDocumento, anio: numbe
   return Number(f.n);
 }
 
+/**
+ * Deja el contador en el número más alto usado ese año, tras asignar o cambiar un número a mano.
+ * Así el siguiente número automático nunca choca con uno puesto a mano, y si se renumera la
+ * última factura el contador baja con ella (borrarDocumento compara contra el contador).
+ */
+export async function recalcularContador(conn: Db, tipo: TipoDocumento, anio: number): Promise<void> {
+  await ejecutar(
+    conn,
+    `INSERT INTO contadores (tipo, anio, ultimo_numero)
+       SELECT ?, ?, COALESCE(MAX(numero), 0) FROM documentos WHERE tipo = ? AND anio = ?
+     ON DUPLICATE KEY UPDATE ultimo_numero = VALUES(ultimo_numero)`,
+    [tipo, anio, tipo, anio],
+  );
+}
+
 /** Asegura que el contador está al menos en `numero` (usado por la importación). */
 export async function ajustarContador(conn: Db, tipo: TipoDocumento, anio: number, numero: number): Promise<void> {
   await ejecutar(

@@ -69,6 +69,8 @@ export type LineaInput = z.infer<typeof lineaSchema>;
 export const documentoSchema = z.object({
   tipo: z.enum(['presupuesto', 'factura']),
   fecha: fechaIso,
+  /** Número dentro del año. Al crear, si no se indica se asigna el siguiente del contador. */
+  numero: z.coerce.number().int('El número debe ser entero').min(1, 'El número debe ser mayor que 0').max(999_999).optional(),
   clienteId: z.number().int().positive(),
   distribuidorId: z.number().int().positive().nullable().default(null),
   lineas: z.array(lineaSchema).default([]),

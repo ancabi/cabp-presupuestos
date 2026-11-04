@@ -208,6 +208,32 @@ describe('documentos y numeración por año', () => {
     expect(f3.numero).toBe(2);
   });
 
+  it('permite elegir el número de una factura al crearla y al editarla, sin repetir', async () => {
+    const fac = (fecha: string, extra: Record<string, unknown> = {}) =>
+      docBase(clienteId, fecha, { tipo: 'factura', pedidoNombre: 'Pedido de prueba', ...extra });
+    const a = await api.post('/api/documentos', fac('2032-01-01', { numero: 10 }));
+    expect(a.status).toBe(201);
+    expect(a.body.codigo).toBe('F-2032/0010');
+    // El automático sigue después del más alto usado.
+    const b = (await api.post('/api/documentos', fac('2032-01-02'))).body;
+    expect(b.numero).toBe(11);
+    // Número repetido al crear.
+    const rep = await api.post('/api/documentos', fac('2032-01-03', { numero: 10 }));
+    expect(rep.status).toBe(409);
+    expect(rep.body.error).toContain('F-2032/0010');
+    // Otro año sí puede usar el mismo número.
+    expect((await api.post('/api/documentos', fac('2033-01-01', { numero: 10 }))).status).toBe(201);
+    // Al editar: número ocupado -> error; libre -> se cambia.
+    const { id: _id, ...datosB } = b;
+    expect((await api.put(`/api/documentos/${b.id}`, { ...datosB, numero: 10 })).status).toBe(409);
+    const ok = await api.put(`/api/documentos/${b.id}`, { ...datosB, numero: 5 });
+    expect(ok.status).toBe(200);
+    expect(ok.body.codigo).toBe('F-2032/0005');
+    // La 10 vuelve a ser la última del año: se puede borrar y el contador retrocede.
+    expect((await api.del(`/api/documentos/${a.body.id}`)).status).toBe(200);
+    expect((await api.post('/api/documentos', fac('2032-02-01'))).body.numero).toBe(6);
+  });
+
   it('filtra el listado por año y tipo', async () => {
     const r = await api.get('/api/documentos?anio=2027&tipo=presupuesto');
     expect(r.body).toHaveLength(1);
