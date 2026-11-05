@@ -14,6 +14,7 @@ export const CabeceraDocumento = forwardRef<
           <div className="empresa-nombre">{e.nombre}</div>
           {e.titular && <div>{e.titular}</div>}
           {e.nif && <div>NIF: {e.nif}</div>}
+          {e.telefonos && <div>{e.telefonos}</div>}
           {(e.exportadorRegistrado || e.ivaIntracomunitario || e.eori) && (
             <div>
               {[
@@ -26,7 +27,6 @@ export const CabeceraDocumento = forwardRef<
             </div>
           )}
           {e.direccion && <div>{e.direccion}</div>}
-          {e.telefonos && <div>{e.telefonos}</div>}
         </div>
       </div>
       <div className="documento">
