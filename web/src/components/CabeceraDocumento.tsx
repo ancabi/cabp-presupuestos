@@ -12,7 +12,19 @@ export const CabeceraDocumento = forwardRef<
         {e.logoUrl && <img src={e.logoUrl} alt="" className="logo" />}
         <div>
           <div className="empresa-nombre">{e.nombre}</div>
-          <div>{[e.titular, e.nif && `NIF: ${e.nif}`].filter(Boolean).join(' · ')}</div>
+          {e.titular && <div>{e.titular}</div>}
+          {e.nif && <div>NIF: {e.nif}</div>}
+          {(e.exportadorRegistrado || e.ivaIntracomunitario || e.eori) && (
+            <div>
+              {[
+                e.exportadorRegistrado && `Nº Exportador Registrado: ${e.exportadorRegistrado}`,
+                e.ivaIntracomunitario && `IVA Intracomunitario: ${e.ivaIntracomunitario}`,
+                e.eori && `EORI: ${e.eori}`,
+              ]
+                .filter(Boolean)
+                .join(' · ')}
+            </div>
+          )}
           {e.direccion && <div>{e.direccion}</div>}
           {e.telefonos && <div>{e.telefonos}</div>}
         </div>

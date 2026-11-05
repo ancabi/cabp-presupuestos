@@ -79,6 +79,9 @@ export function AjustesPage() {
               {emp('nombre', 'Nombre comercial')}
               {emp('titular', 'Titular')}
               {emp('nif', 'NIF')}
+              {emp('exportadorRegistrado', 'Nº Exportador Registrado')}
+              {emp('ivaIntracomunitario', 'IVA Intracomunitario')}
+              {emp('eori', 'EORI')}
               {emp('direccion', 'Dirección')}
               {emp('telefonos', 'Teléfonos')}
               {emp('web', 'Web')}

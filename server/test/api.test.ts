@@ -386,6 +386,16 @@ describe('ajustes: aspecto del PDF', () => {
       expect((await api.put('/api/ajustes', { ...actuales, pdf: { ...pdf, ...malo } })).status).toBe(400);
     }
   });
+
+  it('guarda los datos de exportación de la empresa; los ajustes antiguos los tienen vacíos', async () => {
+    const actuales = (await api.get('/api/ajustes')).body;
+    const { exportadorRegistrado: _1, ivaIntracomunitario: _2, eori: _3, ...empresaAntigua } = actuales.empresa;
+    await pool.query("REPLACE INTO ajustes (clave, valor) VALUES ('general', ?)", [JSON.stringify({ ...actuales, empresa: empresaAntigua })]);
+    expect((await api.get('/api/ajustes')).body.empresa).toMatchObject({ exportadorRegistrado: '', ivaIntracomunitario: '', eori: '' });
+    const empresa = { ...actuales.empresa, exportadorRegistrado: 'ESREXES29000123', ivaIntracomunitario: 'ES26266748N', eori: 'ES26266748N' };
+    expect((await api.put('/api/ajustes', { ...actuales, empresa })).status).toBe(200);
+    expect((await api.get('/api/ajustes')).body.empresa).toMatchObject(empresa);
+  });
 });
 
 describe('pedidos', () => {

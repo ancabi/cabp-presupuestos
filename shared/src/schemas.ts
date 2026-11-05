@@ -124,6 +124,10 @@ export const empresaSchema = z.object({
   nombre: texto(),
   titular: texto(),
   nif: texto(30),
+  /** Datos de exportación: se imprimen en la cabecera si no están vacíos. */
+  exportadorRegistrado: texto(50),
+  ivaIntracomunitario: texto(30),
+  eori: texto(30),
   direccion: texto(),
   telefonos: texto(),
   web: texto(),
