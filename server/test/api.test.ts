@@ -249,6 +249,17 @@ describe('documentos y numeración por año', () => {
     expect(anios.body).toEqual(expect.arrayContaining([2031, 2030, 2027, 2026]));
   });
 
+  it('guarda la opción de mostrar el total en dólares con su cotización', async () => {
+    const r = await api.post('/api/documentos', docBase(clienteId, '2046-03-01', { mostrarDolares: true, tipoCambioUsd: 1.0857 }));
+    expect(r.status).toBe(201);
+    const leido = (await api.get(`/api/documentos/${r.body.id}`)).body;
+    expect(leido.mostrarDolares).toBe(true);
+    expect(leido.tipoCambioUsd).toBe(1.0857);
+    const sinDolares = (await api.post('/api/documentos', docBase(clienteId, '2046-03-02'))).body;
+    expect((await api.get(`/api/documentos/${sinDolares.id}`)).body).toMatchObject({ mostrarDolares: false, tipoCambioUsd: 0 });
+    expect((await api.get('/api/documentos/cotizacion-usd?fecha=ayer')).status).toBe(400);
+  });
+
   it('filtra el listado por trimestre según la fecha', async () => {
     await api.post('/api/documentos', docBase(clienteId, '2045-02-10'));
     await api.post('/api/documentos', docBase(clienteId, '2045-05-20'));

@@ -12,6 +12,7 @@ import {
   obtenerDocumento,
   proximoNumero,
 } from '../services/documentos';
+import { cotizacionUsd } from '../services/cotizacion';
 import { idParam, queryInt, queryStr, queryTrimestre } from './util';
 
 function tipoQuery(v: string | undefined): TipoDocumento | undefined {
@@ -32,6 +33,12 @@ export async function rutasDocumentos(app: FastifyInstance) {
   );
 
   app.get('/documentos/anios', async () => aniosConDocumentos(app.db));
+
+  app.get('/documentos/cotizacion-usd', async (req) => {
+    const fecha = queryStr(req, 'fecha');
+    if (fecha && !/^\d{4}-\d{2}-\d{2}$/.test(fecha)) throw peticionIncorrecta('Fecha no válida');
+    return cotizacionUsd(fecha);
+  });
 
   app.get('/documentos/proximo-numero', async (req) => {
     const tipo = tipoQuery(queryStr(req, 'tipo')) ?? 'presupuesto';

@@ -2,7 +2,7 @@ import { useEffect, useLayoutEffect, useRef, type CSSProperties } from 'react';
 import { Button, Center, Group, Loader, Text } from '@mantine/core';
 import { IconArrowLeft, IconPrinter } from '@tabler/icons-react';
 import { Link, useParams } from 'react-router-dom';
-import { formatoEuros, formatoFecha, importeLinea, indicePrincipal, variablesPdf } from '@cabp/shared';
+import { aDolares, formatoDolares, formatoEuros, formatoFecha, importeLinea, indicePrincipal, variablesPdf } from '@cabp/shared';
 import { useAjustes, useDocumento } from '../api/hooks';
 import { CabeceraDocumento } from '../components/CabeceraDocumento';
 import '../fuentesPdf';
@@ -178,6 +178,15 @@ export function DocumentoImprimirPage() {
                       <th>TOTAL</th>
                       <td>{formatoEuros(doc.totalConIva)}</td>
                     </tr>
+                    {doc.mostrarDolares && doc.tipoCambioUsd > 0 && (
+                      <tr className="total-dolares">
+                        <th>
+                          TOTAL en dólares
+                          <span className="cambio">1 € = {doc.tipoCambioUsd.toLocaleString('es-ES', { maximumFractionDigits: 6 })} US$</span>
+                        </th>
+                        <td>{formatoDolares(aDolares(doc.totalConIva, doc.tipoCambioUsd))}</td>
+                      </tr>
+                    )}
                   </tbody>
                 </table>
 

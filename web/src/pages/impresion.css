@@ -187,6 +187,21 @@
   border-top: 1.5px solid var(--pdf-color);
   padding-top: 3px;
 }
+/* Total en dólares: solo informativo, debajo del total en euros. */
+.hoja table.totales tr.total-dolares th,
+.hoja table.totales tr.total-dolares td {
+  font-weight: 700;
+  padding-top: 2px;
+}
+.hoja table.totales tr.total-dolares td {
+  vertical-align: top;
+}
+.hoja table.totales tr.total-dolares .cambio {
+  display: block;
+  font-weight: 400;
+  font-size: calc(7pt * var(--pdf-escala));
+  opacity: 0.75;
+}
 
 /* Texto de importación: dos columnas paralelas (p. ej. español / inglés), como piden en aduanas. */
 .hoja .importacion {

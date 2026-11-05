@@ -101,6 +101,10 @@ export const documentoSchema = z.object({
   totalManualActivo: z.boolean().default(false),
   totalManual: importeConSigno,
   porcentajeReparto: z.coerce.number().int().min(0).max(100).default(50),
+  /** Mostrar además el total en dólares (solo el total), con la cotización indicada. */
+  mostrarDolares: z.boolean().default(false),
+  /** Dólares por euro (1 € = tipoCambioUsd US$). */
+  tipoCambioUsd: z.coerce.number().finite().min(0).max(1000).default(0),
   textoConcepto: z.string().max(10000).default(''),
   textoFormaPago: z.string().max(10000).default(''),
   textoExplicativo: z.string().max(10000).default(''),

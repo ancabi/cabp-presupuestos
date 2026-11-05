@@ -36,14 +36,18 @@ import {
   IconPackage,
   IconPlus,
   IconPrinter,
+  IconRefresh,
   IconTrash,
 } from '@tabler/icons-react';
 import { Link, useBlocker, useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import {
+  aDolares,
   anioDeFecha,
   calcularTotales,
   calcularViaje,
+  formatoDolares,
   formatoEuros,
+  formatoFecha,
   hoyIso,
   importeLinea,
   indicePrincipal,
@@ -53,6 +57,7 @@ import {
   type TipoDocumento,
 } from '@cabp/shared';
 import {
+  notificarError,
   notificarOk,
   useAjustes,
   useBorrarDocumento,
@@ -66,7 +71,7 @@ import {
   useProductos,
   useProximoNumero,
 } from '../api/hooks';
-import { ApiError } from '../api/http';
+import { ApiError, http } from '../api/http';
 import { Numero } from '../components/Numero';
 import { CalculadoraEscalera } from '../components/CalculadoraEscalera';
 import { confirmar } from '../components/confirmar';
@@ -96,6 +101,8 @@ function nuevoDocumento(tipo: TipoDocumento, clienteId: number, iva: number, for
     totalManualActivo: false,
     totalManual: 0,
     porcentajeReparto: 50,
+    mostrarDolares: false,
+    tipoCambioUsd: 0,
     textoConcepto: '',
     textoFormaPago: formaPago,
     textoExplicativo: '',
@@ -164,6 +171,7 @@ function Editor({ doc, inicial }: { doc?: Documento; inicial: DocumentoInput }) 
   const [calcAbierta, calc] = useDisclosure();
   const [productoSel, setProductoSel] = useState<string | null>(null);
   const [enfocarLinea, setEnfocarLinea] = useState<number | null>(null);
+  const [cotizacion, setCotizacion] = useState<{ cargando: boolean; fecha?: string }>({ cargando: false });
   const navigate = useNavigate();
 
   // El bloqueo de navegación lee el ref: así, al guardar y navegar en el mismo clic, ya no bloquea.
@@ -256,6 +264,22 @@ function Editor({ doc, inicial }: { doc?: Documento; inicial: DocumentoInput }) 
     value: d[k] as number,
     onChange: (n: number) => cambiar({ [k]: n } as Partial<DocumentoInput>),
   });
+  // Precarga la cotización del BCE para la fecha del documento; se puede corregir a mano.
+  const cargarCotizacion = async () => {
+    setCotizacion({ cargando: true });
+    try {
+      const c = await http.get<{ tipoCambio: number; fecha: string }>(`/documentos/cotizacion-usd?fecha=${d.fecha}`);
+      cambiar({ tipoCambioUsd: Math.round(c.tipoCambio * 10000) / 10000 });
+      setCotizacion({ cargando: false, fecha: c.fecha });
+    } catch (e) {
+      notificarError(e);
+      setCotizacion({ cargando: false });
+    }
+  };
+  const activarDolares = (activo: boolean) => {
+    cambiar({ mostrarDolares: activo });
+    if (activo && !d.tipoCambioUsd) void cargarCotizacion();
+  };
   const setLinea = (i: number, parcial: Partial<Linea>) =>
     cambiar({ lineas: d.lineas.map((l, j) => (j === i ? { ...l, ...parcial } : l)) });
   const quitarLinea = (i: number) => cambiar({ lineas: d.lineas.filter((_, j) => j !== i) });
@@ -819,6 +843,50 @@ function Editor({ doc, inicial }: { doc?: Documento; inicial: DocumentoInput }) 
                   {formatoEuros(t.totalConIva)}
                 </Text>
               </Group>
+              <Checkbox
+                label="Mostrar también el total en dólares (US$)"
+                checked={d.mostrarDolares}
+                onChange={(e) => activarDolares(e.currentTarget.checked)}
+              />
+              {d.mostrarDolares && (
+                <>
+                  <Group gap="xs" align="flex-end" wrap="nowrap">
+                    <Numero
+                      w={150}
+                      label="1 € ="
+                      suffix=" US$"
+                      decimalScale={4}
+                      disabled={cotizacion.cargando}
+                      error={!cotizacion.cargando && !(d.tipoCambioUsd > 0) ? 'Indica la cotización' : undefined}
+                      value={d.tipoCambioUsd}
+                      onChange={(n) => {
+                        cambiar({ tipoCambioUsd: n });
+                        setCotizacion({ cargando: false });
+                      }}
+                    />
+                    <Tooltip label="Cargar la cotización del BCE para la fecha del documento">
+                      <ActionIcon
+                        variant="default"
+                        size="input-sm"
+                        aria-label="Cargar cotización"
+                        loading={cotizacion.cargando}
+                        onClick={cargarCotizacion}
+                        mb={!cotizacion.cargando && !(d.tipoCambioUsd > 0) ? 22 : 0}
+                      >
+                        <IconRefresh size={16} />
+                      </ActionIcon>
+                    </Tooltip>
+                    <Text fw={700} className="importe" ml="auto" mb={8}>
+                      {formatoDolares(aDolares(t.totalConIva, d.tipoCambioUsd))}
+                    </Text>
+                  </Group>
+                  {cotizacion.fecha && (
+                    <Text size="xs" c="dimmed">
+                      Cotización del BCE del {formatoFecha(cotizacion.fecha)}. Corrígela si no es la que quieres usar.
+                    </Text>
+                  )}
+                </>
+              )}
               <Divider label="Reparto de pagos" labelPosition="left" mt="sm" />
               <Slider
                 value={d.porcentajeReparto}

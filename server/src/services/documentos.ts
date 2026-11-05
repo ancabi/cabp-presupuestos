@@ -38,6 +38,8 @@ const CAMPOS: [keyof DocumentoInput, string][] = [
   ['totalManualActivo', 'total_manual_activo'],
   ['totalManual', 'total_manual'],
   ['porcentajeReparto', 'porcentaje_reparto'],
+  ['mostrarDolares', 'mostrar_dolares'],
+  ['tipoCambioUsd', 'tipo_cambio_usd'],
   ['textoConcepto', 'texto_concepto'],
   ['textoFormaPago', 'texto_forma_pago'],
   ['textoExplicativo', 'texto_explicativo'],
@@ -49,7 +51,7 @@ const CAMPOS: [keyof DocumentoInput, string][] = [
   ['valorC', 'valor_c'],
   ['valorAux', 'valor_aux'],
 ];
-const BOOLEANOS = new Set(['aplicaGanancia', 'aplicaIva', 'totalManualActivo']);
+const BOOLEANOS = new Set(['aplicaGanancia', 'aplicaIva', 'totalManualActivo', 'mostrarDolares']);
 
 function valoresConTotales(d: DocumentoInput) {
   const t = calcularTotales(d);

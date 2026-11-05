@@ -230,4 +230,13 @@ export const migraciones: { nombre: string; sql: string[] }[] = [
           SET l.principal = 1`,
     ],
   },
+  {
+    // Total también en dólares en el PDF, con la cotización (US$ por €) guardada en el documento.
+    nombre: '007_documento_dolares',
+    sql: [
+      `ALTER TABLE documentos
+         ADD COLUMN mostrar_dolares TINYINT(1) NOT NULL DEFAULT 0 AFTER porcentaje_reparto,
+         ADD COLUMN tipo_cambio_usd DECIMAL(12,6) NOT NULL DEFAULT 0 AFTER mostrar_dolares`,
+    ],
+  },
 ];
