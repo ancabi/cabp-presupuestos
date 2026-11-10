@@ -353,18 +353,24 @@ function Editor({ doc, inicial }: { doc?: Documento; inicial: DocumentoInput }) 
         }),
     );
 
-  const convertirConPedido = (pedidoNombre: string) =>
-    doc &&
-    convertir.mutate(
-      { id: doc.id, pedidoNombre },
-      {
-        onSuccess: (f) => {
-          setModalPedido(null);
-          notificarOk(`Factura ${f.codigo} creada`);
-          navigate(`/documentos/${f.id}`);
+  // La factura se crea en el servidor a partir del presupuesto guardado: si hay cambios sin guardar
+  // (gastos, observaciones…), se guardan antes para que pasen a la factura.
+  const convertirConPedido = (pedidoNombre: string) => {
+    if (!doc) return;
+    const crearFactura = () =>
+      convertir.mutate(
+        { id: doc.id, pedidoNombre },
+        {
+          onSuccess: (f) => {
+            setModalPedido(null);
+            notificarOk(`Factura ${f.codigo} creada`);
+            navigate(`/documentos/${f.id}`);
+          },
         },
-      },
-    );
+      );
+    if (sucio) onGuardar(crearFactura);
+    else crearFactura();
+  };
 
   const crearPedidoFactura = (nombre: string) =>
     doc &&
@@ -972,12 +978,12 @@ function Editor({ doc, inicial }: { doc?: Documento; inicial: DocumentoInput }) 
         titulo={modalPedido === 'convertir' ? 'Convertir a factura' : 'Crear pedido'}
         explicacion={
           modalPedido === 'convertir'
-            ? `Se creará una factura con fecha de hoy copiando el presupuesto ${doc?.codigo}, y con ella su pedido.`
+            ? `Se creará una factura con fecha de hoy copiando el presupuesto ${doc?.codigo}, y con ella su pedido.${sucio ? ' Antes se guardarán los cambios del presupuesto.' : ''}`
             : `El pedido será del cliente de la factura ${doc?.codigo}.`
         }
         inicial={modalPedido === 'convertir' ? (doc?.textoConcepto.split('\n')[0] ?? '').trim() : ''}
         etiquetaBoton={modalPedido === 'convertir' ? 'Convertir' : 'Crear pedido'}
-        cargando={convertir.isPending || crearPedido.isPending}
+        cargando={convertir.isPending || crearPedido.isPending || guardar.isPending}
         onCerrar={() => setModalPedido(null)}
         onAceptar={modalPedido === 'convertir' ? convertirConPedido : crearPedidoFactura}
       />

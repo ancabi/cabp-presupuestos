@@ -185,6 +185,28 @@ describe('documentos y numeración por año', () => {
     expect(ok.body.numero).toBe(d.numero);
   });
 
+  it('al convertir a factura copia todos los campos del presupuesto', async () => {
+    const datos = {
+      distribuidorId: null,
+      lineas: [
+        { productoId: null, nombreProducto: 'Silla', cantidad: 2, precio: 1000, principal: false },
+        { productoId: null, nombreProducto: 'Mando', cantidad: 1, precio: 50, principal: true },
+      ],
+      ganancia: 200, restaurante: 11, pasaje: 22, combustible: 33, otros: 44, hotel: 55, transporte: 66,
+      kilometros: 120, numViajes: 3, consumo: 8.5, precioGasolina: 1.65,
+      aplicaGanancia: false, aplicaIva: false, ivaPorcentaje: 10,
+      totalManualActivo: false, totalManual: 999, porcentajeReparto: 70,
+      mostrarDolares: true, tipoCambioUsd: 1.0857,
+      textoConcepto: 'Concepto', textoFormaPago: 'Forma de pago', textoExplicativo: 'Observaciones',
+      textoImportacion1: 'Col 1', textoImportacion2: 'Col 2',
+      calcTipo: 'stepper', valorA: 1.5, valorB: 2.5, valorC: 3, valorAux: 4,
+    };
+    const p = (await api.post('/api/documentos', docBase(clienteId, '2026-10-02', datos))).body;
+    const f = (await api.post(`/api/documentos/${p.id}/convertir-a-factura`, { pedidoNombre: 'Copia completa' })).body;
+    expect(f).toMatchObject({ ...datos, lineas: datos.lineas.map((l) => expect.objectContaining(l)) });
+    expect(f.totalConIva).toBe(p.totalConIva);
+  });
+
   it('convierte un presupuesto en factura una sola vez', async () => {
     const p = (await api.post('/api/documentos', docBase(clienteId, '2026-10-01'))).body;
     const f = await api.post(`/api/documentos/${p.id}/convertir-a-factura`, { pedidoNombre: 'Pedido convertido' });
