@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { calcularEscalera, calcularTotales, calcularViaje, type DatosCalculo } from './calculos';
+import { calcularEscalera, calcularTotales, calcularViaje, lineaConGastos, type DatosCalculo } from './calculos';
 import { numeroDocumento } from './formato';
 import { textoSobre, variablesPdf, PDF_POR_DEFECTO } from './pdf';
 import { indicePrincipal } from './schemas';
@@ -148,5 +148,23 @@ describe('línea principal', () => {
     expect(indicePrincipal([])).toBe(-1);
     expect(indicePrincipal([{}, {}])).toBe(0);
     expect(indicePrincipal([{ principal: false }, { principal: true }, { principal: true }])).toBe(1);
+  });
+});
+
+describe('gastos repartidos en la línea principal', () => {
+  it('suma gastos / unidades al precio unidad y los gastos al total', () => {
+    expect(lineaConGastos({ cantidad: 2, precio: 1000 }, 300)).toEqual({ precio: 1150, total: 2300 });
+  });
+  it('el total es exacto aunque el precio unidad se redondee', () => {
+    expect(lineaConGastos({ cantidad: 3, precio: 10 }, 100)).toEqual({ precio: 43.33, total: 130 });
+  });
+  it('con una unidad, precio y total suben lo mismo', () => {
+    expect(lineaConGastos({ cantidad: 1, precio: 500 }, 120.5)).toEqual({ precio: 620.5, total: 620.5 });
+  });
+  it('con cantidad 0 no reparte: solo suma al total', () => {
+    expect(lineaConGastos({ cantidad: 0, precio: 50 }, 30)).toEqual({ precio: 50, total: 30 });
+  });
+  it('funciona con abonos (cantidades negativas)', () => {
+    expect(lineaConGastos({ cantidad: -2, precio: 100 }, -60)).toEqual({ precio: 130, total: -260 });
   });
 });

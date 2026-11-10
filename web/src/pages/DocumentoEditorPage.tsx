@@ -738,7 +738,7 @@ function Editor({ doc, inicial }: { doc?: Documento; inicial: DocumentoInput }) 
                 {d.totalManualActivo
                   ? 'En el PDF se suman al total manual, en una sola línea.'
                   : principal >= 0
-                    ? `En el PDF se suman al total de la línea principal (${d.lineas[principal].nombreProducto || `línea ${principal + 1}`}), sin crear otra línea.`
+                    ? `En el PDF se reparten en el precio unidad de la línea principal (${d.lineas[principal].nombreProducto || `línea ${principal + 1}`}) y se suman a su total, sin crear otra línea.`
                     : 'Sin líneas: en el PDF aparecerán como una línea aparte.'}
                 {t.totalSinIva !== t.neto && <> Ahora suman <b className="importe">{formatoEuros(Math.round((t.totalSinIva - t.neto) * 100) / 100)}</b>.</>}
               </Text>

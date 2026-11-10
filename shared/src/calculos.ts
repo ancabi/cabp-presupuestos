@@ -53,6 +53,19 @@ export function importeLinea(linea: LineaCalculo): number {
   return aEuros(redondear0(aCentimos(linea.precio) * (Number(linea.cantidad) || 0)));
 }
 
+/**
+ * Línea principal del PDF con los gastos y la ganancia repartidos entre sus unidades:
+ * precio unidad = precio + extra / cantidad, y total = importe + extra (exacto, para que cuadre con la base imponible).
+ * El precio unidad se redondea a céntimos, así que precio × cantidad puede diferir del total en algún céntimo.
+ * Con cantidad 0 no se puede repartir: el extra solo se suma al total.
+ */
+export function lineaConGastos(linea: LineaCalculo, extra: number): { precio: number; total: number } {
+  const cantidad = Number(linea.cantidad) || 0;
+  const total = aEuros(aCentimos(importeLinea(linea)) + aCentimos(extra));
+  const precio = cantidad ? aEuros(redondear0(aCentimos(linea.precio) + aCentimos(extra) / cantidad)) : Number(linea.precio) || 0;
+  return { precio, total };
+}
+
 export function calcularTotales(d: DatosCalculo): Totales {
   const subtotal = d.lineas.reduce(
     (acc, l) => acc + redondear0(aCentimos(l.precio) * (Number(l.cantidad) || 0)),

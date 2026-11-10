@@ -2,7 +2,7 @@ import { useEffect, useLayoutEffect, useRef, type CSSProperties } from 'react';
 import { Button, Center, Group, Loader, Text } from '@mantine/core';
 import { IconArrowLeft, IconPrinter } from '@tabler/icons-react';
 import { Link, useParams } from 'react-router-dom';
-import { aDolares, formatoDolares, formatoEuros, formatoFecha, importeLinea, indicePrincipal, variablesPdf } from '@cabp/shared';
+import { aDolares, formatoDolares, formatoEuros, formatoFecha, importeLinea, indicePrincipal, lineaConGastos, variablesPdf } from '@cabp/shared';
 import { useAjustes, useDocumento } from '../api/hooks';
 import { CabeceraDocumento } from '../components/CabeceraDocumento';
 import '../fuentesPdf';
@@ -70,11 +70,11 @@ export function DocumentoImprimirPage() {
   const lineas = doc.totalManualActivo
     ? [{ nombreProducto: doc.textoConcepto.split('\n')[0] || 'Según concepto', cantidad: 1, precio: doc.totalManual, principal: true }]
     : doc.lineas;
-  // Gastos y ganancia no van en una línea propia: se suman al total de la línea principal
-  // (el precio unidad se deja como está). Solo si no hay ninguna línea se muestran aparte.
+  // Gastos y ganancia no van en una línea propia: se reparten en el precio unidad de la línea
+  // principal (extra / cantidad) y se suman a su total. Solo si no hay ninguna línea se muestran aparte.
   const principal = indicePrincipal(lineas);
-  const totalLinea = (l: (typeof lineas)[number], i: number) =>
-    i === principal ? Math.round((importeLinea(l) + otrosConceptos) * 100) / 100 : importeLinea(l);
+  const importes = (l: (typeof lineas)[number], i: number) =>
+    i === principal ? lineaConGastos(l, otrosConceptos) : { precio: l.precio, total: importeLinea(l) };
 
   return (
     <div className="impresion">
@@ -149,8 +149,8 @@ export function DocumentoImprimirPage() {
                       <tr key={i}>
                         <td className="cant">{l.cantidad.toLocaleString('es-ES')}</td>
                         <td>{l.nombreProducto}</td>
-                        <td className="num">{formatoEuros(l.precio)}</td>
-                        <td className="num">{formatoEuros(totalLinea(l, i))}</td>
+                        <td className="num">{formatoEuros(importes(l, i).precio)}</td>
+                        <td className="num">{formatoEuros(importes(l, i).total)}</td>
                       </tr>
                     ))}
                     {otrosConceptos !== 0 && principal < 0 && (
