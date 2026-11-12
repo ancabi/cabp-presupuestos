@@ -57,6 +57,9 @@
   height: var(--pdf-logo);
   width: auto;
 }
+.hoja .empresa-fiscal > span {
+  white-space: nowrap;
+}
 .hoja .empresa-nombre {
   font-size: calc(11pt * var(--pdf-escala));
   font-weight: 700;

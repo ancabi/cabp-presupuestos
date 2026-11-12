@@ -78,7 +78,7 @@ export function AjustesPage() {
             <SimpleGrid cols={{ base: 1, sm: 2 }}>
               {emp('nombre', 'Nombre comercial')}
               {emp('titular', 'Titular')}
-              {emp('nif', 'NIF')}
+              {emp('nif', 'DNI / NIF')}
               {emp('exportadorRegistrado', 'Nº Exportador Registrado')}
               {emp('ivaIntracomunitario', 'IVA Intracomunitario')}
               {emp('eori', 'EORI')}
