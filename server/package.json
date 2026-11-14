@@ -10,7 +10,8 @@
     "migrar": "tsx --env-file-if-exists=../.env scripts/migrar.ts",
     "crear-admin": "tsx --env-file-if-exists=../.env scripts/crear-admin.ts",
     "cambiar-password": "tsx --env-file-if-exists=../.env scripts/cambiar-password.ts",
-    "importar": "tsx --env-file-if-exists=../.env scripts/importar-sqlite.ts"
+    "importar": "tsx --env-file-if-exists=../.env scripts/importar-sqlite.ts",
+    "limpiar-pruebas": "tsx --env-file-if-exists=../.env scripts/limpiar-pruebas.ts"
   },
   "dependencies": {
     "@cabp/shared": "*",

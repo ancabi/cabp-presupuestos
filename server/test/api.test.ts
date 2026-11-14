@@ -4,6 +4,7 @@ import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import type { FastifyInstance } from 'fastify';
 import type { Pool } from 'mysql2/promise';
 import { cliente, prepararApp } from './helpers';
+import { borrarDocumentosDePrueba, documentosDePrueba } from '../src/services/limpieza';
 
 let app: FastifyInstance;
 let pool: Pool;
@@ -607,5 +608,38 @@ describe('pedidos', () => {
     expect(p2.clienteId).toBe(otroClienteId);
     expect(p2.actualizadoEn > ren.body.actualizadoEn).toBe(true);
     expect(p2.nombre).toBe('Renombrado');
+  });
+});
+
+describe('limpieza de pruebas y primer número de factura', () => {
+  let clienteId: number;
+  beforeAll(async () => {
+    clienteId = (await api.post('/api/clientes', { nombre: 'Limpieza' })).body.id;
+  });
+  const fac = (fecha: string) => docBase(clienteId, fecha, { tipo: 'factura', pedidoNombre: 'Pedido de prueba' });
+
+  it('borra solo lo hecho en la app (con sus pedidos) y las facturas siguen desde el primer número', async () => {
+    // Factura importada de la versión anterior (sin usuario creador): se conserva.
+    const [imp] = (await pool.query(
+      `INSERT INTO documentos (tipo, anio, numero, fecha, cliente_id, iva_porcentaje, texto_concepto, texto_forma_pago, texto_explicativo)
+       VALUES ('factura', 2050, 7, '2050-01-05', ?, 21, '', '', '')`,
+      [clienteId],
+    )) as any;
+    const f = (await api.post('/api/documentos', fac('2050-02-01'))).body;
+    const p = (await api.post('/api/documentos', docBase(clienteId, '2050-02-02'))).body;
+    expect((await documentosDePrueba(pool, 2050)).map((d) => d.id).sort()).toEqual([f.id, p.id].sort());
+
+    const r = await borrarDocumentosDePrueba(pool, 2050, 522);
+    expect(r).toEqual({ documentos: 2, pedidoIds: [f.pedido.id] });
+    expect((await api.get(`/api/documentos/${imp.insertId}`)).status).toBe(200);
+    expect((await api.get(`/api/documentos/${f.id}`)).status).toBe(404);
+    expect((await api.get(`/api/pedidos/${f.pedido.id}`)).status).toBe(404);
+
+    expect((await api.get('/api/documentos/proximo-numero?tipo=factura&anio=2050')).body.numero).toBe(522);
+    const f522 = (await api.post('/api/documentos', fac('2050-03-01'))).body;
+    expect(f522.numero).toBe(522);
+    // Al borrar la 522 el contador no vuelve a la 8: la siguiente sigue siendo la 522.
+    expect((await api.del(`/api/documentos/${f522.id}`)).status).toBe(200);
+    expect((await api.post('/api/documentos', fac('2050-03-02'))).body.numero).toBe(522);
   });
 });

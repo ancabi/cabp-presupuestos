@@ -23,7 +23,7 @@ const comun = {
 await build({ ...comun, entryPoints: ['src/index.ts'], outfile: 'dist/index.js' });
 await build({
   ...comun,
-  entryPoints: ['scripts/migrar.ts', 'scripts/crear-admin.ts', 'scripts/cambiar-password.ts', 'scripts/importar-sqlite.ts'],
+  entryPoints: ['scripts/migrar.ts', 'scripts/crear-admin.ts', 'scripts/cambiar-password.ts', 'scripts/importar-sqlite.ts', 'scripts/limpiar-pruebas.ts'],
   outdir: 'dist/scripts',
 });
 console.log('Servidor compilado en dist/');

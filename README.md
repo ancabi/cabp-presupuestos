@@ -108,6 +108,10 @@ docker compose up -d --build
 docker compose exec app node server/dist/scripts/crear-admin.js tu@email.com "Tu nombre"
 # Cambiar la contraseña de un usuario que ya existe (-it para que la pida por consola):
 docker compose exec -it app node server/dist/scripts/cambiar-password.js usuario@email.com
+# Borrar los presupuestos y facturas de prueba de un año y fijar el primer nº de factura.
+# Sin --confirmar solo muestra la lista de lo que borraría. Los documentos importados no se tocan.
+docker compose exec app node server/dist/scripts/limpiar-pruebas.js --anio 2026 --primera-factura 522
+docker compose exec app node server/dist/scripts/limpiar-pruebas.js --anio 2026 --primera-factura 522 --confirmar
 ```
 
 - La aplicación queda en `127.0.0.1:3000`. Publícala detrás de un proxy inverso con HTTPS, por ejemplo este `Caddyfile`:

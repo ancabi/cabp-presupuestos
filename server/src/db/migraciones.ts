@@ -239,4 +239,9 @@ export const migraciones: { nombre: string; sql: string[] }[] = [
          ADD COLUMN tipo_cambio_usd DECIMAL(12,6) NOT NULL DEFAULT 0 AFTER mostrar_dolares`,
     ],
   },
+  {
+    // Primer número del año (p. ej. facturas que empiezan en el 522): el contador nunca baja de ahí.
+    nombre: '008_contador_primer_numero',
+    sql: [`ALTER TABLE contadores ADD COLUMN primer_numero INT UNSIGNED NOT NULL DEFAULT 1 AFTER ultimo_numero`],
+  },
 ];
